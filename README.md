@@ -20,6 +20,20 @@ Set `SESSION_SECRET` in `.env` to a random value of at least 32 characters. For 
 openssl rand -hex 32
 ```
 
+Never commit `.env`; it is ignored by Git. In Render, add `NODE_ENV=production`
+and a stable `SESSION_SECRET` generated with the command above. Render supplies
+`PORT` automatically. This app uses SQLite, not `DATABASE_URL`: attach a Render
+persistent disk mounted at `/var/data`, then set `DATABASE_PATH=/var/data/blogging-platform.sqlite`
+and `UPLOADS_PATH=/var/data/uploads` so both account/content data and uploaded
+images survive restarts and deploys. Without the disk, both are on ephemeral
+instance storage and can be lost. The SQLite database supports one app instance;
+do not scale this service to multiple instances sharing a local disk.
+
+For a Render Web Service use build command `npm ci` and start command `npm start`.
+The production server trusts one proxy hop so `Secure`, `HttpOnly`, `SameSite=Lax`
+session cookies work through Render's HTTPS proxy. The server refuses to start if
+`SESSION_SECRET` is missing or shorter than 32 characters.
+
 Then start the site:
 
 ```sh
