@@ -5,10 +5,14 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const source = path.join(root, "Frontend");
-// Vercel resolves outputDirectory relative to its configured Root Directory,
-// which is also the working directory used for the build command.
-const output = path.resolve(process.cwd(), "dist");
+// Build output must be anchored to this repository, not whichever directory
+// the deploy runner happens to use as its current working directory.
+const output = path.resolve(__dirname, "..", "dist");
 const configuredApi = (process.env.FRONTEND_API_URL || "").trim().replace(/\/$/, "");
+
+if (process.env.VERCEL && path.resolve(process.cwd()) !== root) {
+  throw new Error(`Set Vercel Root Directory to the repository root (${root}); build ran from ${process.cwd()}.`);
+}
 
 if (process.env.VERCEL && !configuredApi) {
   throw new Error("Set FRONTEND_API_URL in Vercel to the deployed Render backend origin.");
