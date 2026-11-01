@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Contact Us | VYONIC</title>
+<title>Contact | Blogging Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Contact VYONIC for support, partnerships, or general inquiries.">
+<meta name="description" content="Contact Blogging Platform for support, partnerships, or general inquiries.">
 
 <style>
 * {
@@ -153,9 +153,18 @@ button:hover {
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar">
-  <div class="logo">Blogging Platform</div>
-  <a href="blogs.html">← Back to Blogs</a>
+<nav class="navbar" aria-label="Main navigation">
+  <div class="logo"><a href="index.html">Blogging Platform</a></div>
+  <div class="nav-wrap">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="editor.html">Write</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="Contact.html" aria-current="page">Contact</a></li>
+    </ul>
+    <ul class="auth-links" id="authArea"><li><a href="login.html" class="login-btn">Login</a></li></ul>
+  </div>
 </nav>
 
 <!-- CONTACT -->
@@ -171,17 +180,17 @@ button:hover {
 
     <div class="info-box">
       <strong>Email</strong>
-      ridhamgupta805@gmail.com
+      <span>ridhamgupta805@gmail.com</span>
     </div>
 
     <div class="info-box">
       <strong>Business</strong>
-      partnerships@vyonic.com
+      <span>ridhamgupta805@gmail.com</span>
     </div>
 
     <div class="info-box">
       <strong>Location</strong>
-      Remote · Worldwide
+      <span>Remote · Worldwide</span>
     </div>
   </div>
 
@@ -190,21 +199,22 @@ button:hover {
     <h2>Send a Message</h2>
 
     <div class="field">
-      <label>Your Name</label>
-      <input type="text" required>
+      <label for="contactName">Your Name</label>
+      <input id="contactName" type="text" placeholder="Your name" required>
     </div>
 
     <div class="field">
-      <label>Email Address</label>
-      <input type="email" required>
+      <label for="contactEmail">Email Address</label>
+      <input id="contactEmail" type="email" placeholder="you@example.com" required>
     </div>
 
     <div class="field">
-      <label>Message</label>
-      <textarea required></textarea>
+      <label for="contactMessage">Message</label>
+      <textarea id="contactMessage" placeholder="How can we help?" required></textarea>
     </div>
 
     <button type="submit">Send Message</button>
+    <p class="contact-status" id="contactStatus" aria-live="polite"></p>
   </form>
 
 </section>

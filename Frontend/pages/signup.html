@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Create your Blogging Platform account to start writing, managing drafts, and publishing posts.">
-  <meta name="theme-color" content="#ffc466">
+  <meta name="theme-color" content="#171717">
   <title>Sign Up | Blogging Platform</title>
   <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="/css/court-enhancements.css">
@@ -19,13 +19,13 @@
 
   <form id="signupForm" novalidate>
     <label for="signupName">Full name</label>
-    <input type="text" id="signupName" name="name" autocomplete="name" maxlength="60" required>
+    <input type="text" id="signupName" name="name" placeholder="Your full name" autocomplete="name" maxlength="60" required>
 
     <label for="signupEmail">Email address</label>
-    <input type="email" id="signupEmail" name="email" autocomplete="email" required>
+    <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
 
     <label for="signupPassword">Password</label>
-    <input type="password" id="signupPassword" name="password" autocomplete="new-password" minlength="12" required>
+    <input type="password" id="signupPassword" name="password" placeholder="Create a secure password" autocomplete="new-password" minlength="12" required>
     <small>At least 12 characters with a lowercase letter, uppercase letter, and number. We’ll email you a verification link.</small>
 
     <button type="submit">Create Account</button>
