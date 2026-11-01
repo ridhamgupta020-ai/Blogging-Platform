@@ -30,7 +30,7 @@ if (!sessionSecret || sessionSecret.length < 32) {
 if (isProduction && !supabase.configured) {
   throw new Error("Production requires SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, and SUPABASE_SECRET_KEY for email authentication.");
 }
-if (isProduction && (!process.env.PUBLIC_APP_URL || !(process.env.BACKEND_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL))) {
+if (isProduction && (!process.env.PUBLIC_APP_URL || !process.env.BACKEND_PUBLIC_URL)) {
   throw new Error("Production requires PUBLIC_APP_URL (Vercel) and BACKEND_PUBLIC_URL (Render) for authentication redirects.");
 }
 if (isProduction && !process.env.FRONTEND_ORIGIN) {
@@ -367,6 +367,20 @@ app.use((req, res, next) => {
 for (const assetType of ["css", "js", "images"]) {
   app.use(`/${assetType}`, express.static(path.join(frontendDirectory, assetType), { dotfiles: "ignore", index: false }));
 }
+
+// Some Supabase URL configurations return the authorization code to the site
+// root. Forward only known OAuth callback parameters before static index.html
+// can consume the request.
+app.get("/", (req, res, next) => {
+  const callbackParams = new URLSearchParams();
+  for (const key of ["code", "sb_flow_id", "error", "error_description", "error_code"]) {
+    const value = req.query[key];
+    if (typeof value === "string") callbackParams.set(key, value);
+  }
+  if (!callbackParams.has("code") && !callbackParams.has("error")) return next();
+  return res.redirect(302, `/auth/callback?${callbackParams.toString()}`);
+});
+
 app.use(express.static(publicPagesDirectory, { dotfiles: "ignore", index: "index.html" }));
 
 registerApiRoutes(app, {

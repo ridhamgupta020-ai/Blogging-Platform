@@ -26,7 +26,7 @@ services:
       - key: PUBLIC_APP_URL
         sync: false
       - key: BACKEND_PUBLIC_URL
-        sync: false
+        value: https://blogging-platform-zkur.onrender.com
       - key: FRONTEND_ORIGIN
         sync: false
     disk:

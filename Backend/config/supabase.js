@@ -10,6 +10,7 @@ const configured = Boolean(url && publishableKey && secretKey);
 const isProduction = process.env.NODE_ENV === "production";
 
 function publicBaseUrl(value, name) {
+  if (!value) throw new Error(`${name} is required and must be a valid HTTP(S) origin.`);
   let parsed;
   try {
     parsed = new URL(value);
@@ -25,7 +26,10 @@ function publicBaseUrl(value, name) {
 
 const localUrl = `http://localhost:${process.env.PORT || 3000}`;
 const frontendUrl = publicBaseUrl(process.env.PUBLIC_APP_URL || localUrl, "PUBLIC_APP_URL");
-const backendUrl = publicBaseUrl(process.env.BACKEND_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || localUrl, "BACKEND_PUBLIC_URL");
+const backendUrl = publicBaseUrl(
+  isProduction ? process.env.BACKEND_PUBLIC_URL : (process.env.BACKEND_PUBLIC_URL || localUrl),
+  "BACKEND_PUBLIC_URL"
+);
 const pkceStorageKey = "draftly-google-oauth";
 const pkceCookiePattern = new RegExp(`^${pkceStorageKey}(?:-code-verifier|-flows-code-verifier|-flow-[A-Za-z0-9_-]{8,64}-code-verifier)(?:\\.\\d+)?$`);
 

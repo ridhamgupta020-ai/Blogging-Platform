@@ -121,6 +121,10 @@ test("Google OAuth uses PKCE and creates the existing app session without duplic
   assert.equal(startResponse.headers.get("location"), `${process.env.SUPABASE_URL}/auth/v1/authorize?provider=google`);
   assert.equal(redirectTo, `${origin}/auth/callback`);
 
+  const rootFallback = await fetch(`${origin}/?code=new-google-user&sb_flow_id=google-flow-root`, { redirect: "manual" });
+  assert.equal(rootFallback.status, 302);
+  assert.equal(rootFallback.headers.get("location"), "/auth/callback?code=new-google-user&sb_flow_id=google-flow-root");
+
   const firstLogin = await fetch(`${origin}/auth/callback?code=new-google-user&sb_flow_id=google-flow-1234`, { redirect: "manual" });
   assert.equal(firstLogin.status, 302);
   assert.equal(firstLogin.headers.get("location"), `${process.env.PUBLIC_APP_URL}/dashboard.html`);
