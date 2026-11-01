@@ -5,6 +5,13 @@
   const status = document.getElementById("status");
   const signupForm = document.getElementById("signupForm");
 
+  document.querySelectorAll("[data-google-auth]").forEach((link) => {
+    link.addEventListener("click", async (event) => {
+      event.preventDefault();
+      window.location.assign(await api.publicUrl("/auth/google"));
+    });
+  });
+
   function showStatus(message, type, action) {
     if (status) {
       status.replaceChildren(document.createTextNode(message));
@@ -162,4 +169,7 @@
   const authError = new URLSearchParams(location.search).get("auth_error");
   if (authError === "expired_link") showStatus("This verification or reset link has expired. Request a fresh email and try again.", "error");
   else if (authError) showStatus("This authentication link is invalid. Request a fresh email and try again.", "error");
+  else if (new URLSearchParams(location.search).get("error") === "google_failed") {
+    showStatus("Google sign-in couldn't be completed. Try again or sign in with your email and password.", "error");
+  }
 })();

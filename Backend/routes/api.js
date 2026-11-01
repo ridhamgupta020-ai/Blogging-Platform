@@ -60,9 +60,15 @@ async function ensureLocalProfile(authUser, bcrypt) {
   if (!local) {
     const passwordHash = await bcrypt.hash(crypto.randomBytes(48).toString("hex"), 12);
     const name = String(authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email.split("@")[0]).slice(0, 60);
-    const result = db.prepare("INSERT INTO users (email, password_hash, display_name, supabase_user_id) VALUES (?, ?, ?, ?)").run(authUser.email.toLowerCase(), passwordHash, name, authUser.id);
+    const avatar = authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture;
+    const parsedAvatar = typeof avatar === "string" && URL.canParse(avatar) ? new URL(avatar) : null;
+    const avatarUrl = parsedAvatar?.protocol === "https:" && !parsedAvatar.username && !parsedAvatar.password
+      ? parsedAvatar.href
+      : null;
+    const result = db.prepare("INSERT INTO users (email, password_hash, display_name, avatar_path, supabase_user_id) VALUES (?, ?, ?, ?, ?)").run(authUser.email.toLowerCase(), passwordHash, name, avatarUrl, authUser.id);
     local = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
   } else if (local.supabase_user_id !== authUser.id) {
+    if (local.supabase_user_id) throw new ApiError(409, "This email is already linked to a different account.");
     db.prepare("UPDATE users SET supabase_user_id = ? WHERE id = ?").run(authUser.id, local.id);
     local.supabase_user_id = authUser.id;
   }
@@ -76,7 +82,54 @@ function saveAuthSession(req, authSession, localUser) {
   req.session.supabaseExpiresAt = authSession.expires_at || Math.floor(Date.now() / 1000) + (authSession.expires_in || 3600);
 }
 
+app.get("/auth/google", asyncRoute(async (req, res) => {
+  try {
+    const redirectTo = `${supabase.backendUrl}/auth/callback`;
+    const { data, error } = await supabase.createPkceClient(req, res).auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo }
+    });
+    if (error) throw error;
+    const authorizeUrl = new URL(data?.url);
+    if (!supabase.url || authorizeUrl.origin !== new URL(supabase.url).origin) {
+      throw new Error("Supabase returned an unexpected OAuth authorization URL.");
+    }
+    res.redirect(authorizeUrl.href);
+  } catch (error) {
+    console.error("Google OAuth initiation failed:", error);
+    res.redirect(`${supabase.frontendUrl}/login.html?error=google_failed`);
+  }
+}));
+
 app.get("/auth/callback", asyncRoute(async (req, res) => {
+  const { code, sb_flow_id: flowId, error: providerError, error_description: errorDescription } = req.query;
+  if (typeof providerError === "string" && supabase.hasPendingPkceVerifier(req)) {
+    console.error("Google OAuth provider callback failed:", {
+      error: providerError,
+      description: typeof errorDescription === "string" ? errorDescription : undefined
+    });
+    supabase.clearPkceCookies(req, res);
+    return res.redirect(`${supabase.frontendUrl}/login.html?error=google_failed`);
+  }
+  if (typeof code === "string") {
+    try {
+      const client = supabase.createPkceClient(req, res);
+      const exchangeOptions = typeof flowId === "string" ? { flowId } : undefined;
+      const { data, error } = await client.auth.exchangeCodeForSession(code, exchangeOptions);
+      if (error) throw error;
+      if (!data.user?.email || !data.user.email_confirmed_at || !data.session) {
+        throw new Error("Google OAuth did not return a confirmed user session.");
+      }
+      const localUser = await ensureLocalProfile(data.user, bcrypt);
+      await new Promise((resolve, reject) => req.session.regenerate((sessionError) => sessionError ? reject(sessionError) : resolve()));
+      saveAuthSession(req, data.session, localUser);
+      return res.redirect(`${supabase.frontendUrl}/dashboard.html`);
+    } catch (error) {
+      console.error("Google OAuth callback failed:", error);
+      return res.redirect(`${supabase.frontendUrl}/login.html?error=google_failed`);
+    }
+  }
+
   const { token_hash: tokenHash, type } = req.query;
   if (typeof tokenHash !== "string" || !["signup", "email", "email_change", "recovery"].includes(type)) {
     return res.redirect(`${supabase.frontendUrl}/login.html?auth_error=invalid_link`);

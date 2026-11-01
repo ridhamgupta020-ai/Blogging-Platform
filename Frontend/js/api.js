@@ -54,6 +54,10 @@
     return absolutizeUploads(payload, apiBase);
   }
 
+  function publicUrl(path) {
+    return apiBasePromise.then((apiBase) => `${apiBase}${path.startsWith("/") ? path : `/${path}`}`);
+  }
+
   function notice(message, type = "info", target) {
     let output = target;
     if (!output) {
@@ -80,6 +84,7 @@
 
   window.PlatformAPI = {
     request,
+    publicUrl,
     notice,
     redirectToLogin
   };

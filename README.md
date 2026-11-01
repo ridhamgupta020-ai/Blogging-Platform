@@ -82,6 +82,8 @@ In Supabase Auth settings, enable email confirmations and set password minimum l
 
 The signup redirect includes `type=signup`; the password recovery redirect includes `type=recovery`. The backend callback verifies the one-time token and creates the server session. Without those template and URL settings, confirmation/recovery links will not complete.
 
+To enable Google sign-in, open **Authentication → Sign In / Providers → Google** in the Supabase dashboard, enable Google, and enter the Google OAuth client ID and client secret there. Do not add the client secret to this repository or frontend environment. In Google Cloud Console, allow the Supabase project's callback URL (`https://<project-ref>.supabase.co/auth/v1/callback`) as an authorized redirect URI. In Supabase's URL configuration, allow `${BACKEND_PUBLIC_URL}/auth/callback` as a redirect URL. The app starts the PKCE flow on the backend, keeps the short-lived verifier in an HTTP-only cookie, and creates the same server-side session used by email login. No additional application environment variables are required.
+
 Then start the site:
 
 ```sh

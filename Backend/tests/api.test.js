@@ -7,11 +7,16 @@ const path = require("node:path");
 const test = require("node:test");
 
 const testDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "blog-platform-test-"));
+process.env.NODE_ENV = "test";
 process.env.DATABASE_PATH = path.join(testDirectory, "test.sqlite");
 process.env.UPLOADS_PATH = path.join(testDirectory, "uploads");
 process.env.SESSION_SECRET = "test-session-secret-with-at-least-32-characters";
+process.env.SUPABASE_URL = "https://test-project.supabase.co";
+process.env.SUPABASE_PUBLISHABLE_KEY = "test-publishable-key";
+process.env.SUPABASE_SECRET_KEY = "test-secret-key";
 
 const { app, db } = require("../../server");
+const supabase = require("../config/supabase");
 
 test("authenticated blog workflows persist and enforce ownership", async (t) => {
   const server = app.listen(0);
@@ -23,6 +28,56 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
   });
 
   const origin = `http://127.0.0.1:${server.address().port}`;
+  const usersByEmail = new Map();
+  const usersByVerificationToken = new Map();
+  function createAuthSession(user) {
+    return {
+      access_token: `access-${user.id}`,
+      refresh_token: `refresh-${user.id}`,
+      expires_in: 3600
+    };
+  }
+  supabase.configured = true;
+  supabase.createAuthClient = () => ({
+    auth: {
+      async signUp({ email, password, options }) {
+        if (usersByEmail.has(email)) {
+          return { data: { user: { email, identities: [] }, session: null }, error: null };
+        }
+        const user = {
+          id: `supabase-${email}`,
+          email,
+          email_confirmed_at: null,
+          user_metadata: options.data,
+          password
+        };
+        usersByEmail.set(email, user);
+        usersByVerificationToken.set(`confirm-${email}`, user);
+        return { data: { user: { ...user, identities: [{}] }, session: null }, error: null };
+      },
+      async verifyOtp({ token_hash: tokenHash }) {
+        const user = usersByVerificationToken.get(tokenHash);
+        if (!user) return { data: {}, error: new Error("Token not found.") };
+        const verifiedUser = { ...user, email_confirmed_at: new Date().toISOString() };
+        usersByEmail.set(user.email, verifiedUser);
+        return { data: { user: verifiedUser, session: createAuthSession(verifiedUser) }, error: null };
+      },
+      async signInWithPassword({ email, password }) {
+        const user = usersByEmail.get(email);
+        if (!user || user.password !== password) {
+          return { data: {}, error: new Error("Invalid login credentials") };
+        }
+        return { data: { user, session: createAuthSession(user) }, error: null };
+      },
+      async setSession() {
+        return { data: { session: null }, error: null };
+      },
+      async signOut() {
+        return { error: null };
+      }
+    }
+  });
+
   async function request(url, options = {}, cookie) {
     const headers = new Headers(options.headers || {});
     if (cookie) headers.set("Cookie", cookie);
@@ -41,11 +96,17 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
     method: "POST",
     body: { name: "Riley Writer", email: "riley@example.com", password: "SecurePass1234!" }
   });
-  assert.equal(registration.response.status, 201);
-  const ownerCookie = registration.cookie;
+  assert.equal(registration.response.status, 202);
+  assert.equal(registration.payload.email, "riley@example.com");
+  const verification = await fetch(`${origin}/auth/callback?token_hash=confirm-riley%40example.com&type=signup`, { redirect: "manual" });
+  assert.equal(verification.status, 302);
+  assert.equal(verification.headers.get("location"), `${supabase.frontendUrl}/dashboard.html`);
+  const ownerCookie = verification.headers.getSetCookie().find((value) => value.startsWith("blog.sid="))?.split(";")[0];
   assert.ok(ownerCookie);
-  assert.equal(registration.payload.user.email, "riley@example.com");
-  assert.equal("password" in registration.payload.user, false);
+  assert.equal(db.prepare("SELECT email FROM users WHERE email = ?").get("riley@example.com").email, "riley@example.com");
+  const registeredUser = (await request("auth/me", {}, ownerCookie)).payload.user;
+  assert.equal(registeredUser.email, "riley@example.com");
+  assert.equal("password" in registeredUser, false);
   assert.equal((await request("dashboard")).response.status, 401);
   assert.equal((await request("auth/me")).payload.user, null);
 
@@ -86,7 +147,7 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
   });
   assert.equal(login.response.status, 200);
   assert.ok(login.cookie);
-  assert.equal(login.payload.user.id, registration.payload.user.id);
+  assert.equal(login.payload.user.id, registeredUser.id);
   assert.equal((await request("auth/me", {}, login.cookie)).payload.user.email, "riley@example.com");
   assert.equal((await request("dashboard", {}, login.cookie)).response.status, 200);
 
@@ -188,6 +249,9 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
     method: "POST",
     body: { name: "Other Writer", email: "other@example.com", password: "AnotherSecure123!" }
   });
+  assert.equal(otherUser.response.status, 202);
+  const otherVerification = await fetch(`${origin}/auth/callback?token_hash=confirm-other%40example.com&type=signup`, { redirect: "manual" });
+  const otherUserCookie = otherVerification.headers.getSetCookie().find((value) => value.startsWith("blog.sid="))?.split(";")[0];
   const forbidden = await request(`blogs/${draftId}`, {
     method: "PATCH",
     body: {
@@ -198,7 +262,7 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
       tags: [],
       status: "published"
     }
-  }, otherUser.cookie);
+  }, otherUserCookie);
   assert.equal(forbidden.response.status, 403);
 
   const commentDelete = await request(`comments/${comment.payload.comment.id}`, { method: "DELETE" }, ownerCookie);
