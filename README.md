@@ -54,7 +54,7 @@ supabase db push --linked
 supabase migration list --linked
 ```
 
-The CLI prompts for the database password during linking; do not put it in source or committed files. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, and `SESSION_SECRET` in Render's private environment settings. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
+The project URL is `https://tsmkeivqvqnyfcmaqbhb.supabase.co`. The CLI prompts for the database password during linking; enter it only in that prompt and do not put it in source, a command argument, or committed files. If it contains reserved characters, the CLI prompt avoids connection-string encoding concerns. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, and `SESSION_SECRET` in Render's private environment settings. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
 
 Then start the site:
 
