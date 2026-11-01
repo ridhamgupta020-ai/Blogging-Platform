@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover, write, and publish high quality blogs with a fast and simple blogging platform.">
+  <meta name="theme-color" content="#171717">
+  <title>Blogging Platform | Write Better, Publish Faster</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    :root {
+      --brand-blue: #A78BFA;
+      --brand-orange: #E8FF65;
+      --text-dark: #111;
+      --text-light: #f4f4f4;
+      --surface: #ffffff;
+      --surface-soft: #f7fbff;
+      --shadow-soft: 0 18px 36px rgba(0, 0, 0, 0.08);
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--text-dark);
+      color: var(--surface);
+      padding: 10px 14px;
+      border-radius: 8px;
+      z-index: 1200;
+    }
+
+    .skip-link:focus {
+      left: 16px;
+      top: 16px;
+    }
+
+    .navbar {
+      backdrop-filter: saturate(140%) blur(6px);
+    }
+
+    .logo a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hamburger {
+      border: 0;
+      background: transparent;
+      color: var(--text-dark);
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+
+    .hero-content {
+      max-width: 640px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(58, 183, 255, 0.35);
+      color: #0f172a;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .hero-content p {
+      max-width: 580px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .hero-btn.secondary {
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+    }
+
+    .hero-stats {
+      margin-top: 22px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 12px;
+      padding: 10px 14px;
+      min-width: 140px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stat strong {
+      font-size: 1.1rem;
+      color: #0f172a;
+    }
+
+    .vision-list {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .vision-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: #333;
+      line-height: 1.45;
+    }
+
+    .vision-list i {
+      color: var(--brand-blue);
+      margin-top: 2px;
+    }
+
+    .features .subtitle {
+      margin-top: 12px;
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    .cards {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .card {
+      text-align: left;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 26px 50px rgba(0, 0, 0, 0.12);
+    }
+
+    .quick-start {
+      background: linear-gradient(180deg, var(--surface-soft), var(--surface));
+      padding: 80px 80px 90px;
+    }
+
+    .quick-start h2 {
+      text-align: center;
+      font-size: 2rem;
+      color: #0f172a;
+      margin-bottom: 34px;
+    }
+
+    .steps {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .step-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--brand-orange);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 12px;
+    }
+
+    .step h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .step p {
+      color: #4b5563;
+      line-height: 1.55;
+    }
+
+    .newsletter-cta {
+      max-width: 1100px;
+      margin: 0 auto 90px;
+      background: linear-gradient(135deg, #111827, #1f2937);
+      color: var(--text-light);
+      border-radius: 24px;
+      padding: 36px;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+      box-shadow: 0 28px 48px rgba(17, 24, 39, 0.24);
+    }
+
+    .newsletter-cta h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .newsletter-cta p {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .newsletter-form input {
+      flex: 1 1 220px;
+      border-radius: 999px;
+      border: 1px solid #475569;
+      padding: 12px 14px;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .newsletter-form button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--brand-orange);
+      color: #111827;
+    }
+
+    .newsletter-feedback {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #93c5fd;
+      min-height: 1rem;
+    }
+
+    #authArea {
+      margin-left: 10px;
+    }
+
+    .auth-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .logout-btn {
+      border: 0;
+      border-radius: 999px;
+      background: #111827;
+      color: #fff;
+      cursor: pointer;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+    }
+
+    .scroll-top {
+      user-select: none;
+    }
+
+    @media (max-width: 1024px) {
+      .quick-start {
+        padding: 72px 30px;
+      }
+
+      .newsletter-cta {
+        margin: 0 20px 80px;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-content h1 {
+        font-size: 2.7rem;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-btn.secondary {
+        background: #111827;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-stats {
+        gap: 10px;
+      }
+
+      .stat {
+        min-width: 120px;
+      }
+
+      .newsletter-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .newsletter-feedback {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/css/court-enhancements.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="logo"><a href="index.html">Blogging Platform</a></div>
+
+    <button class="hamburger" id="navToggle" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#vision">Vision</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="editor.html" class="login-btn">Write</a></li>
+      <li id="authArea"><a href="login.html" class="login-btn">Login</a></li>
+    </ul>
+  </nav>
+
+  <main id="main-content">
+    <header class="hero" id="home">
+      <div class="overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="bi bi-stars"></i>
+          Trusted by new and growing creators
+        </div>
+        <h1>Write Better<br><span>Publish Faster</span></h1>
+        <p>Plan, draft, and publish engaging articles from one place. Build your audience with a clean, fast writing workflow.</p>
+        <div class="hero-actions">
+          <a href="#vision" class="hero-btn">Explore Platform</a>
+          <a href="editor.html" class="hero-btn secondary">Start Writing</a>
+        </div>
+        <div class="hero-stats" aria-label="Platform highlights">
+          <div class="stat">
+            <strong data-platform-stat="published">0</strong>
+            <p>Published posts</p>
+          </div>
+          <div class="stat">
+            <strong data-platform-stat="creators">0</strong>
+            <p>Published creators</p>
+          </div>
+          <div class="stat">
+            <strong data-platform-stat="subscribers">0</strong>
+            <p>Newsletter subscribers</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="vision" id="vision">
+      <div class="vision-left">
+        <h2>Our Vision</h2>
+        <p>
+          We believe great ideas should be easy to publish. This platform is built to help you focus on writing, not tool friction.
+        </p>
+        <ul class="vision-list">
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Simple editor experience for fast publishing.</span></li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Content-first workflow designed for consistency.</span></li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Built-in organization so your blog stays clean.</span></li>
+        </ul>
+        <a href="editor.html" class="arrow-btn" aria-label="Open editor">→</a>
+      </div>
+
+      <div class="vision-right">
+        <img src="/images/2.jpg" alt="Team collaborating on blog strategy">
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <h2>What We Offer</h2>
+      <p class="subtitle">Core features to help you research, write, and grow your audience.</p>
+      <div class="cards">
+        <article class="card">
+          <img src="/images/7.png" alt="Content strategy article preview">
+          <h3>Let’s talk about love languages</h3>
+          <p>Not all marketing works the same way for all prospects, just as the same love language is not for everyone.</p>
+          <a href="short.html" class="card-btn">Read →</a>
+        </article>
+
+        <article class="card">
+          <img src="/images/8.webp" alt="Monetization strategy article preview">
+          <h3>There’s money on the table you’re not collecting</h3>
+          <p>You may already have everything you need to start generating revenue from your existing content.</p>
+          <a href="newsletter2.html" class="card-btn">Read →</a>
+        </article>
+
+        <article class="card">
+          <img src="/images/3.jpg" alt="SEO training article preview">
+          <h3>Can’t you learn SEO from YouTube and ChatGPT?</h3>
+          <p>Understand when free advice is enough and when a structured learning path gives better long-term results.</p>
+          <a href="newsletter.html" class="card-btn">Read →</a>
+        </article>
+
+        <article class="card">
+          <img src="/images/6.jpg" alt="Consistency and writing routine article preview">
+          <h3>How to build a 30-day writing streak</h3>
+          <p>Use a repeatable content cadence with practical prompts so you can publish consistently without burnout.</p>
+          <a href="blogs.html" class="card-btn">Read →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="quick-start" id="quick-start">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="step-number">1</div>
+          <h3>Draft Quickly</h3>
+          <p>Open the editor and turn ideas into structured posts with clean formatting tools.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">2</div>
+          <h3>Organize Smartly</h3>
+          <p>Use tags and simple management tools to keep all your blog content easy to find.</p>
+        </article>
+        <article class="step">
+          <div class="step-number">3</div>
+          <h3>Publish Confidently</h3>
+          <p>Ship polished content and keep a reliable publishing rhythm that grows audience trust.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="newsletter-cta" aria-labelledby="newsletterTitle">
+      <div>
+        <h3 id="newsletterTitle">Get Weekly Writing Insights</h3>
+        <p>Receive practical tips on content strategy, SEO basics, and consistency systems used by high-performing creators.</p>
+      </div>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" id="newsletterEmail" name="newsletterEmail" placeholder="Enter your email" required aria-label="Email address">
+        <button type="submit">Subscribe</button>
+        <p id="newsletterFeedback" class="newsletter-feedback" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col brand">
+        <h2>Blogging<br>Platform</h2>
+        <a href="about.html">About</a>
+        <a href="Contact.html">Contact</a>
+        <div class="socials" aria-label="Social media links">
+          <span class="bi bi-youtube" aria-hidden="true"></span>
+          <span class="bi bi-pinterest" aria-hidden="true"></span>
+          <span class="bi bi-instagram" aria-hidden="true"></span>
+          <span class="bi bi-twitter-x" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>RESOURCES</h4>
+        <a href="blogs.html">→ Newsletter</a>
+        <a href="blogs.html">→ Blog</a>
+        <a href="Features.html">→ Tools & Resources</a>
+        <a href="dashboard.html">→ Dashboard</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>SPONSOR / ADS</h4>
+        <a href="Contact.html#contact-form">→ Brand Partnership</a>
+        <a href="Contact.html#contact-form">→ Newsletter Ads</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>DISCLOSURES</h4>
+        <a href="legal.html#privacy">→ Privacy Policy</a>
+        <a href="legal.html#terms">→ Terms & Conditions</a>
+        <a href="legal.html#affiliate">→ Affiliate Disclosure</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2018 – <span id="year"></span> The Side Blogger. All Rights Reserved.</p>
+      <p class="cookie">This site uses affiliate links and cookies.</p>
+      <button class="vault-btn" type="button" onclick="window.location.href='signup.html'">Join the Vault</button>
+      <div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div>
+    </div>
+  </footer>
+
+  <script>
+    const navToggle = document.getElementById("navToggle");
+    const navLinks = document.getElementById("navLinks");
+    const navLinkItems = navLinks.querySelectorAll("a");
+    const authArea = document.getElementById("authArea");
+    const newsletterForm = document.getElementById("newsletterForm");
+    const newsletterEmail = document.getElementById("newsletterEmail");
+    const newsletterFeedback = document.getElementById("newsletterFeedback");
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+    const yearEl = document.getElementById("year");
+
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    if (navToggle && navLinks) {
+      navToggle.addEventListener("click", () => {
+        const isExpanded = navToggle.getAttribute("aria-expanded") === "true";
+        navToggle.setAttribute("aria-expanded", String(!isExpanded));
+        navLinks.classList.toggle("active");
+      });
+
+      navLinkItems.forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("active");
+          navToggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+
+    function renderAuth() {
+      const isLoggedIn = localStorage.getItem("loggedIn");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      if (!authArea) return;
+
+      if (isLoggedIn) {
+        authArea.innerHTML = [
+          '<span class="auth-chip">',
+          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
+          (user.name || "User"),
+          '<button class="logout-btn" type="button" id="logoutBtn">Logout</button>',
+          '</span>'
+        ].join(" ");
+
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+          });
+        }
+      } else {
+        authArea.innerHTML = '<a href="login.html" class="login-btn">Login</a>';
+      }
+    }
+
+    renderAuth();
+
+    if (newsletterForm && newsletterEmail && newsletterFeedback) {
+      newsletterForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const email = newsletterEmail.value.trim();
+
+        if (!email) {
+          newsletterFeedback.textContent = "Please enter your email address.";
+          return;
+        }
+
+        localStorage.setItem("newsletterEmail", email);
+        newsletterFeedback.textContent = "Thanks for subscribing. Updates are on the way.";
+        newsletterForm.reset();
+      });
+    }
+
+    if (scrollTopBtn) {
+      const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollTopBtn.addEventListener("click", scrollToTop);
+      scrollTopBtn.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          scrollToTop();
+        }
+      });
+    }
+  </script>
+<script src="/js/court-enhancements.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/platform.js"></script>
+</body>
+</html>

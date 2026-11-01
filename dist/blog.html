@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title id="seo-title">Read Blog</title>
+<link rel="stylesheet" href="/css/style.css">
+<meta id="seo-description" name="description" content="Read in-depth blog posts with clean formatting, SEO metadata, and social sharing.">
+<meta name="theme-color" content="#171717">
+
+<meta property="og:type" content="article">
+<meta id="og-title" property="og:title">
+<meta id="og-description" property="og:description">
+<meta id="og-url" property="og:url">
+<meta id="og-image" property="og:image">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta id="twitter-title" name="twitter:title">
+<meta id="twitter-description" name="twitter:description">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;padding:0;box-sizing:border-box;
+  font-family:Inter,system-ui,sans-serif;
+}
+
+body{
+  background:#f6f4f1;
+  color:#1f2937;
+  line-height:1.85;
+}
+
+/* PROGRESS BAR */
+.progress{
+  position:fixed;
+  top:0;left:0;
+  height:4px;
+  background:#3ab7ff;
+  width:0%;
+  z-index:1000;
+}
+
+/* NAVBAR */
+.navbar{
+  position:sticky;top:0;
+  background:#fff;
+  padding:18px 50px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 10px 25px rgba(0,0,0,.05);
+  z-index:20;
+}
+
+.logo{font-size:22px;font-weight:600;color:#3ab7ff}
+
+.nav-links a{
+  text-decoration:none;
+  font-weight:500;
+  color:#374151;
+}
+
+.theme-toggle{
+  border:none;
+  background:#f1f1f1;
+  padding:8px 12px;
+  border-radius:50%;
+  cursor:pointer;
+}
+
+/* BLOG CARD */
+.blog-view{
+  max-width:860px;
+  margin:60px auto;
+  background:#fff;
+  padding:70px;
+  border-radius:26px;
+  box-shadow:0 40px 80px rgba(0,0,0,.08);
+  position:relative;
+}
+
+.export{
+  position:absolute;
+  top:28px;right:28px;
+  padding:8px 16px;
+  border-radius:999px;
+  border:none;
+  background:#3ab7ff;
+  color:#fff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.blog-view img{
+  width:100%;
+  max-height:380px;
+  object-fit:cover;
+  border-radius:22px;
+  margin-bottom:40px;
+}
+
+.blog-view h1{
+  font-size:42px;
+  line-height:1.25;
+  margin-bottom:10px;
+}
+
+.meta{
+  display:flex;
+  gap:15px;
+  font-size:14px;
+  color:#6b7280;
+  margin-bottom:35px;
+}
+
+.tags{
+  margin-top:25px;
+}
+
+.tags span{
+  display:inline-block;
+  background:#eef6ff;
+  color:#2563eb;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:13px;
+  margin-right:8px;
+  margin-bottom:8px;
+}
+
+.content{
+  font-size:18px;
+}
+
+.content h2{
+  margin-top:50px;
+  margin-bottom:18px;
+  font-size:26px;
+}
+
+.content p{margin-bottom:24px}
+
+/* SHARE */
+.share{
+  margin-top:50px;
+  display:flex;
+  gap:12px;
+}
+
+.share a{
+  padding:10px 16px;
+  border-radius:999px;
+  background:#f3f4f6;
+  text-decoration:none;
+  font-size:14px;
+  color:#374151;
+}
+
+/* DARK MODE */
+body.dark{
+  background:#020617;
+  color:#e5e7eb;
+}
+
+body.dark .navbar,
+body.dark .blog-view{
+  background:#020617;
+}
+
+body.dark .share a{background:#111827;color:#e5e7eb}
+body.dark .export{background:#2563eb}
+
+/* MOBILE */
+@media(max-width:768px){
+  .blog-view{
+    padding:32px;
+    margin:25px 15px;
+  }
+  .blog-view h1{font-size:30px}
+}
+</style>
+  <link rel="stylesheet" href="/css/court-enhancements.css">
+</head>
+
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="navbar">
+  <div class="logo">Blogging Platform</div>
+  <!-- <button class="theme-toggle" onclick="toggleTheme()">🌙</button> -->
+  <div class="nav-links">
+    <a href="blogs.html">← Back</a>
+  </div>
+</nav>
+
+<article class="blog-view" id="blog">
+  <button class="export" onclick="window.print()">⬇ Export PDF</button>
+</article>
+<!-- FOOTER -->
+  <footer class="site-footer">
+
+  <div class="footer-top">
+
+    <!-- BRAND -->
+    <div class="footer-col brand">
+      <h2>Blogging<br>Platform</h2>
+      <a href="about.html">About</a>
+      <a href="Contact.html">Contact</a>
+
+      <div class="socials">
+        <span class="bi bi-youtube"></span>
+        <span class="bi bi-pinterest"></span>
+        <span class="bi bi-instagram"></span>
+        <span class="bi bi-twitter-x"></span>
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="footer-col">
+      <h4>RESOURCES</h4>
+      <a href="blogs.html">→ Newsletter</a>
+      <a href="blogs.html">→ Blog</a>
+      <a href="Features.html">→ Tools & Resources</a>
+      <a href="signup.html">→ Membership</a>
+    </div>
+
+    <!-- SPONSOR -->
+    <div class="footer-col">
+      <h4>SPONSOR / ADS</h4>
+      <a href="Contact.html#contact-form">→ Brand Partnership</a>
+      <a href="Contact.html#contact-form">→ Newsletter Ads</a>
+    </div>
+
+    <!-- DISCLOSURES -->
+    <div class="footer-col">
+      <h4>DISCLOSURES</h4>
+      <a href="legal.html#privacy">→ Privacy Policy</a>
+      <a href="legal.html#terms">→ Terms & Conditions</a>
+      <a href="legal.html#affiliate">→ Affiliate Disclosure</a>
+    </div>
+
+  </div>
+
+  <!-- FOOTER BOTTOM -->
+  <div class="footer-bottom">
+    <p>© 2018 – 2026 The Side Blogger. All Rights Reserved.</p>
+    <p class="cookie">
+      This site uses affiliate links and cookies. By continuing to use this site, you consent to all cookies.
+    </p>
+
+    <a class="vault-btn" href="signup.html">Join the Vault</a>
+    <div class="scroll-top">↑</div>
+  </div>
+
+</footer>
+
+
+
+<script src="/js/court-enhancements.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/platform.js"></script>
+<script src="/js/blog-page.js"></script>
+</body>
+</html>
