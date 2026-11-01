@@ -147,6 +147,14 @@
       font-size: 0.95rem;
     }
 
+    .google-auth-divider {
+      margin: 0 0 18px;
+    }
+
+    .google-auth-button {
+      margin-bottom: 18px;
+    }
+
     form {
       display: grid;
       gap: 14px;
@@ -304,7 +312,7 @@
   <main class="layout">
     <section class="side" aria-label="Platform details">
       <div>
-        <p class="brand"><a class="draftly-logo" href="/"><img src="/images/draftly-icon.svg" alt="Draftly" width="36" height="36"></a></p>
+        <p class="brand"><a class="draftly-logo" href="/" aria-label="Draftly home"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></p>
         <h1>Welcome back. Publish your next idea today.</h1>
         <p>Sign in to manage drafts, edit existing posts, and track your growth dashboard.</p>
 
@@ -325,6 +333,17 @@
     <section class="panel">
       <h2>Login</h2>
       <p class="subtitle">Enter your credentials to continue to your dashboard.</p>
+
+      <a class="google-auth-button" href="/auth/google" data-google-auth>
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94a11.05 11.05 0 0 1-4.8 7.24l7.73 6C44.38 38.05 46.98 31.95 46.98 24.55Z"/>
+          <path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.9 23.9 0 0 0 0 21.56l7.98-6.19Z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.14 1.44-4.89 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </a>
+      <div class="google-auth-divider" aria-hidden="true"><span>or</span></div>
 
       <form id="loginForm" novalidate>
         <div>
