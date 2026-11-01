@@ -32,6 +32,21 @@ body{
   font-size:28px;
 }
 
+.dashboard-brand{
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:center;
+  line-height:0;
+}
+
+.dashboard-brand img{
+  display:block;
+  width:auto;
+  max-width:min(180px, 42vw);
+  height:36px;
+  object-fit:contain;
+}
+
 .header a{
   text-decoration:none;
   background:#3ab7ff;
@@ -194,6 +209,9 @@ body{
 
 <!-- HEADER -->
 <div class="header">
+  <a class="dashboard-brand" href="/" aria-label="Draftly home">
+    <img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36">
+  </a>
   <h1>Creator dashboard</h1>
   <nav aria-label="Dashboard navigation">
     <a href="index.html">Home</a>
