@@ -1,6 +1,22 @@
 "use strict";
 
 (function () {
+  const apiBasePromise = fetch("/runtime-config.json", { cache: "no-store" })
+    .then((response) => response.ok ? response.json() : {})
+    .then((config) => typeof config.apiBaseUrl === "string" ? config.apiBaseUrl.replace(/\/$/, "") : "")
+    .catch(() => "");
+
+  function absolutizeUploads(value, base) {
+    if (Array.isArray(value)) return value.map((item) => absolutizeUploads(item, base));
+    if (value && typeof value === "object") {
+      for (const [key, item] of Object.entries(value)) value[key] = absolutizeUploads(item, base);
+      return value;
+    }
+    if (typeof value !== "string" || !base) return value;
+    if (value.startsWith("/uploads/")) return `${base}${value}`;
+    return value.replace(/(src=["'])\/uploads\//gi, `$1${base}/uploads/`);
+  }
+
   try {
     localStorage.removeItem("loggedIn");
     const legacyUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -9,6 +25,7 @@
   }
 
   async function request(url, options = {}) {
+    const apiBase = await apiBasePromise;
     const headers = new Headers(options.headers || {});
     let body = options.body;
     if (body && !(body instanceof FormData) && typeof body !== "string") {
@@ -16,13 +33,14 @@
       body = JSON.stringify(body);
     }
 
-    const response = await fetch(url.startsWith("/api/") || url.startsWith("/uploads/")
+    const path = url.startsWith("/api/") || url.startsWith("/uploads/")
       ? url
-      : `/api/${url.replace(/^\/+/, "")}`, {
+      : `/api/${url.replace(/^\/+/, "")}`;
+    const response = await fetch(apiBase ? `${apiBase}${path}` : path, {
       ...options,
       body,
       headers,
-      credentials: "same-origin",
+      credentials: "include",
       cache: "no-store"
     });
 
@@ -33,7 +51,7 @@
       error.status = response.status;
       throw error;
     }
-    return payload;
+    return absolutizeUploads(payload, apiBase);
   }
 
   function notice(message, type = "info", target) {

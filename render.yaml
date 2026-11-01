@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: blogging-platform-api
+    runtime: node
+    rootDir: .
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_PATH
+        value: /var/data/blogging-platform.sqlite
+      - key: UPLOADS_PATH
+        value: /var/data/uploads
+      - key: SESSION_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: PUBLIC_APP_URL
+        sync: false
+      - key: BACKEND_PUBLIC_URL
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+    disk:
+      name: blogging-platform-data
+      mountPath: /var/data
+      sizeGB: 1

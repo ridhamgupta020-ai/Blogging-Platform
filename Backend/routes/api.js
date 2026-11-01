@@ -79,21 +79,21 @@ function saveAuthSession(req, authSession, localUser) {
 app.get("/auth/callback", asyncRoute(async (req, res) => {
   const { token_hash: tokenHash, type } = req.query;
   if (typeof tokenHash !== "string" || !["signup", "email", "email_change", "recovery"].includes(type)) {
-    return res.redirect("/login.html?auth_error=invalid_link");
+    return res.redirect(`${supabase.frontendUrl}/login.html?auth_error=invalid_link`);
   }
   let result;
   try {
     result = await supabase.createAuthClient().auth.verifyOtp({ token_hash: tokenHash, type });
   } catch {
-    return res.redirect("/login.html?auth_error=expired_link");
+    return res.redirect(`${supabase.frontendUrl}/login.html?auth_error=expired_link`);
   }
   if (result.error || !result.data.user || !result.data.session) {
-    return res.redirect("/login.html?auth_error=expired_link");
+    return res.redirect(`${supabase.frontendUrl}/login.html?auth_error=expired_link`);
   }
   let localUser;
   if (type === "email_change") {
     const linked = db.prepare("SELECT id FROM users WHERE supabase_user_id = ?").get(result.data.user.id);
-    if (!linked) return res.redirect("/login.html?auth_error=invalid_link");
+    if (!linked) return res.redirect(`${supabase.frontendUrl}/login.html?auth_error=invalid_link`);
     db.prepare("UPDATE users SET email = ? WHERE id = ?").run(result.data.user.email.toLowerCase(), linked.id);
     localUser = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(linked.id);
   } else {
@@ -101,7 +101,7 @@ app.get("/auth/callback", asyncRoute(async (req, res) => {
   }
   await new Promise((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
   saveAuthSession(req, result.data.session, localUser);
-  res.redirect(type === "recovery" ? "/reset-password.html" : "/dashboard.html");
+  res.redirect(`${supabase.frontendUrl}/${type === "recovery" ? "reset-password.html" : "dashboard.html"}`);
 }));
 
 app.post("/api/auth/register", authLimiter, asyncRoute(async (req, res) => {
@@ -117,7 +117,7 @@ app.post("/api/auth/register", authLimiter, asyncRoute(async (req, res) => {
     password,
     options: {
       data: { full_name: name },
-      emailRedirectTo: `${supabase.siteUrl}/auth/callback?type=signup`
+      emailRedirectTo: `${supabase.backendUrl}/auth/callback?type=signup`
     }
   });
   if (error) throw authError(error);
@@ -147,7 +147,7 @@ app.post("/api/auth/login", authLimiter, asyncRoute(async (req, res) => {
 app.post("/api/auth/forgot-password", authLimiter, asyncRoute(async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const { error } = await supabase.createAuthClient().auth.resetPasswordForEmail(email, {
-    redirectTo: `${supabase.siteUrl}/auth/callback?type=recovery`
+    redirectTo: `${supabase.backendUrl}/auth/callback?type=recovery`
   });
   if (error) throw authError(error);
   res.json({ message: "If an account exists for that email, a password reset link has been sent." });
@@ -185,7 +185,7 @@ app.post("/api/auth/logout", asyncRoute(async (req, res) => {
   await new Promise((resolve, reject) => {
     req.session.destroy((error) => error ? reject(error) : resolve());
   });
-  res.clearCookie("blog.sid", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
+  res.clearCookie("blog.sid", { httpOnly: true, sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", secure: process.env.NODE_ENV === "production" });
   res.json({ success: true });
 }));
 
@@ -207,7 +207,7 @@ app.patch("/api/profile", requireAuth, asyncRoute(async (req, res) => {
     const client = supabase.createAuthClient();
     const verified = await client.auth.signInWithPassword({ email: req.user.email, password });
     if (verified.error) throw new ApiError(403, "Current password is incorrect.");
-    const updated = await client.auth.updateUser({ email }, { emailRedirectTo: `${supabase.siteUrl}/auth/callback?type=email_change` });
+    const updated = await client.auth.updateUser({ email }, { emailRedirectTo: `${supabase.backendUrl}/auth/callback?type=email_change` });
     if (updated.error) throw authError(updated.error);
   }
   db.prepare("UPDATE users SET display_name = ? WHERE id = ?").run(name, req.user.id);

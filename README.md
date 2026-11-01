@@ -30,9 +30,27 @@ instance storage and can be lost. The SQLite database supports one app instance;
 do not scale this service to multiple instances sharing a local disk.
 
 For a Render Web Service use build command `npm ci` and start command `npm start`.
-The production server trusts one proxy hop so `Secure`, `HttpOnly`, `SameSite=Lax`
-session cookies work through Render's HTTPS proxy. The server refuses to start if
+The production server trusts one proxy hop so `Secure`, `HttpOnly`, `SameSite=None`
+session cookies work across the Vercel and Render origins. The server refuses to start if
 `SESSION_SECRET` is missing or shorter than 32 characters.
+
+## Vercel frontend and Render backend
+
+The repository root is the project root for both services. Render settings are:
+
+- Root Directory: `.`
+- Build Command: `npm ci`
+- Start Command: `npm start`
+- Node.js: `22` (also pinned by `.node-version` and `engines`)
+- Health Check Path: `/api/health`
+
+`render.yaml` provides those settings and a `/var/data` persistent disk for the app's current SQLite content, session store, and uploads. The application currently stores blog records and assets in SQLite/filesystem; adding Supabase Auth does not migrate those APIs to Supabase Postgres or Storage. The Render disk is required to preserve those records and sessions until that data layer is migrated. Render assigns `PORT`; the server binds `0.0.0.0`.
+
+Set these Render environment values privately: `NODE_ENV=production`, `DATABASE_PATH=/var/data/blogging-platform.sqlite`, `UPLOADS_PATH=/var/data/uploads`, `SESSION_SECRET` (stable random value at least 32 characters), `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `PUBLIC_APP_URL` (the Vercel origin), `BACKEND_PUBLIC_URL` (the Render origin), and `FRONTEND_ORIGIN` (the Vercel origin). Render supplies `PORT`. Do not set secrets in `render.yaml` or commit `.env`.
+
+For Vercel, use Framework Preset **Other**, Root Directory `.`, Install Command `npm ci`, Build Command `npm run build`, and Output Directory `dist`. Set the public build-time variable `FRONTEND_API_URL` to the Render origin, such as `https://your-api.onrender.com`. The Vercel build fails if it is missing or points to localhost. `scripts/build-frontend.js` copies the existing frontend structure to `dist/` and writes the public API origin into `runtime-config.json`; it never includes Supabase keys. The frontend uses credentialed CORS, and `/uploads/...` image URLs are normalized to Render.
+
+The Render service must allow the Vercel origin in `FRONTEND_ORIGIN`. Supabase email redirects should use `BACKEND_PUBLIC_URL/auth/callback*`; after verification/reset the backend redirects to the Vercel frontend. Configure Supabase Auth's Site URL as the Vercel origin. Cross-site cookies (`SameSite=None; Secure`) are required for separate Vercel and Render domains; browser third-party-cookie blocking may prevent sessions. For the most reliable cookie behavior, use custom Vercel and Render domains under the same registrable domain (for example `app.example.com` and `api.example.com`).
 
 ## Supabase schema setup
 
@@ -54,9 +72,9 @@ supabase db push --linked
 supabase migration list --linked
 ```
 
-The project URL is `https://tsmkeivqvqnyfcmaqbhb.supabase.co`. The CLI prompts for the database password during linking; enter it only in that prompt and do not put it in source, a command argument, or committed files. If it contains reserved characters, the CLI prompt avoids connection-string encoding concerns. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `SESSION_SECRET`, and `PUBLIC_APP_URL` in Render's private environment settings. `PUBLIC_APP_URL` must be the deployed origin such as `https://your-service.onrender.com`. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
+The project URL is `https://tsmkeivqvqnyfcmaqbhb.supabase.co`. The CLI prompts for the database password during linking; enter it only in that prompt and do not put it in source, a command argument, or committed files. If it contains reserved characters, the CLI prompt avoids connection-string encoding concerns. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `SESSION_SECRET`, `PUBLIC_APP_URL` (Vercel origin), `BACKEND_PUBLIC_URL` (Render origin), and `FRONTEND_ORIGIN` (Vercel origin) in Render's private environment settings. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
 
-In Supabase Auth settings, enable email confirmations and set password minimum length to 12 with lowercase, uppercase, and numeric characters required. Add `${PUBLIC_APP_URL}/auth/callback*` to the allowed redirect URLs. Customize both the Confirm signup and Reset Password email templates so their link uses the supplied redirect and token hash, for example:
+In Supabase Auth settings, enable email confirmations and set password minimum length to 12 with lowercase, uppercase, and numeric characters required. Set Site URL to `PUBLIC_APP_URL` and add `${BACKEND_PUBLIC_URL}/auth/callback*` to the allowed redirect URLs. Customize both the Confirm signup and Reset Password email templates so their link uses the supplied redirect and token hash, for example:
 
 ```html
 <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}">Continue</a>

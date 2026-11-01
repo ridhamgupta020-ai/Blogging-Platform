@@ -30,8 +30,11 @@ if (!sessionSecret || sessionSecret.length < 32) {
 if (isProduction && !supabase.configured) {
   throw new Error("Production requires SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, and SUPABASE_SECRET_KEY for email authentication.");
 }
-if (isProduction && !process.env.PUBLIC_APP_URL) {
-  throw new Error("Production requires PUBLIC_APP_URL so authentication emails can return to the deployed site.");
+if (isProduction && (!process.env.PUBLIC_APP_URL || !(process.env.BACKEND_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL))) {
+  throw new Error("Production requires PUBLIC_APP_URL (Vercel) and BACKEND_PUBLIC_URL (Render) for authentication redirects.");
+}
+if (isProduction && !process.env.FRONTEND_ORIGIN) {
+  throw new Error("Production requires FRONTEND_ORIGIN so the Vercel site can make credentialed API requests.");
 }
 
 fs.mkdirSync(uploadsDirectory, { recursive: true });
@@ -115,18 +118,29 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-const requireSameOrigin = (req, res, next) => {
+const allowBrowserRequests = (req, res, next) => {
   const origin = req.get("origin");
   if (!origin) return next();
 
   try {
-    if (new URL(origin).host !== req.get("host")) {
-      return next(new ApiError(403, "Cross-origin requests are not allowed."));
+    const parsedOrigin = new URL(origin);
+    const allowedOrigins = (process.env.FRONTEND_ORIGIN || "").split(",").map((value) => {
+      try { return new URL(value.trim()).origin; } catch { return ""; }
+    }).filter(Boolean);
+    const sameOrigin = parsedOrigin.origin === `${req.protocol}://${req.get("host")}`;
+    if (!sameOrigin && !allowedOrigins.includes(parsedOrigin.origin)) return next(new ApiError(403, "This website is not allowed to access the API."));
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Vary", "Origin");
+    if (req.method === "OPTIONS") {
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", req.get("access-control-request-headers") || "Content-Type");
+      return res.sendStatus(204);
     }
   } catch {
     return next(new ApiError(403, "Invalid request origin."));
   }
-  next();
+  return next();
 };
 
 const upload = multer({
@@ -288,7 +302,7 @@ if (isProduction) app.set("trust proxy", 1);
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: false, limit: "1mb" }));
-app.use(requireSameOrigin);
+app.use(allowBrowserRequests);
 app.use(session({
   name: "blog.sid",
   secret: sessionSecret,
@@ -299,7 +313,7 @@ app.use(session({
   rolling: true,
   cookie: {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: isProduction ? "none" : "lax",
     secure: isProduction,
     maxAge: 14 * 24 * 60 * 60 * 1000
   }
@@ -377,7 +391,7 @@ app.use((error, req, res, next) => {
 });
 
 if (require.main === module) {
-  const server = app.listen(port, () => {
+  const server = app.listen(port, "0.0.0.0", () => {
     console.log(`Blogging Platform listening at http://localhost:${port}`);
   });
   server.on("error", (error) => {

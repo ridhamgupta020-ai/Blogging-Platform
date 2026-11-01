@@ -4,11 +4,13 @@
   "private": true,
   "description": "A persistent blogging platform with secure sessions and a SQLite data store.",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "build": "node scripts/build-frontend.js",
+    "build:frontend": "node scripts/build-frontend.js",
     "test": "node --test Backend/tests/*.test.js"
   },
   "dependencies": {

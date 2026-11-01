@@ -6,7 +6,8 @@ const url = process.env.SUPABASE_URL;
 const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
 const secretKey = process.env.SUPABASE_SECRET_KEY;
 const configured = Boolean(url && publishableKey && secretKey);
-const siteUrl = (process.env.PUBLIC_APP_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, "");
+const frontendUrl = (process.env.PUBLIC_APP_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, "");
+const backendUrl = (process.env.BACKEND_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, "");
 
 if (configured && !/^https:\/\//i.test(url)) {
   throw new Error("SUPABASE_URL must be an HTTPS URL.");
@@ -32,4 +33,4 @@ async function checkConnection() {
   return { configured: true, connected: !error };
 }
 
-module.exports = { configured, publicClient, adminClient, createAuthClient, siteUrl, checkConnection };
+module.exports = { configured, publicClient, adminClient, createAuthClient, frontendUrl, backendUrl, checkConnection };
