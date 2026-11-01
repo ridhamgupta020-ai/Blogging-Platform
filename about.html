@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn about the Blogging Platform mission, values, and the team helping creators publish better content.">
+  <title>About | Blogging Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #d8e2ef;
+      --primary: #3ab7ff;
+      --primary-dark: #249fe0;
+      --accent: #ffc466;
+      --dark: #111827;
+      --shadow: 0 26px 55px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 8%, rgba(58, 183, 255, 0.18), transparent 24%),
+        radial-gradient(circle at 90% 90%, rgba(255, 196, 102, 0.2), transparent 30%),
+        var(--bg);
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: #111827;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      z-index: 100;
+    }
+
+    .skip-link:focus {
+      left: 16px;
+      top: 16px;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 26px;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo a {
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 1.12rem;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links,
+    .auth-links {
+      list-style: none;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .nav-links a,
+    .auth-links a {
+      text-decoration: none;
+      color: #0f172a;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .nav-links a:hover,
+    .auth-links a:hover {
+      background: #eaf4ff;
+    }
+
+    .hamburger {
+      display: none;
+      border: 0;
+      background: transparent;
+      color: #0f172a;
+      font-size: 1.7rem;
+      cursor: pointer;
+    }
+
+    .auth-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.88rem;
+    }
+
+    .logout-btn {
+      border: 0;
+      border-radius: 999px;
+      background: #0f172a;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 58px 20px 22px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(58, 183, 255, 0.4);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      line-height: 1.15;
+      margin: 14px 0;
+      max-width: 15ch;
+    }
+
+    .hero p {
+      color: #374151;
+      line-height: 1.7;
+      max-width: 52ch;
+    }
+
+    .hero-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    .btn-secondary {
+      color: #0f172a;
+      background: #e8f2ff;
+    }
+
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      height: 330px;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+
+    .hero-card p {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .stats {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 26px 20px 14px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .stat h2 {
+      font-size: 1.9rem;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+
+    .stat p {
+      color: #556070;
+      font-size: 0.9rem;
+    }
+
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 26px 20px;
+    }
+
+    .section-head {
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      max-width: 62ch;
+      line-height: 1.6;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .value-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .value-card i {
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+    }
+
+    .value-card h3 {
+      margin: 9px 0 6px;
+      font-size: 1.03rem;
+      color: #0f172a;
+    }
+
+    .value-card p {
+      color: #4b5563;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .story-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .story-panel,
+    .timeline-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .story-panel p {
+      color: #374151;
+      line-height: 1.68;
+      margin-bottom: 12px;
+    }
+
+    .timeline {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline li {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #f9fcff;
+    }
+
+    .timeline strong {
+      display: block;
+      font-size: 0.88rem;
+      color: #0369a1;
+      margin-bottom: 4px;
+    }
+
+    .timeline p {
+      color: #334155;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .court-section {
+      max-width: 1200px;
+      margin: 8px auto 0;
+      padding: 34px 20px;
+    }
+
+    .court-wrap {
+      border: 1px solid #ffd8ad;
+      background: linear-gradient(145deg, #fff3e0, #fffaf2);
+      border-radius: 20px;
+      padding: 22px;
+    }
+
+    .court-wrap h2 {
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      margin-bottom: 8px;
+      color: #7c2d12;
+    }
+
+    .court-wrap .intro {
+      color: #78350f;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      max-width: 70ch;
+    }
+
+    .court-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .court-card {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid #f2c48f;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .court-card h3 {
+      font-size: 1rem;
+      color: #7c2d12;
+      margin-bottom: 6px;
+    }
+
+    .court-card p {
+      color: #78350f;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .court-card ul {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      color: #78350f;
+      font-size: 0.86rem;
+    }
+
+    .court-card li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .court-card i {
+      margin-top: 2px;
+      color: #b45309;
+    }
+
+    .court-tracker {
+      margin-top: 12px;
+      border-color: #f8c892;
+      background: linear-gradient(145deg, #fff2dc, #fffbf5);
+    }
+
+    .score-wrap {
+      margin-bottom: 14px;
+    }
+
+    .score-meter {
+      width: 100%;
+      height: 10px;
+      background: #fde7cb;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #f4c995;
+    }
+
+    .score-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      transition: width 0.25s ease;
+    }
+
+    .score-text {
+      margin-top: 8px;
+      color: #7c2d12;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .tracker-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .tracker-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      border: 1px solid #f3cfa3;
+      border-radius: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.82);
+      color: #78350f;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+
+    .tracker-item input {
+      margin-top: 2px;
+      accent-color: #ea580c;
+    }
+
+    .court-verdict {
+      margin-top: 12px;
+      color: #78350f;
+      font-size: 0.88rem;
+      font-weight: 600;
+      min-height: 1rem;
+    }
+
+    .newsletter {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 26px 20px 54px;
+    }
+
+    .newsletter-box {
+      background: linear-gradient(135deg, #111827, #1f2937);
+      border-radius: 20px;
+      padding: 24px;
+      color: #e5e7eb;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .newsletter-box h2 {
+      margin-bottom: 6px;
+      font-size: clamp(1.4rem, 3vw, 1.95rem);
+      color: #f8fafc;
+    }
+
+    .newsletter-box p {
+      color: #cbd5e1;
+      line-height: 1.6;
+      max-width: 56ch;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .newsletter-form input {
+      flex: 1 1 220px;
+      border: 1px solid #475569;
+      border-radius: 999px;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 11px 13px;
+      font-size: 0.9rem;
+    }
+
+    .newsletter-form button {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 15px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #111827;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    #newsletterFeedback {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      color: #93c5fd;
+      min-height: 1rem;
+    }
+
+    .site-footer {
+      background: #343434;
+      color: #e6e6e6;
+    }
+
+    .footer-top {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 44px 20px;
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .footer-col h4 {
+      letter-spacing: 1.1px;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+      color: #f3f4f6;
+    }
+
+    .footer-col a {
+      display: block;
+      text-decoration: none;
+      color: #cfd4dc;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+    }
+
+    .footer-col a:hover {
+      color: #fff;
+    }
+
+    .brand-col h2 {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    .socials {
+      display: flex;
+      gap: 10px;
+      font-size: 1rem;
+      margin-top: 12px;
+    }
+
+    .socials span {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 20px 22px;
+      text-align: center;
+      position: relative;
+    }
+
+    .footer-bottom p {
+      font-size: 0.8rem;
+      color: #bcc2cb;
+    }
+
+    .vault-btn {
+      position: absolute;
+      right: 70px;
+      bottom: 12px;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: #e7c8b9;
+      color: #1f2937;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .scroll-top {
+      position: absolute;
+      right: 22px;
+      bottom: 12px;
+      width: 33px;
+      height: 33px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #e7c8b9;
+      color: #1f2937;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    @media (max-width: 1040px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .values-grid,
+      .court-grid,
+      .tracker-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .story-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .newsletter-box {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hamburger {
+        display: inline-flex;
+      }
+
+      .nav-wrap {
+        position: relative;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 44px;
+        right: 0;
+        width: min(260px, calc(100vw - 30px));
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+        padding: 8px;
+      }
+
+      .nav-links li,
+      .nav-links a {
+        width: 100%;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .auth-links {
+        margin-right: 4px;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+
+      .vault-btn,
+      .scroll-top {
+        position: static;
+        margin: 12px auto 0;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+<body>
+  <a href="#mainContent" class="skip-link">Skip to main content</a>
+
+  <header class="navbar">
+    <div class="logo"><a href="index.html">Blogging Platform</a></div>
+
+    <div class="nav-wrap">
+      <button class="hamburger" id="menuBtn" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+        <li><a href="editor.html">Write</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="Contact.html">Contact</a></li>
+      </ul>
+
+      <ul class="auth-links" id="authArea"></ul>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    <section class="hero">
+      <div>
+        <span class="hero-badge"><i class="bi bi-stars"></i> About Our Platform</span>
+        <h1>Helping creators turn ideas into consistent publishing systems.</h1>
+        <p>
+          Blogging Platform exists to make writing and publishing less chaotic. We focus on practical workflows,
+          clean tools, and guidance that helps creators build momentum week after week.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="editor.html"><i class="bi bi-pen"></i>Start Writing</a>
+          <a class="btn btn-secondary" href="#creatorCourt"><i class="bi bi-clipboard-check"></i>View Creator Court</a>
+        </div>
+      </div>
+
+      <article class="hero-card">
+        <img src="6.jpg" alt="Writers collaborating and planning blog content">
+        <p>Built for bloggers, founders, and independent writers who value clarity over noise.</p>
+      </article>
+    </section>
+
+    <section class="stats" aria-label="Platform stats">
+      <article class="stat">
+        <h2>35K+</h2>
+        <p>Newsletter readers</p>
+      </article>
+      <article class="stat">
+        <h2>500+</h2>
+        <p>Published guides</p>
+      </article>
+      <article class="stat">
+        <h2>6+</h2>
+        <p>Years of content systems</p>
+      </article>
+      <article class="stat">
+        <h2>4.9/5</h2>
+        <p>Creator satisfaction score</p>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>What Drives Us</h2>
+        <p>Everything we build is centered around quality publishing, creator sustainability, and long-term audience trust.</p>
+      </div>
+
+      <div class="values-grid">
+        <article class="value-card">
+          <i class="bi bi-lightbulb"></i>
+          <h3>Practical Over Theoretical</h3>
+          <p>We favor repeatable writing systems that creators can use immediately, not vague tactics.</p>
+        </article>
+        <article class="value-card">
+          <i class="bi bi-graph-up-arrow"></i>
+          <h3>Growth With Structure</h3>
+          <p>Strong performance comes from consistency. We design around weekly execution and clear metrics.</p>
+        </article>
+        <article class="value-card">
+          <i class="bi bi-people"></i>
+          <h3>Community First</h3>
+          <p>Creator feedback shapes our roadmap so the platform keeps solving real publishing friction.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Our Story</h2>
+        <p>From one writing workflow to a complete content platform for creators building authority online.</p>
+      </div>
+
+      <div class="story-layout">
+        <article class="story-panel">
+          <p>
+            We started with one simple problem: publishing great content should not feel fragmented across random tools.
+            Writers needed one clear place to draft, structure, and ship.
+          </p>
+          <p>
+            The platform evolved into a workflow that supports article ideation, editorial quality, and publishing discipline.
+            Today, it powers creators who want sustainable writing systems, not one-off spikes.
+          </p>
+          <p>
+            Our mission stays the same: help you write work that compounds.
+          </p>
+        </article>
+
+        <article class="timeline-panel">
+          <ul class="timeline">
+            <li>
+              <strong>2019 - Foundation</strong>
+              <p>Built first repeatable writing framework for weekly publishing.</p>
+            </li>
+            <li>
+              <strong>2021 - Productization</strong>
+              <p>Launched a full editor workflow with templates and publishing tools.</p>
+            </li>
+            <li>
+              <strong>2024 - Creator Expansion</strong>
+              <p>Scaled to a wider community of bloggers and newsletter operators.</p>
+            </li>
+            <li>
+              <strong>2026 - Platform Focus</strong>
+              <p>Refining quality systems to help creators publish with clarity and speed.</p>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="court-section" id="creatorCourt">
+      <div class="court-wrap">
+        <h2>Creator Court (Additional Court)</h2>
+        <p class="intro">
+          Before publishing, we evaluate content through three court checks. This keeps your writing helpful, searchable, and trustworthy.
+        </p>
+
+        <div class="court-grid">
+          <article class="court-card">
+            <h3>Clarity Court</h3>
+            <p>Does the post communicate one core idea without confusion?</p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i><span>Clear headline promise</span></li>
+              <li><i class="bi bi-check2-circle"></i><span>Structured sections</span></li>
+              <li><i class="bi bi-check2-circle"></i><span>Actionable conclusion</span></li>
+            </ul>
+          </article>
+
+          <article class="court-card">
+            <h3>Value Court</h3>
+            <p>Does the reader gain practical insight they can use right away?</p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i><span>Examples over fluff</span></li>
+              <li><i class="bi bi-check2-circle"></i><span>Specific steps included</span></li>
+              <li><i class="bi bi-check2-circle"></i><span>Audience pain solved</span></li>
+            </ul>
+          </article>
+
+          <article class="court-card">
+            <h3>Growth Court</h3>
+            <p>Is the post ready to perform in search, shares, and subscriber growth?</p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i><span>Relevant keywords used</span></li>
+              <li><i class="bi bi-check2-circle"></i><span>Metadata and tags ready</span></li>
+              <li><i class="bi bi-check2-circle"></i><span>Strong CTA for next step</span></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="court-section" id="courtTracker">
+      <div class="court-wrap court-tracker">
+        <h2>Publishing Court Tracker</h2>
+        <p class="intro">
+          Score your draft before publishing. Complete checks to raise your readiness score and improve post quality.
+        </p>
+
+        <div class="score-wrap" aria-live="polite">
+          <div class="score-meter">
+            <div class="score-bar" id="courtScoreBar"></div>
+          </div>
+          <p class="score-text" id="courtScoreText">Court Score: 0 / 100</p>
+        </div>
+
+        <div class="tracker-grid">
+          <label class="tracker-item">
+            <input type="checkbox" class="court-check" data-points="20">
+            <span>Headline is specific and outcome-driven.</span>
+          </label>
+          <label class="tracker-item">
+            <input type="checkbox" class="court-check" data-points="15">
+            <span>Introduction clearly states reader pain/problem.</span>
+          </label>
+          <label class="tracker-item">
+            <input type="checkbox" class="court-check" data-points="20">
+            <span>Post includes at least 3 practical examples.</span>
+          </label>
+          <label class="tracker-item">
+            <input type="checkbox" class="court-check" data-points="15">
+            <span>Sections are scannable with useful subheadings.</span>
+          </label>
+          <label class="tracker-item">
+            <input type="checkbox" class="court-check" data-points="15">
+            <span>Tags/metadata align with search intent.</span>
+          </label>
+          <label class="tracker-item">
+            <input type="checkbox" class="court-check" data-points="15">
+            <span>Ending includes a clear next-step CTA.</span>
+          </label>
+        </div>
+
+        <p class="court-verdict" id="courtVerdict">Verdict: start completing checks.</p>
+      </div>
+    </section>
+
+    <section class="newsletter" aria-labelledby="newsletterTitle">
+      <div class="newsletter-box">
+        <div>
+          <h2 id="newsletterTitle">Get Weekly Writing Frameworks</h2>
+          <p>Receive practical strategy notes on publishing cadence, content quality, and monetization workflows.</p>
+        </div>
+        <form class="newsletter-form" id="newsletterForm">
+          <input id="newsletterName" type="text" placeholder="First name" required aria-label="First name">
+          <input id="newsletterEmail" type="email" placeholder="Email address" required aria-label="Email address">
+          <button type="submit">Join the Vault</button>
+          <p id="newsletterFeedback" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col brand-col">
+        <h2>Blogging<br>Platform</h2>
+        <a href="about.html">About</a>
+        <a href="Contact.html">Contact</a>
+        <div class="socials">
+          <span class="bi bi-youtube"></span>
+          <span class="bi bi-pinterest"></span>
+          <span class="bi bi-instagram"></span>
+          <span class="bi bi-twitter-x"></span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>RESOURCES</h4>
+        <a href="blogs.html">Newsletter</a>
+        <a href="blogs.html">Blog</a>
+        <a href="editor.html">Write</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>SPONSOR / ADS</h4>
+        <a href="#">Brand Partnership</a>
+        <a href="#">Newsletter Ads</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>DISCLOSURES</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Affiliate Disclosure</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2018 - <span id="year"></span> The Side Blogger. All Rights Reserved.</p>
+      <p>This site uses affiliate links and cookies.</p>
+      <button class="vault-btn" type="button" onclick="window.location.href='signup.html'">Join the Vault</button>
+      <div class="scroll-top" id="scrollTop" role="button" tabindex="0" aria-label="Back to top">↑</div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+    const navItems = navLinks ? navLinks.querySelectorAll("a") : [];
+    const authArea = document.getElementById("authArea");
+    const newsletterForm = document.getElementById("newsletterForm");
+    const newsletterName = document.getElementById("newsletterName");
+    const newsletterEmail = document.getElementById("newsletterEmail");
+    const newsletterFeedback = document.getElementById("newsletterFeedback");
+    const courtChecks = document.querySelectorAll(".court-check");
+    const courtScoreBar = document.getElementById("courtScoreBar");
+    const courtScoreText = document.getElementById("courtScoreText");
+    const courtVerdict = document.getElementById("courtVerdict");
+    const scrollTopBtn = document.getElementById("scrollTop");
+    const yearEl = document.getElementById("year");
+
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    if (menuBtn && navLinks) {
+      menuBtn.addEventListener("click", () => {
+        const expanded = menuBtn.getAttribute("aria-expanded") === "true";
+        menuBtn.setAttribute("aria-expanded", String(!expanded));
+        navLinks.classList.toggle("active");
+      });
+
+      navItems.forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("active");
+          menuBtn.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+
+    function updateCourtScore() {
+      let score = 0;
+      const states = [];
+
+      courtChecks.forEach((check, index) => {
+        if (check.checked) {
+          score += Number(check.dataset.points || 0);
+          states.push(index);
+        }
+      });
+
+      score = Math.min(100, score);
+      if (courtScoreBar) courtScoreBar.style.width = score + "%";
+      if (courtScoreText) courtScoreText.textContent = "Court Score: " + score + " / 100";
+
+      if (courtVerdict) {
+        if (score >= 85) {
+          courtVerdict.textContent = "Verdict: approved for publish.";
+        } else if (score >= 60) {
+          courtVerdict.textContent = "Verdict: close, refine a few sections.";
+        } else {
+          courtVerdict.textContent = "Verdict: improve clarity and value before publishing.";
+        }
+      }
+
+      localStorage.setItem("aboutCourtChecks", JSON.stringify(states));
+    }
+
+    function loadCourtScoreState() {
+      const saved = localStorage.getItem("aboutCourtChecks");
+      if (!saved) {
+        updateCourtScore();
+        return;
+      }
+
+      try {
+        const states = JSON.parse(saved);
+        if (Array.isArray(states)) {
+          courtChecks.forEach((check, index) => {
+            check.checked = states.includes(index);
+          });
+        }
+      } catch (error) {
+        localStorage.removeItem("aboutCourtChecks");
+      }
+
+      updateCourtScore();
+    }
+
+    function renderAuth() {
+      const isLoggedIn = localStorage.getItem("loggedIn");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      if (!authArea) return;
+
+      if (isLoggedIn) {
+        authArea.innerHTML = [
+          '<li class="auth-chip">',
+          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
+          (user.name || "User"),
+          '<button class="logout-btn" id="logoutBtn" type="button">Logout</button>',
+          '</li>'
+        ].join(" ");
+
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+          });
+        }
+      } else {
+        authArea.innerHTML = '<li><a href="login.html">Login</a></li>';
+      }
+    }
+
+    renderAuth();
+    courtChecks.forEach((check) => check.addEventListener("change", updateCourtScore));
+    loadCourtScoreState();
+
+    if (newsletterForm) {
+      newsletterForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const name = newsletterName.value.trim();
+        const email = newsletterEmail.value.trim();
+        if (!name || !email) {
+          newsletterFeedback.textContent = "Please add your name and email.";
+          return;
+        }
+
+        localStorage.setItem("newsletterName", name);
+        localStorage.setItem("newsletterEmail", email);
+        newsletterFeedback.textContent = "You are subscribed. Weekly insights will be sent soon.";
+        newsletterForm.reset();
+      });
+    }
+
+    if (scrollTopBtn) {
+      const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollTopBtn.addEventListener("click", scrollTop);
+      scrollTopBtn.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          scrollTop();
+        }
+      });
+    }
+  </script>
+<script src="court-enhancements.js"></script>
+</body>
+</html>

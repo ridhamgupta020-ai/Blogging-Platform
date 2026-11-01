@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Let’s talk about love languages | Blogging Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A short-form relationship article with storytelling, reflection prompts, and newsletter CTA.">
+  <meta name="theme-color" content="#ffc466" />
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Georgia, serif;
+}
+
+body {
+  background: #faf7f5;
+  color: #2b2b2b;
+  line-height: 1.8;
+}
+
+/* TOP NEWSLETTER */
+.newsletter-top {
+  background: #e9e4e0;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.newsletter-top h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.newsletter-top p {
+  max-width: 600px;
+  margin: 0 auto 20px;
+  font-size: 15px;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.newsletter-form input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.newsletter-form button {
+  padding: 12px 24px;
+  background: #ffc466;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* LAYOUT */
+.container {
+  max-width: 1100px;
+  margin: 80px auto;
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 60px;
+  padding: 0 20px;
+}
+
+/* POST */
+.post {
+  background: #fff;
+  padding: 60px;
+}
+
+.post h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.date {
+  font-size: 14px;
+  color: #777;
+}
+
+.post hr {
+  margin: 25px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.note {
+  font-size: 13px;
+  color: #ffc466;
+}
+
+.post p {
+  margin-bottom: 22px;
+  font-size: 17px;
+}
+
+blockquote {
+  background: #f4efec;
+  padding: 25px;
+  margin: 30px 0;
+  font-style: italic;
+}
+
+/* CTA */
+.cta-box {
+  background: #ebe6e2;
+  padding: 35px;
+  text-align: center;
+}
+
+.cta-box button {
+  margin-top: 15px;
+  padding: 12px 26px;
+  border: none;
+  background: #7a6a64;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: sticky;
+  top: 100px;
+}
+
+.subscribe-box {
+  background: #fff;
+  padding: 25px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+/* FLOAT BUTTON */
+.float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background: #c9b8b0;
+  border: none;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .post {
+    padding: 30px;
+  }
+}
+/* NAVBAR */
+.navbar {
+  background: #ffc466;
+  padding: 18px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid #eee;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #2b2b2b;
+}
+
+.btn a {
+  background: #3ab7ff;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+}
+
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background: #ffffff;
+    width: 100%;
+    flex-direction: column;
+    gap: 20px;
+    padding: 30px;
+    display: none;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+}
+
+
+  </style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+<body>
+   <nav class="navbar">
+  <div class="logo">Blogging Platform</div>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="editor.html">Vision</a></li>
+    <li><a href="Features.html">Features</a></li>
+  </ul>
+
+  <div class="hamburger" id="hamburger">☰</div>
+</nav>
+
+<!-- TOP NEWSLETTER BAR -->
+<section class="newsletter-top">
+  <h3>Don't miss my next email.</h3>
+  <p>
+    I send a daily-ish newsletter with growth and income tips for your content
+    business. Join
+  </p>
+
+  <form class="newsletter-form">
+    <input type="text" placeholder="First Name" />
+    <input type="email" placeholder="Email" />
+    <button>SUBSCRIBE</button>
+  </form>
+</section>
+
+<!-- MAIN LAYOUT -->
+<main class="container">
+
+  <!-- ARTICLE -->
+  <article class="post">
+    <h1>Let’s talk about love languages</h1>
+    <span class="date">January 12, 2026</span>
+
+    <hr />
+
+    <p class="note">
+      This page may have affiliate links and/or sponsored content.
+    </p>
+
+    <hr />
+
+    <p>
+      Some time ago, I read a book titled <em>“The 5 Love Languages.”</em>
+    </p>
+
+    <p>
+      Long story short, we all feel love differently. Some like to be told
+      they’re loved, some like gifts, some like touch, and some like quality
+      time.
+    </p>
+
+    <p>
+      If you’ve been feeling frustrated in your relationship lately, maybe now’s
+      a good time for a sit-down love-language talk.
+    </p>
+
+    <blockquote>
+      <strong>Him:</strong> So, what’s your love language?<br><br>
+      <strong>Me:</strong> Touch. Tight hugs every morning and evening.<br><br>
+      <strong>Him:</strong> Gladly.<br><br>
+      <strong>Me:</strong> Cool. What’s yours?<br><br>
+      <strong>Him:</strong> Affirmation. Five “I love yous” a day?<br><br>
+      <strong>Me:</strong> Deal.
+    </blockquote>
+
+    <p>
+      In marketing, it’s the same. People buy differently. Some respond to trust,
+      some to urgency, some to words.
+    </p>
+
+    <p>
+      At the core of both love and marketing is trust.
+    </p>
+
+    <p>
+      Show up regularly. Use words carefully. Build relationships first.
+    </p>
+
+    <hr />
+
+    <div class="cta-box">
+      <h3>My newsletter helps creators grow an audience and sales.</h3>
+      <p>Join thousands of writers learning how to build trust with words.</p>
+      <button>Join the Newsletter</button>
+    </div>
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="subscribe-box">
+      <span>📣</span>
+      <p><strong>Subscribe to my newsletter</strong></p>
+    </div>
+  </aside>
+
+</main>
+
+<!-- FLOATING BUTTON -->
+<button class="float-btn">Join the Vault</button>
+
+<script>
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("navLinks");
+
+  hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+</script>
+<!-- FOOTER -->
+  <footer class="site-footer">
+
+ <div class="footer-top">
+
+    <div class="footer-col brand">
+      <h2>Blogging<br>Platform</h2>
+      <a href="about.html">About</a>
+      <a href="Contact.html">Contact</a>
+
+      <div class="socials">
+        <span class="bi bi-youtube"></span>
+        <span class="bi bi-pinterest"></span>
+        <span class="bi bi-instagram"></span>
+        <span class="bi bi-twitter-x"></span>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>RESOURCES</h4>
+      <a href="blogs.html">→ Newsletter</a>
+      <a href="blogs.html">→ Blog</a>
+      <a href="#">→ Tools & Resources</a>
+      <a href="#">→ Membership</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>SPONSOR / ADS</h4>
+      <a href="#">→ Brand Partnership</a>
+      <a href="#">→ Newsletter Ads</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>DISCLOSURES</h4>
+      <a href="#">→ Privacy Policy</a>
+      <a href="#">→ Terms & Conditions</a>
+      <a href="#">→ Affiliate Disclosure</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2018 – 2026 The Side Blogger. All Rights Reserved.</p>
+    <p class="cookie">
+      This site uses affiliate links and cookies.
+    </p>
+
+    <button class="vault-btn">Join the Vault</button>
+    <div class="scroll-top">↑</div>
+  </div>
+
+  </div>
+
+</footer>
+
+
+<script src="court-enhancements.js"></script>
+</body>
+</html>

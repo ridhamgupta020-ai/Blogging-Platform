@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard | Blogging Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Track your posts, readers, and subscribers from a simple Blogging Platform dashboard.">
+<meta name="theme-color" content="#ffc466">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Inter,system-ui,sans-serif;
+}
+
+body{
+  background:#f6f4f1;
+  margin:0;
+  padding:50px;
+  color:#222;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
+}
+
+.header h1{
+  font-size:28px;
+}
+
+.header a{
+  text-decoration:none;
+  background:#3ab7ff;
+  color:#fff;
+  padding:10px 18px;
+  border-radius:20px;
+  font-size:14px;
+}
+
+/* STATS */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:25px;
+  margin-bottom:50px;
+}
+
+.stat{
+  background:#fff;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+}
+
+.stat h2{
+  font-size:34px;
+  margin-bottom:6px;
+}
+
+.stat p{
+  color:#777;
+  font-size:14px;
+}
+
+/* LAYOUT */
+.layout{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:40px;
+}
+
+/* BLOG LIST */
+.blog{
+  background:#fff;
+  padding:25px;
+  border-radius:16px;
+  box-shadow:0 15px 30px rgba(0,0,0,.07);
+  margin-bottom:20px;
+}
+
+.blog h3{
+  margin-bottom:8px;
+}
+
+.blog p{
+  font-size:14px;
+  color:#555;
+}
+
+.blog a{
+  font-size:13px;
+  color:#3ab7ff;
+  text-decoration:none;
+}
+
+/* AUTHOR CARD */
+.author{
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.author img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:15px;
+}
+
+.author h3{
+  margin-bottom:6px;
+}
+
+.author p{
+  font-size:14px;
+  color:#666;
+}
+
+/* SUBSCRIBERS */
+.subscriber{
+  background:#fff;
+  padding:14px 18px;
+  border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,.06);
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .stats{grid-template-columns:1fr;}
+  .layout{grid-template-columns:1fr;}
+}
+.newsletter {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 22px;
+  max-width: 520px;
+  margin: 60px auto;
+  text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,.08);
+}
+
+.newsletter h2 {
+  margin-bottom: 10px;
+}
+
+.newsletter p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.newsletter input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 30px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+.newsletter button {
+  background: #3ab7ff;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#newsletterMsg {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+</style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Dashboard</h1>
+  <a href="editor.html">+ Write Blog</a>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <h2 id="totalBlogs">0</h2>
+    <p>Total Blogs</p>
+  </div>
+  <div class="stat">
+    <h2 id="readers">0</h2>
+    <p>Readers</p>
+  </div>
+  <div class="stat">
+    <h2 id="subscribers">0</h2>
+    <p>Subscribers</p>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="layout">
+
+  <!-- LEFT -->
+  <div>
+    <h2 style="margin-bottom:20px;">Recent Blogs</h2>
+    <div id="blogList"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div>
+    <!-- AUTHOR -->
+    <div class="author">
+      <img src="https://i.pravatar.cc/150" alt="Author">
+      <h3>Ridham Gupta</h3>
+      <p>Founder & Writer</p>
+      <p>Sharing insights on tech, blogging & growth.</p>
+    </div>
+
+    <!-- SUBSCRIBERS -->
+    <h2 style="margin-bottom:15px;">📩 Newsletter Subscribers</h2>
+    <div id="subscriberList"></div>
+  </div>
+<section class="newsletter">
+  <h2>📩 Join the Newsletter</h2>
+  <p>Get new blogs, tips & updates directly in your inbox.</p>
+
+  <form id="newsletterForm">
+    <input
+      type="email"
+      id="newsletterEmail"
+      placeholder="Enter your email"
+      required
+    />
+    <button type="submit">Subscribe</button>
+  </form>
+
+  <p id="newsletterMsg"></p>
+</section>
+
+</div>
+
+<script>
+/* AUTH PROTECT */
+if(!localStorage.getItem("loggedIn")){
+  window.location.href="login.html";
+}
+
+/* LOAD BLOGS */
+const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
+const blogList = document.getElementById("blogList");
+
+document.getElementById("totalBlogs").innerText = blogs.length;
+document.getElementById("readers").innerText = blogs.length * Math.floor(Math.random() * 0+1 ); // Simulated readers
+
+/* RENDER BLOGS */
+function stripHTML(html){
+  return html.replace(/<[^>]+>/g,"");
+}
+
+blogs.slice(0,5).forEach(blog=>{
+  const div=document.createElement("div");
+  div.className="blog";
+  div.innerHTML=`
+    <h3>${blog.title}</h3>
+    <p>${stripHTML(blog.content).slice(0,120)}...</p>
+    <a href="blog.html?id=${blog.id}">Read →</a>
+  `;
+  blogList.appendChild(div);
+});
+
+/* SUBSCRIBERS */
+const subscribers = JSON.parse(localStorage.getItem("subscribers")) || [];
+const subscriberList = document.getElementById("subscriberList");
+
+document.getElementById("subscribers").innerText = subscribers.length;
+
+if(!subscribers.length){
+  subscriberList.innerHTML="<p style='font-size:14px;color:#777;'>No subscribers yet.</p>";
+}
+
+subscribers.slice(0,6).forEach(email=>{
+  const div=document.createElement("div");
+  div.className="subscriber";
+  div.innerText=email;
+  subscriberList.appendChild(div);
+});
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const email = emailInput.value.trim().toLowerCase();
+  if (!email) return;
+
+  let subscribers = JSON.parse(localStorage.getItem("subscribers")) || [];
+
+  if (subscribers.includes(email)) {
+    msg.innerText = "⚠️ You are already subscribed.";
+    msg.style.color = "#ef4444";
+    return;
+  }
+
+  subscribers.push(email);
+  localStorage.setItem("subscribers", JSON.stringify(subscribers));
+
+  // UI feedback
+  msg.innerText = "✅ Successfully subscribed!";
+  msg.style.color = "#22c55e";
+  emailInput.value = "";
+
+  // 🔥 LIVE UPDATE DASHBOARD
+  document.getElementById("subscribers").innerText = subscribers.length;
+
+  const div = document.createElement("div");
+  div.className = "subscriber";
+  div.innerText = email;
+  subscriberList.prepend(div);
+});
+
+
+</script>
+
+<script src="court-enhancements.js"></script>
+</body>
+</html>

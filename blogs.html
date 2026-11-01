@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse all published blogs, search by topic, and filter by tags on Blogging Platform.">
+  <title>Blogs | Blogging Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #d8e2ef;
+      --primary: #3ab7ff;
+      --primary-dark: #249fe0;
+      --accent: #ffc466;
+      --shadow: 0 24px 52px rgba(15, 23, 42, 0.11);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(58, 183, 255, 0.18), transparent 25%),
+        radial-gradient(circle at 92% 95%, rgba(255, 196, 102, 0.2), transparent 30%),
+        var(--bg);
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: #111827;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      z-index: 100;
+    }
+
+    .skip-link:focus {
+      left: 16px;
+      top: 16px;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 26px;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo a {
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 1.12rem;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links,
+    .auth-links {
+      list-style: none;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .nav-links a,
+    .auth-links a {
+      text-decoration: none;
+      color: #0f172a;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .nav-links a:hover,
+    .auth-links a:hover {
+      background: #eaf4ff;
+    }
+
+    .auth-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.88rem;
+    }
+
+    .logout-btn {
+      border: 0;
+      border-radius: 999px;
+      background: #0f172a;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .hamburger {
+      display: none;
+      border: 0;
+      background: transparent;
+      color: #0f172a;
+      font-size: 1.7rem;
+      cursor: pointer;
+    }
+
+    .page-wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 26px 20px 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #f1f8ff, #fff5e8);
+      border: 1px solid #dbe8f8;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #374151;
+      line-height: 1.6;
+      max-width: 72ch;
+    }
+
+    .meta-stats {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 650px;
+    }
+
+    .meta-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #d9e6f7;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .meta-card strong {
+      display: block;
+      font-size: 1.15rem;
+      color: #0f172a;
+    }
+
+    .meta-card span {
+      font-size: 0.82rem;
+      color: #475569;
+    }
+
+    .filter-bar {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr auto;
+      gap: 8px;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      width: 100%;
+      border: 1px solid #cfdced;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .filter-bar input:focus,
+    .filter-bar select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(58, 183, 255, 0.18);
+    }
+
+    .clear-btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #0f172a;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .layout {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(270px, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .active-filter {
+      margin-bottom: 10px;
+      color: #475569;
+      font-size: 0.86rem;
+      min-height: 1rem;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .blog-card {
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+    }
+
+    .blog-cover {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #e7f4ff, #fff3df);
+    }
+
+    .blog-content {
+      padding: 14px;
+    }
+
+    .blog-title {
+      font-size: 1.03rem;
+      line-height: 1.3;
+      margin-bottom: 7px;
+      color: #0f172a;
+    }
+
+    .blog-meta {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .blog-excerpt {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #374151;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      background: #ecf6ff;
+      color: #0369a1;
+      border: 1px solid #cae6ff;
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    .empty-state {
+      border: 1px dashed #c6d5e7;
+      border-radius: 16px;
+      background: #fff;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .empty-state p {
+      color: #64748b;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .empty-actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    .btn-ghost {
+      color: #0f172a;
+      background: #edf3ff;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .sidebar-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .sidebar-card h3 {
+      font-size: 1rem;
+      margin-bottom: 7px;
+      color: #0f172a;
+    }
+
+    .sidebar-card p {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #4b5563;
+      margin-bottom: 8px;
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-filter {
+      border: 1px solid #d7e8ff;
+      background: #f2f8ff;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      color: #0369a1;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .tag-filter:hover {
+      background: #e5f3ff;
+    }
+
+    .court-list {
+      list-style: none;
+      display: grid;
+      gap: 7px;
+    }
+
+    .court-list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: #78350f;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .court-list i {
+      margin-top: 2px;
+      color: #b45309;
+    }
+
+    .court-box {
+      border: 1px solid #ffdcb5;
+      background: linear-gradient(145deg, #fff5e8, #fffdf8);
+    }
+
+    .additional-court {
+      margin-top: 18px;
+      border: 1px solid #ffdcb5;
+      background: linear-gradient(145deg, #fff5e8, #fffdf8);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .additional-court h2 {
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      color: #7c2d12;
+      margin-bottom: 6px;
+    }
+
+    .additional-court p {
+      color: #78350f;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .court-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .court-card {
+      border: 1px solid #f2c48f;
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .court-card h4 {
+      margin-bottom: 5px;
+      color: #7c2d12;
+      font-size: 0.95rem;
+    }
+
+    .court-card p {
+      color: #78350f;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .site-footer {
+      margin-top: 24px;
+      background: #343434;
+      color: #e6e6e6;
+    }
+
+    .footer-top {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .footer-col h4 {
+      letter-spacing: 1.1px;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+      color: #f3f4f6;
+    }
+
+    .footer-col a {
+      display: block;
+      text-decoration: none;
+      color: #cfd4dc;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+    }
+
+    .footer-col a:hover {
+      color: #fff;
+    }
+
+    .brand-col h2 {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    .socials {
+      display: flex;
+      gap: 10px;
+      font-size: 1rem;
+      margin-top: 12px;
+    }
+
+    .socials span {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 20px 22px;
+      text-align: center;
+      position: relative;
+    }
+
+    .footer-bottom p {
+      font-size: 0.8rem;
+      color: #bcc2cb;
+    }
+
+    .vault-btn {
+      position: absolute;
+      right: 70px;
+      bottom: 12px;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: #e7c8b9;
+      color: #1f2937;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .scroll-top {
+      position: absolute;
+      right: 22px;
+      bottom: 12px;
+      width: 33px;
+      height: 33px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #e7c8b9;
+      color: #1f2937;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .court-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .filter-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hamburger {
+        display: inline-flex;
+      }
+
+      .nav-wrap {
+        position: relative;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 44px;
+        right: 0;
+        width: min(260px, calc(100vw - 30px));
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+        padding: 8px;
+      }
+
+      .nav-links li,
+      .nav-links a {
+        width: 100%;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .auth-links {
+        margin-right: 4px;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+
+      .vault-btn,
+      .scroll-top {
+        position: static;
+        margin: 12px auto 0;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+<body>
+  <a href="#mainContent" class="skip-link">Skip to main content</a>
+
+  <header class="navbar">
+    <div class="logo"><a href="index.html">Blogging Platform</a></div>
+
+    <div class="nav-wrap">
+      <button class="hamburger" id="menuBtn" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+        <li><a href="editor.html">Write</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="Contact.html">Contact</a></li>
+      </ul>
+
+      <ul class="auth-links" id="authArea"></ul>
+    </div>
+  </header>
+
+  <main class="page-wrap" id="mainContent">
+    <section class="hero">
+      <h1>Explore Articles That Help You Publish Better</h1>
+      <p>Search and filter practical writing guides, SEO lessons, and monetization insights from the platform.</p>
+
+      <div class="meta-stats">
+        <div class="meta-card">
+          <strong id="totalPosts">0</strong>
+          <span>Total posts</span>
+        </div>
+        <div class="meta-card">
+          <strong id="totalTags">0</strong>
+          <span>Active tags</span>
+        </div>
+        <div class="meta-card">
+          <strong id="avgRead">0 min</strong>
+          <span>Avg read time</span>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input id="searchInput" type="text" placeholder="Search title, content, tags...">
+        <select id="tagSelect">
+          <option value="all">All tags</option>
+        </select>
+        <select id="sortSelect">
+          <option value="newest">Sort: Newest</option>
+          <option value="oldest">Sort: Oldest</option>
+          <option value="title-asc">Sort: Title A-Z</option>
+          <option value="title-desc">Sort: Title Z-A</option>
+        </select>
+        <button id="clearFiltersBtn" class="clear-btn" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="layout">
+      <article>
+        <p class="active-filter" id="activeFilter"></p>
+        <div class="blog-grid" id="blogList"></div>
+
+        <section class="additional-court" id="blogCourt">
+          <h2>Blog Court (Additional Court)</h2>
+          <p>Before an article gets featured, we run it through these courts to maintain quality and reader value.</p>
+          <div class="court-grid">
+            <article class="court-card">
+              <h4>Discovery Court</h4>
+              <p>Checks search intent match, title clarity, and keyword relevance.</p>
+            </article>
+            <article class="court-card">
+              <h4>Quality Court</h4>
+              <p>Reviews structure, examples, and usefulness for real creators.</p>
+            </article>
+            <article class="court-card">
+              <h4>Engagement Court</h4>
+              <p>Validates readability, CTA strength, and shareability signals.</p>
+            </article>
+          </div>
+        </section>
+      </article>
+
+      <aside class="sidebar">
+        <section class="sidebar-card">
+          <h3>The Vault</h3>
+          <p>Members unlock courses, writing systems, and deep-dive tutorials.</p>
+          <a class="btn btn-primary" href="signup.html"><i class="bi bi-box-arrow-in-right"></i>Join Now</a>
+        </section>
+
+        <section class="sidebar-card">
+          <h3>Top Tags</h3>
+          <div class="tag-cloud" id="tagCloud"></div>
+        </section>
+
+        <section class="sidebar-card court-box">
+          <h3>Mini Court Check</h3>
+          <ul class="court-list">
+            <li><i class="bi bi-check2-circle"></i><span>Title promises one clear outcome.</span></li>
+            <li><i class="bi bi-check2-circle"></i><span>At least 3 practical takeaways.</span></li>
+            <li><i class="bi bi-check2-circle"></i><span>Readable structure with headings.</span></li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-col brand-col">
+        <h2>Blogging<br>Platform</h2>
+        <a href="about.html">About</a>
+        <a href="Contact.html">Contact</a>
+        <div class="socials">
+          <span class="bi bi-youtube"></span>
+          <span class="bi bi-pinterest"></span>
+          <span class="bi bi-instagram"></span>
+          <span class="bi bi-twitter-x"></span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>RESOURCES</h4>
+        <a href="blogs.html">Newsletter</a>
+        <a href="blogs.html">Blog</a>
+        <a href="editor.html">Write</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>SPONSOR / ADS</h4>
+        <a href="#">Brand Partnership</a>
+        <a href="#">Newsletter Ads</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>DISCLOSURES</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Affiliate Disclosure</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2018 - <span id="year"></span> The Side Blogger. All Rights Reserved.</p>
+      <p>This site uses affiliate links and cookies.</p>
+      <button class="vault-btn" type="button" onclick="window.location.href='signup.html'">Join the Vault</button>
+      <div class="scroll-top" id="scrollTop" role="button" tabindex="0" aria-label="Back to top">↑</div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+    const authArea = document.getElementById("authArea");
+    const blogList = document.getElementById("blogList");
+    const activeFilter = document.getElementById("activeFilter");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const tagSelect = document.getElementById("tagSelect");
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    const tagCloud = document.getElementById("tagCloud");
+    const totalPostsEl = document.getElementById("totalPosts");
+    const totalTagsEl = document.getElementById("totalTags");
+    const avgReadEl = document.getElementById("avgRead");
+    const yearEl = document.getElementById("year");
+    const scrollTopBtn = document.getElementById("scrollTop");
+
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    if (menuBtn && navLinks) {
+      menuBtn.addEventListener("click", () => {
+        const expanded = menuBtn.getAttribute("aria-expanded") === "true";
+        menuBtn.setAttribute("aria-expanded", String(!expanded));
+        navLinks.classList.toggle("active");
+      });
+    }
+
+    function renderAuth() {
+      const isLoggedIn = localStorage.getItem("loggedIn");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      if (!authArea) return;
+
+      if (isLoggedIn) {
+        authArea.innerHTML = [
+          '<li class="auth-chip">',
+          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
+          (user.name || "User"),
+          '<button class="logout-btn" id="logoutBtn" type="button">Logout</button>',
+          '</li>'
+        ].join(" ");
+
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+          });
+        }
+      } else {
+        authArea.innerHTML = '<li><a href="login.html">Login</a></li>';
+      }
+    }
+
+    renderAuth();
+
+    function safeArrayParse(key) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function stripHTML(html) {
+      return String(html || "").replace(/<[^>]+>/g, " ");
+    }
+
+    function getWords(text) {
+      const cleaned = String(text || "").trim();
+      if (!cleaned) return 0;
+      return cleaned.split(/\s+/).length;
+    }
+
+    function getReadTimeFromContent(content) {
+      const words = getWords(stripHTML(content));
+      return words > 0 ? Math.max(1, Math.ceil(words / 220)) : 1;
+    }
+
+    function normalizeTags(tags) {
+      if (!Array.isArray(tags)) return [];
+      return tags.map((t) => String(t).trim()).filter(Boolean);
+    }
+
+    function getImageUrl(cover) {
+      if (!cover || typeof cover !== "string") return "";
+      if (cover.startsWith("data:image/")) return cover;
+      if (/^(https?:)?\/\//.test(cover)) return cover;
+      if (/^[\w./-]+$/.test(cover)) return cover;
+      return "";
+    }
+
+    const blogs = safeArrayParse("blogs").map((blog) => {
+      const normalizedTags = normalizeTags(blog.tags);
+      return {
+        id: blog.id || Date.now(),
+        title: String(blog.title || "Untitled post"),
+        content: String(blog.content || ""),
+        tags: normalizedTags,
+        cover: getImageUrl(blog.cover),
+        date: String(blog.date || ""),
+        readTime: getReadTimeFromContent(blog.content || "")
+      };
+    });
+
+    function renderStats(data) {
+      const totalPosts = data.length;
+      const tags = new Set();
+      let totalRead = 0;
+
+      data.forEach((blog) => {
+        blog.tags.forEach((t) => tags.add(t.toLowerCase()));
+        totalRead += blog.readTime;
+      });
+
+      totalPostsEl.textContent = String(totalPosts);
+      totalTagsEl.textContent = String(tags.size);
+      avgReadEl.textContent = totalPosts ? Math.max(1, Math.round(totalRead / totalPosts)) + " min" : "0 min";
+    }
+
+    function getTagFrequency(data) {
+      const freq = {};
+      data.forEach((blog) => {
+        blog.tags.forEach((tag) => {
+          const key = tag.toLowerCase();
+          freq[key] = (freq[key] || 0) + 1;
+        });
+      });
+      return freq;
+    }
+
+    function renderTagFilters(data) {
+      const freq = getTagFrequency(data);
+      const entries = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+
+      tagSelect.innerHTML = '<option value="all">All tags</option>';
+      entries.forEach(([key, count]) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = key + " (" + count + ")";
+        tagSelect.appendChild(option);
+      });
+
+      tagCloud.innerHTML = "";
+      entries.slice(0, 14).forEach(([key, count]) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tag-filter";
+        btn.textContent = key + " (" + count + ")";
+        btn.addEventListener("click", () => {
+          tagSelect.value = key;
+          applyFiltersAndRender();
+        });
+        tagCloud.appendChild(btn);
+      });
+
+      if (!entries.length) {
+        const empty = document.createElement("p");
+        empty.textContent = "No tags yet.";
+        empty.style.color = "#64748b";
+        empty.style.fontSize = "0.85rem";
+        tagCloud.appendChild(empty);
+      }
+    }
+
+    function sortBlogs(data, sortBy) {
+      const sorted = [...data];
+
+      if (sortBy === "oldest") {
+        sorted.sort((a, b) => Number(a.id) - Number(b.id));
+      } else if (sortBy === "title-asc") {
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sortBy === "title-desc") {
+        sorted.sort((a, b) => b.title.localeCompare(a.title));
+      } else {
+        sorted.sort((a, b) => Number(b.id) - Number(a.id));
+      }
+
+      return sorted;
+    }
+
+    function renderEmptyState() {
+      blogList.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.className = "empty-state";
+      wrapper.innerHTML = [
+        "<h3>No blogs found</h3>",
+        "<p>Try another search term or reset the filters.</p>",
+        '<div class="empty-actions">',
+        '<a class="btn btn-primary" href="editor.html"><i class="bi bi-pen"></i>Write New Blog</a>',
+        '<button class="btn btn-ghost" id="resetFromEmpty" type="button"><i class="bi bi-arrow-counterclockwise"></i>Reset Filters</button>',
+        "</div>"
+      ].join("");
+      blogList.appendChild(wrapper);
+
+      const resetBtn = document.getElementById("resetFromEmpty");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", resetFilters);
+      }
+    }
+
+    function createBlogCard(blog) {
+      const link = document.createElement("a");
+      link.className = "blog-card";
+      link.href = "blog.html?id=" + encodeURIComponent(blog.id);
+
+      const cover = document.createElement("img");
+      cover.className = "blog-cover";
+      cover.alt = blog.title;
+      cover.src = blog.cover || "1.jpg";
+      link.appendChild(cover);
+
+      const content = document.createElement("div");
+      content.className = "blog-content";
+
+      const title = document.createElement("h2");
+      title.className = "blog-title";
+      title.textContent = blog.title;
+      content.appendChild(title);
+
+      const meta = document.createElement("p");
+      meta.className = "blog-meta";
+      meta.textContent = (blog.date || "Unknown date") + " • " + blog.readTime + " min read";
+      content.appendChild(meta);
+
+      const excerpt = document.createElement("p");
+      excerpt.className = "blog-excerpt";
+      const plain = stripHTML(blog.content).trim();
+      excerpt.textContent = plain ? plain.slice(0, 180) + (plain.length > 180 ? "..." : "") : "No description available.";
+      content.appendChild(excerpt);
+
+      const tags = document.createElement("div");
+      tags.className = "tags";
+
+      if (blog.tags.length) {
+        blog.tags.slice(0, 4).forEach((tagText) => {
+          const tag = document.createElement("span");
+          tag.className = "tag";
+          tag.textContent = "#" + tagText;
+          tags.appendChild(tag);
+        });
+      } else {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "#untagged";
+        tags.appendChild(tag);
+      }
+
+      content.appendChild(tags);
+      link.appendChild(content);
+
+      return link;
+    }
+
+    function updateActiveFilterText(query, tag, sortBy, totalShown) {
+      const parts = [];
+      if (query) parts.push('search: "' + query + '"');
+      if (tag && tag !== "all") parts.push("tag: " + tag);
+      parts.push("sort: " + sortBy);
+
+      activeFilter.textContent = "Showing " + totalShown + " post(s) • " + parts.join(" • ");
+    }
+
+    function applyFiltersAndRender() {
+      const query = searchInput.value.trim().toLowerCase();
+      const selectedTag = tagSelect.value;
+      const sortBy = sortSelect.value;
+
+      let filtered = blogs.filter((blog) => {
+        const combined = [blog.title, stripHTML(blog.content), blog.tags.join(" ")].join(" ").toLowerCase();
+        const matchQuery = query ? combined.includes(query) : true;
+        const matchTag = selectedTag !== "all" ? blog.tags.some((t) => t.toLowerCase() === selectedTag) : true;
+        return matchQuery && matchTag;
+      });
+
+      filtered = sortBlogs(filtered, sortBy);
+      updateActiveFilterText(query, selectedTag, sortBy, filtered.length);
+
+      blogList.innerHTML = "";
+      if (!filtered.length) {
+        renderEmptyState();
+        return;
+      }
+
+      filtered.forEach((blog) => {
+        blogList.appendChild(createBlogCard(blog));
+      });
+    }
+
+    function resetFilters() {
+      searchInput.value = "";
+      tagSelect.value = "all";
+      sortSelect.value = "newest";
+      applyFiltersAndRender();
+    }
+
+    renderStats(blogs);
+    renderTagFilters(blogs);
+    applyFiltersAndRender();
+
+    searchInput.addEventListener("input", applyFiltersAndRender);
+    tagSelect.addEventListener("change", applyFiltersAndRender);
+    sortSelect.addEventListener("change", applyFiltersAndRender);
+    clearFiltersBtn.addEventListener("click", resetFilters);
+
+    if (scrollTopBtn) {
+      const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollTopBtn.addEventListener("click", toTop);
+      scrollTopBtn.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toTop();
+        }
+      });
+    }
+  </script>
+<script src="court-enhancements.js"></script>
+</body>
+</html>

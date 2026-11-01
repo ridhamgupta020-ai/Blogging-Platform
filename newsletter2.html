@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>There’s money on the table you’re not collecting | Blogging Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A newsletter article on monetization gaps and practical ways to capture missed creator revenue.">
+<meta name="theme-color" content="#ffc466">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:#f7f2ee;
+  color:#2b2b2b;
+  line-height:1.8;
+}
+
+/* ================= NAVBAR ================= */
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 60px;
+  background:#ffc466;
+}
+
+.logo{font-size:22px;font-weight:600}
+
+.nav-links{
+  display:flex;
+  gap:25px;
+  list-style:none;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:#333;
+  font-weight:500;
+}
+
+.hamburger{
+  display:none;
+  font-size:26px;
+  cursor:pointer;
+}
+
+/* ================= NEWSLETTER BAR ================= */
+.newsletter-bar{
+  background:#e9e4df;
+  padding:60px 20px;
+  text-align:center;
+}
+
+.newsletter-bar h2{
+  font-family:"Playfair Display",serif;
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+.newsletter-bar p{
+  max-width:600px;
+  margin:0 auto 25px;
+  color:#555;
+}
+
+.newsletter-form{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.newsletter-form input{
+  padding:14px 16px;
+  width:200px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+.newsletter-form button{
+  padding:14px 30px;
+  background:#ffc466;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* ================= LAYOUT ================= */
+.container{
+  max-width:1200px;
+  margin:70px auto;
+  padding:0 20px;
+  display:grid;
+  grid-template-columns:1fr 280px;
+  gap:60px;
+}
+
+/* ================= ARTICLE ================= */
+.article{
+  background:#fff;
+  padding:60px;
+  border-radius:10px;
+}
+
+.article h1{
+  font-family:"Playfair Display",serif;
+  font-size:42px;
+  margin-bottom:15px;
+}
+
+.article .date{
+  font-size:14px;
+  color:#777;
+  margin-bottom:25px;
+}
+
+.article hr{
+  border:none;
+  border-top:1px solid #e5e5e5;
+  margin:25px 0;
+}
+
+.article p{
+  font-size:17px;
+  margin-bottom:22px;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+  position:sticky;
+  top:40px;
+}
+
+.sidebar-box{
+  background:#fff;
+  padding:26px;
+  border-radius:10px;
+  box-shadow:0 20px 40px rgba(0,0,0,.06);
+}
+
+.sidebar-box a{
+  text-decoration:none;
+  color:#333;
+  font-weight:600;
+}
+
+/* ================= FOOTER ================= */
+.site-footer{
+  background:#fff;
+  margin-top:80px;
+}
+
+.footer-bottom{
+  padding:25px;
+  text-align:center;
+  font-size:14px;
+  color:#777;
+}
+
+/* ================= FLOATING UI ================= */
+.vault-btn{
+  position:fixed;
+  bottom:40px;
+  right:40px;
+  padding:14px 24px;
+  border-radius:30px;
+  border:none;
+  background:#e4c9bd;
+  cursor:pointer;
+}
+
+.scroll-top{
+  position:fixed;
+  bottom:40px;
+  right:150px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  background:#e4c9bd;
+  cursor:pointer;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:900px){
+  .container{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .nav-links{display:none}
+  .hamburger{display:block}
+  .navbar{padding:20px}
+  .article{padding:35px}
+}
+</style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div class="logo">Blogging Platform</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="editor.html">Vision</a></li>
+    <li><a href="Features.html">Features</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">☰</div>
+</nav>
+
+<!-- NEWSLETTER -->
+<section class="newsletter-bar">
+  <h2>Don't miss my next email.</h2>
+  <p>I send a daily-ish newsletter with growth and income tips.</p>
+
+  <form class="newsletter-form">
+    <input placeholder="First Name">
+    <input type="email" placeholder="Email">
+    <button>SUBSCRIBE</button>
+  </form>
+</section>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <article class="article">
+    <h1>There’s money on the table you’re not collecting</h1>
+    <div class="date">January 11, 2026</div>
+    <hr>
+
+    <p>This page may have affiliate links and/or sponsored content.</p>
+
+    <p>
+      Ali had 130 subscribers and no offers — until she realized the money
+      was already there.
+    </p>
+
+    <p><strong>What’s stopping you from collecting money?</strong></p>
+
+    <p>If you have an audience, you should already be making money.</p>
+  </article>
+
+  <aside class="sidebar">
+    <div class="sidebar-box">
+      🔊 <a href="#">Subscribe to my newsletter</a>
+    </div>
+  </aside>
+
+</div>
+
+<!-- FLOATING UI -->
+<button class="vault-btn">Join the Vault</button>
+<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    © 2018 – 2026 The Side Blogger. All Rights Reserved.
+  </div>
+</footer>
+
+<script>
+function toggleMenu(){
+  const nav=document.getElementById("navLinks");
+  nav.style.display = nav.style.display==="flex" ? "none" : "flex";
+}
+</script>
+
+<script src="court-enhancements.js"></script>
+</body>
+</html>

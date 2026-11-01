@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to your Blogging Platform account to manage drafts and publish articles.">
+  <title>Login | Blogging Platform</title>
+
+  <style>
+    :root {
+      --brand-blue: #3ab7ff;
+      --brand-orange: #ffc466;
+      --surface: #ffffff;
+      --text-dark: #111827;
+      --text-muted: #6b7280;
+      --success: #059669;
+      --danger: #dc2626;
+      --border: #d1d5db;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(58, 183, 255, 0.2), transparent 28%),
+        radial-gradient(circle at 90% 90%, rgba(255, 196, 102, 0.24), transparent 32%),
+        #f4f7fb;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      color: var(--text-dark);
+    }
+
+    .layout {
+      width: min(960px, 100%);
+      background: var(--surface);
+      border-radius: 24px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.15);
+      border: 1px solid #e5e7eb;
+    }
+
+    .side {
+      background: linear-gradient(150deg, #111827 0%, #1f2937 45%, #3ab7ff 120%);
+      color: #f8fafc;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .side h1 {
+      font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+      line-height: 1.2;
+    }
+
+    .side p {
+      color: #dbeafe;
+      line-height: 1.6;
+      margin-top: 10px;
+      max-width: 30ch;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      list-style: none;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+    }
+
+    .benefits li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--brand-orange);
+      flex-shrink: 0;
+    }
+
+    .extra-card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 16px;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+
+    .extra-card h3 {
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+    }
+
+    .extra-card p {
+      color: #e5e7eb;
+      margin: 0 0 8px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .extra-card code {
+      background: rgba(17, 24, 39, 0.55);
+      border-radius: 8px;
+      padding: 3px 8px;
+      color: #fef3c7;
+      font-size: 0.82rem;
+    }
+
+    .panel {
+      padding: 34px 30px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .panel h2 {
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px 42px 12px 12px;
+      font-size: 0.95rem;
+      color: #111827;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: #fff;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--brand-blue);
+      box-shadow: 0 0 0 3px rgba(58, 183, 255, 0.18);
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 2px 6px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.86rem;
+      color: #475569;
+      flex-wrap: wrap;
+    }
+
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember input {
+      accent-color: var(--brand-blue);
+    }
+
+    .helper-link {
+      color: #0369a1;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .helper-link:hover {
+      text-decoration: underline;
+    }
+
+    .submit {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, var(--brand-blue), #249fe0);
+      color: #fff;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px rgba(58, 183, 255, 0.28);
+    }
+
+    .submit:disabled {
+      cursor: not-allowed;
+      opacity: 0.75;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 1.2rem;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .footer a {
+      color: #0369a1;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="side" aria-label="Platform details">
+      <div>
+        <p class="brand">Blogging Platform</p>
+        <h1>Welcome back. Publish your next idea today.</h1>
+        <p>Sign in to manage drafts, edit existing posts, and track your growth dashboard.</p>
+
+        <ul class="benefits">
+          <li><span class="dot"></span><span>Fast writing workflow with clean editing tools.</span></li>
+          <li><span class="dot"></span><span>Simple publishing and content management.</span></li>
+          <li><span class="dot"></span><span>Easy access to your blog analytics dashboard.</span></li>
+        </ul>
+      </div>
+
+      <aside class="extra-card" aria-label="Additional card">
+        <h3>Quick demo account</h3>
+        <p>Use this if you want to test login without creating a new account first.</p>
+        <p>Email: <code>admin@gmail.com</code></p>
+        <p>Password: <code>admin123</code></p>
+      </aside>
+    </section>
+
+    <section class="panel">
+      <h2>Login</h2>
+      <p class="subtitle">Enter your credentials to continue to your dashboard.</p>
+
+      <form id="loginForm" novalidate>
+        <div>
+          <label for="loginEmail">Email</label>
+          <div class="input-wrap">
+            <input id="loginEmail" name="email" type="email" placeholder="name@example.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div>
+          <label for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <input id="loginPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+            <button type="button" class="toggle-pass" id="togglePassword" aria-label="Show password">SHOW</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="remember" for="rememberEmail">
+            <input id="rememberEmail" type="checkbox">
+            Remember email
+          </label>
+          <a href="signup.html" class="helper-link">Create account</a>
+        </div>
+
+        <button id="loginBtn" class="submit" type="submit">Login</button>
+        <p id="status" class="status" aria-live="polite"></p>
+      </form>
+
+      <p class="footer">
+        Back to <a href="index.html">Home</a>
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const rememberEmail = document.getElementById("rememberEmail");
+    const statusEl = document.getElementById("status");
+    const loginBtn = document.getElementById("loginBtn");
+    const togglePassword = document.getElementById("togglePassword");
+
+    const remembered = localStorage.getItem("rememberedEmail");
+    if (remembered) {
+      loginEmail.value = remembered;
+      rememberEmail.checked = true;
+    }
+
+    function setStatus(message, type) {
+      statusEl.textContent = message;
+      statusEl.className = "status " + type;
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function safeNextPage() {
+      const requested = new URLSearchParams(window.location.search).get("next");
+      if (requested && /^[a-zA-Z0-9._-]+\.html$/.test(requested)) {
+        return requested;
+      }
+      return "dashboard.html";
+    }
+
+    function login(event) {
+      event.preventDefault();
+      setStatus("", "error");
+
+      const email = loginEmail.value.trim().toLowerCase();
+      const password = loginPassword.value.trim();
+
+      if (!email || !password) {
+        setStatus("Please fill in both email and password.", "error");
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        setStatus("Please enter a valid email address.", "error");
+        return;
+      }
+
+      let savedUser = null;
+      try {
+        savedUser = JSON.parse(localStorage.getItem("user") || "null");
+      } catch (error) {
+        savedUser = null;
+      }
+
+      const isDemoLogin = email === "admin@gmail.com" && password === "admin123";
+      const isSavedUserLogin = savedUser && email === savedUser.email && password === savedUser.password;
+
+      if (!isDemoLogin && !isSavedUserLogin) {
+        setStatus("Invalid email or password.", "error");
+        return;
+      }
+
+      const activeUser = isSavedUserLogin
+        ? { name: savedUser.name || "User", email: savedUser.email }
+        : { name: "Admin", email: "admin@gmail.com" };
+
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("user", JSON.stringify(activeUser));
+
+      if (rememberEmail.checked) {
+        localStorage.setItem("rememberedEmail", email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Signing in...";
+      setStatus("Login successful. Redirecting...", "success");
+
+      window.setTimeout(() => {
+        window.location.href = safeNextPage();
+      }, 650);
+    }
+
+    loginForm.addEventListener("submit", login);
+
+    togglePassword.addEventListener("click", () => {
+      const show = loginPassword.type === "password";
+      loginPassword.type = show ? "text" : "password";
+      togglePassword.textContent = show ? "HIDE" : "SHOW";
+      togglePassword.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    });
+  </script>
+<script src="court-enhancements.js"></script>
+</body>
+</html>

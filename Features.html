@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Explore Blogging Platform features for writing, SEO, publishing, and creator growth in one clean workflow.">
+<meta name="theme-color" content="#ffc466">
+<title>Features | Blogging Platform</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* ================= FEATURES ================= */
+.features {
+  background: #f7f2ee;
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.features h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.features-sub {
+  max-width: 640px;
+  margin: 0 auto 60px;
+  font-size: 17px;
+  color: #555;
+}
+
+.features-grid {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.feature-card {
+  background: #ffffff;
+  padding: 36px;
+  border-radius: 16px;
+  text-align: left;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* HOVER */
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 40px 70px rgba(0,0,0,0.1);
+}
+
+.feature-card h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.7;
+}
+
+/* REVEAL ANIMATION */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+  <link rel="stylesheet" href="court-enhancements.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">Blogging Platform</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="editor.html">Vision</a></li>
+    <li><a href="Features.html">Features</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">☰</div>
+</nav>
+
+<!-- FEATURES SECTION -->
+<section class="features">
+  <h2>What You’ll Get</h2>
+  <p class="features-sub">
+    Everything you need to write, grow, and monetize your content — without the bloat.
+  </p>
+
+  <div class="features-grid">
+
+    <div class="feature-card reveal">
+      <h3>✍️ Distraction-Free Writing</h3>
+      <p>
+        A clean editor built for humans — not algorithms. Focus on clarity,
+        storytelling, and real connection.
+      </p>
+    </div>
+
+    <div class="feature-card reveal">
+      <h3>🔍 SEO Without the BS</h3>
+      <p>
+        Learn only what actually moves rankings. No keyword stuffing,
+        no robotic writing, no outdated tricks.
+      </p>
+    </div>
+
+    <div class="feature-card reveal">
+      <h3>📩 Built-in Newsletter</h3>
+      <p>
+        Turn readers into subscribers automatically. Grow your email list
+        alongside your blog.
+      </p>
+    </div>
+
+    <div class="feature-card reveal">
+      <h3>📊 Smart Insights</h3>
+      <p>
+        See word count, read time, and SEO signals while you write —
+        without overwhelming dashboards.
+      </p>
+    </div>
+
+    <div class="feature-card reveal">
+      <h3>🧠 Templates That Think</h3>
+      <p>
+        SEO blogs, case studies, tutorials, product reviews —
+        start faster with proven structures.
+      </p>
+    </div>
+
+    <div class="feature-card reveal">
+      <h3>💸 Monetization-Ready</h3>
+      <p>
+        Affiliate disclosures, CTAs, and content layouts designed to
+        earn without selling your soul.
+      </p>
+    </div>
+
+  </div>
+</section>
+<!-- FOOTER -->
+<footer class="site-footer">
+
+  <div class="footer-top">
+
+    <div class="footer-col brand">
+      <h2>Blogging<br>Platform</h2>
+      <a href="about.html">About</a>
+      <a href="Contact.html">Contact</a>
+
+      <div class="socials">
+        <span class="bi bi-youtube"></span>
+        <span class="bi bi-pinterest"></span>
+        <span class="bi bi-instagram"></span>
+        <span class="bi bi-twitter-x"></span>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>RESOURCES</h4>
+      <a href="blogs.html">→ Newsletter</a>
+      <a href="blogs.html">→ Blog</a>
+      <a href="#">→ Tools & Resources</a>
+      <a href="#">→ Membership</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>SPONSOR / ADS</h4>
+      <a href="#">→ Brand Partnership</a>
+      <a href="#">→ Newsletter Ads</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>DISCLOSURES</h4>
+      <a href="#">→ Privacy Policy</a>
+      <a href="#">→ Terms & Conditions</a>
+      <a href="#">→ Affiliate Disclosure</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2018 – 2026 The Side Blogger. All Rights Reserved.</p>
+    <p class="cookie">
+      This site uses affiliate links and cookies.
+    </p>
+
+    <button class="vault-btn">Join the Vault</button>
+    <div class="scroll-top">↑</div>
+  </div>
+
+</footer>
+
+<script src="feature.js"></script>
+<script src="court-enhancements.js"></script>
+</body>
+</html>

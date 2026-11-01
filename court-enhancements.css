@@ -1,0 +1,281 @@
+.gp-court-shell {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1200;
+  width: min(360px, calc(100vw - 24px));
+  font-family: Inter, system-ui, sans-serif;
+  color: #7c2d12;
+}
+
+.gp-court-toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+}
+
+.gp-court-panel {
+  margin-top: 9px;
+  border: 1px solid #f5c48a;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #fff5e8, #fffdf7);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.gp-court-panel[hidden] {
+  display: none;
+}
+
+.gp-court-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 12px;
+  border-bottom: 1px solid #f4cc9f;
+}
+
+.gp-court-head h3 {
+  margin: 0;
+  color: #7c2d12;
+  font-size: 0.95rem;
+}
+
+.gp-court-score {
+  color: #9a3412;
+  font-size: 0.81rem;
+  font-weight: 700;
+}
+
+.gp-court-body {
+  padding: 11px 12px 12px;
+  max-height: min(70vh, 550px);
+  overflow: auto;
+}
+
+.gp-court-intro {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.gp-court-meter {
+  width: 100%;
+  height: 8px;
+  border: 1px solid #f3c793;
+  border-radius: 999px;
+  background: #ffe9cc;
+  overflow: hidden;
+}
+
+.gp-court-meter > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  transition: width 0.22s ease;
+}
+
+.gp-court-sections {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.gp-court-block {
+  border: 1px solid #f4d2ab;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 9px;
+}
+
+.gp-court-block h4 {
+  margin: 0 0 7px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9a3412;
+}
+
+.gp-court-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.gp-court-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid #f2d7b6;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 7px 8px;
+  color: #7c2d12;
+}
+
+.gp-court-item.pass {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.gp-court-item.fail {
+  border-color: #fecaa5;
+  background: #fff7ed;
+}
+
+.gp-court-check {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.gp-court-manual .gp-court-check label {
+  font-size: 0.79rem;
+  line-height: 1.35;
+}
+
+.gp-court-manual input {
+  margin-top: 2px;
+  accent-color: #ea580c;
+}
+
+.gp-court-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fed7aa;
+  color: #9a3412;
+  font-size: 0.68rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.gp-court-item.pass .gp-court-icon {
+  background: #bbf7d0;
+  color: #166534;
+}
+
+.gp-court-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gp-court-label {
+  font-size: 0.79rem;
+  line-height: 1.32;
+  font-weight: 600;
+}
+
+.gp-court-detail {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
+.gp-court-pill {
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid #f4cc9f;
+  background: #ffe4c7;
+  color: #9a3412;
+  font-size: 0.69rem;
+  font-weight: 700;
+  line-height: 1.1;
+  padding: 3px 7px;
+}
+
+.gp-court-item.pass .gp-court-pill {
+  border-color: #86efac;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.gp-court-verdict {
+  margin: 10px 0 0;
+  color: #7c2d12;
+  font-size: 0.81rem;
+  font-weight: 700;
+  min-height: 1rem;
+}
+
+.gp-court-tips {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  color: #7c2d12;
+}
+
+.gp-court-tips li {
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.gp-court-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gp-court-actions button {
+  border: 1px solid #f2cda0;
+  border-radius: 999px;
+  background: #fff6eb;
+  color: #9a3412;
+  font-size: 0.73rem;
+  font-weight: 700;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+
+.gp-court-actions button:hover {
+  background: #ffecd3;
+}
+
+.gp-court-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #111827;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  z-index: 1300;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.gp-court-skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
+
+@media (max-width: 760px) {
+  .gp-court-shell {
+    right: 10px;
+    bottom: 10px;
+    width: min(320px, calc(100vw - 20px));
+  }
+
+  .gp-court-body {
+    max-height: min(65vh, 480px);
+  }
+}
