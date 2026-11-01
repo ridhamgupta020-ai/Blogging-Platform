@@ -9,6 +9,18 @@ const source = path.join(root, "Frontend");
 // the deploy runner happens to use as its current working directory.
 const output = path.resolve(__dirname, "..", "dist");
 const configuredApi = (process.env.FRONTEND_API_URL || "").trim().replace(/\/$/, "");
+const requiredOutput = [
+  "index.html",
+  "css/style.css",
+  "js/api.js",
+  "js/platform.js",
+  "images/1.jpg",
+  "runtime-config.json"
+];
+
+console.log(`[build] working directory: ${process.cwd()}`);
+console.log(`[build] repository root: ${root}`);
+console.log(`[build] absolute output directory: ${output}`);
 
 if (process.env.VERCEL && path.resolve(process.cwd()) !== root) {
   throw new Error(`Set Vercel Root Directory to the repository root (${root}); build ran from ${process.cwd()}.`);
@@ -30,6 +42,7 @@ if (configuredApi) {
   }
 }
 
+// Clear only the output directory before copying; nothing removes dist after build.
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
 fs.cpSync(path.join(source, "pages"), output, { recursive: true });
@@ -38,15 +51,12 @@ for (const directory of ["css", "js", "images"]) {
 }
 fs.writeFileSync(path.join(output, "runtime-config.json"), JSON.stringify({ apiBaseUrl: configuredApi }) + "\n");
 
-const requiredOutput = [
-  "index.html",
-  "css/style.css",
-  "js/api.js",
-  "js/platform.js",
-  "images/1.jpg",
-  "runtime-config.json"
-];
-const missing = requiredOutput.filter((relativePath) => !fs.existsSync(path.join(output, relativePath)));
+const missing = [];
+for (const relativePath of requiredOutput) {
+  const exists = fs.existsSync(path.join(output, relativePath));
+  console.log(`[build] ${exists ? "OK" : "MISSING"}: ${path.join(output, relativePath)}`);
+  if (!exists) missing.push(relativePath);
+}
 if (missing.length) {
   throw new Error(`Frontend build output is incomplete at ${output}. Missing: ${missing.join(", ")}`);
 }
