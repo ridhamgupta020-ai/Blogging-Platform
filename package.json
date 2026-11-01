@@ -1,8 +1,8 @@
 {
-  "name": "blogging-platform",
+  "name": "draftly",
   "version": "1.0.0",
   "private": true,
-  "description": "A persistent blogging platform with secure sessions and a SQLite data store.",
+  "description": "Draftly — Draft it. Publish it. Grow it.",
   "engines": {
     "node": "22.x"
   },

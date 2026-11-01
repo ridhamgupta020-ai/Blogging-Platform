@@ -1,4 +1,4 @@
-# Blogging Platform
+# Draftly
 
 A responsive editorial blogging platform built from the existing HTML, CSS, and vanilla JavaScript site, with an Express API and SQLite persistence.
 

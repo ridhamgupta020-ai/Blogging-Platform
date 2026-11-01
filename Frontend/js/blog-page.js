@@ -17,7 +17,7 @@
       api.request(`blogs/${encodeURIComponent(blogId)}/comments`)
     ]);
 
-    document.title = `${blog.title} | Blogging Platform`;
+    document.title = `${blog.title} | Draftly`;
     const description = document.querySelector('meta[name="description"]');
     if (description && blog.description) description.content = blog.description;
     article.replaceChildren();

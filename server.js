@@ -392,13 +392,13 @@ app.use((error, req, res, next) => {
 
 if (require.main === module) {
   const server = app.listen(port, "0.0.0.0", () => {
-    console.log(`Blogging Platform listening at http://localhost:${port}`);
+    console.log(`Draftly listening at http://localhost:${port}`);
   });
   server.on("error", (error) => {
     if (error.code === "EADDRINUSE") {
       console.error(`Port ${port} is already in use. Stop the process using it or set PORT to another available port.`);
     } else {
-      console.error("Failed to start the Blogging Platform server:", error);
+      console.error("Failed to start the Draftly server:", error);
     }
     process.exitCode = 1;
   });

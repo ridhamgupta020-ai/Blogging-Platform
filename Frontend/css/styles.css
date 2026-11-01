@@ -84,6 +84,10 @@ p { color: var(--muted); }
 }
 .navbar .logo, .navbar .brand, .topbar .brand, .logo { color: var(--white) !important; font-size: 1rem !important; font-weight: 800 !important; letter-spacing: -.04em; }
 .navbar .logo a, .topbar .brand a { color: var(--white) !important; }
+.draftly-logo { display: inline-flex; align-items: center; justify-content: flex-start; min-height: 36px; line-height: 0; }
+.draftly-logo img { display: block; width: auto; max-width: min(180px, 48vw); height: 36px; object-fit: contain; }
+.draftly-logo img[width="36"] { width: 36px; }
+.site-footer > .draftly-logo, .footer > .draftly-logo, .editor-footer > .draftly-logo { margin-bottom: 16px; }
 .nav-wrap { display: flex; align-items: center; gap: 16px; }
 .navbar ul, .nav-links, .nav-group { gap: 6px !important; }
 .navbar a:not(.login-btn):not(.btn), .topbar a:not(.btn) { color: var(--muted) !important; }
