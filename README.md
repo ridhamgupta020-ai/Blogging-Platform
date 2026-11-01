@@ -34,6 +34,28 @@ The production server trusts one proxy hop so `Secure`, `HttpOnly`, `SameSite=La
 session cookies work through Render's HTTPS proxy. The server refuses to start if
 `SESSION_SECRET` is missing or shorter than 32 characters.
 
+## Supabase schema setup
+
+The repository includes a Supabase CLI project config and an additive SQL migration in `supabase/migrations/`. The backend client reads `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` from the server environment; no Supabase key belongs in frontend files. Copy the placeholders in `.env.example` into your private `.env`. Rotate any Supabase secret key that has ever been committed or shared.
+
+Install the CLI on macOS with `brew install supabase/tap/supabase`, then:
+
+```sh
+supabase login
+supabase link --project-ref tsmkeivqvqnyfcmaqbhb
+supabase migration list --linked
+supabase db pull --linked
+```
+
+Review the pulled schema and migration file before changing production. The repo migration creates tables if missing and does not drop tables or records, but an existing table with a conflicting schema needs a reviewed reconciliation migration first. After confirming compatibility, apply and verify with:
+
+```sh
+supabase db push --linked
+supabase migration list --linked
+```
+
+The CLI prompts for the database password during linking; do not put it in source or committed files. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, and `SESSION_SECRET` in Render's private environment settings. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
+
 Then start the site:
 
 ```sh

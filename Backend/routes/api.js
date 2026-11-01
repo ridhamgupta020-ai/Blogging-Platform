@@ -2,12 +2,19 @@
 
 function registerApiRoutes(app, dependencies) {
   const {
-    db, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
+    db, supabase, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
     importLegacyContent, text, passwordInput, normalizeEmail, normalizeTags,
     normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter
   } = dependencies;
 
-app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+app.get("/api/health", asyncRoute(async (req, res) => {
+  const supabaseStatus = await supabase.checkConnection();
+  res.status(supabaseStatus.connected ? 200 : supabaseStatus.configured ? 503 : 200).json({
+    status: "ok",
+    database: "sqlite",
+    supabase: supabaseStatus
+  });
+}));
 
 app.get("/api/stats", (req, res) => {
   const published = db.prepare("SELECT COUNT(*) AS count FROM blogs WHERE status = 'published'").get().count;

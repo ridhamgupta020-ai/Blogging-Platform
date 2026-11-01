@@ -13,6 +13,7 @@ const helmet = require("helmet");
 const multer = require("multer");
 const sanitizeHtml = require("sanitize-html");
 const db = require("./Backend/config/database");
+const supabase = require("./Backend/config/supabase");
 const registerApiRoutes = require("./Backend/routes/api");
 
 const app = express();
@@ -327,7 +328,7 @@ for (const assetType of ["css", "js", "images"]) {
 app.use(express.static(publicPagesDirectory, { dotfiles: "ignore", index: "index.html" }));
 
 registerApiRoutes(app, {
-  db, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
+  db, supabase, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
   importLegacyContent, text, passwordInput, normalizeEmail, normalizeTags,
   normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter
 });
