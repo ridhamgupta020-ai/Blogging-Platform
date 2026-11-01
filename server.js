@@ -12,12 +12,13 @@ const session = require("express-session");
 const helmet = require("helmet");
 const multer = require("multer");
 const sanitizeHtml = require("sanitize-html");
-const db = require("./db");
+const db = require("./server/config/database");
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const uploadsDirectory = path.resolve(process.env.UPLOADS_PATH || path.join(__dirname, "uploads"));
-const publicDirectory = __dirname;
+const publicPagesDirectory = path.join(__dirname, "public", "pages");
+const publicAssetsDirectory = path.join(__dirname, "public", "assets");
 const sessionSecret = process.env.SESSION_SECRET;
 
 if (!sessionSecret || sessionSecret.length < 32) {
@@ -314,7 +315,8 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(express.static(publicDirectory, { dotfiles: "ignore", index: "index.html" }));
+app.use("/assets", express.static(publicAssetsDirectory, { dotfiles: "ignore", index: false }));
+app.use(express.static(publicPagesDirectory, { dotfiles: "ignore", index: "index.html" }));
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 

@@ -47,6 +47,15 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
   assert.equal(registration.payload.user.email, "riley@example.com");
   assert.equal("password" in registration.payload.user, false);
 
+  const imageForm = new FormData();
+  imageForm.append("image", new Blob([Uint8Array.of(0xff, 0xd8, 0xff, 0xd9)], { type: "image/jpeg" }), "cover.jpg");
+  const imageUpload = await request("uploads/images", { method: "POST", body: imageForm }, ownerCookie);
+  assert.equal(imageUpload.response.status, 201);
+  assert.match(imageUpload.payload.image, /^\/uploads\/[a-f0-9-]+\.jpg$/);
+  const storedImage = await fetch(`${origin}${imageUpload.payload.image}`);
+  assert.equal(storedImage.status, 200);
+  assert.equal(storedImage.headers.get("content-type"), "image/jpeg");
+
   const duplicate = await request("auth/register", {
     method: "POST",
     body: { name: "Someone Else", email: "RILEY@example.com", password: "SecurePass1234!" }

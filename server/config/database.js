@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const Database = require("better-sqlite3");
 
-const databasePath = path.resolve(process.env.DATABASE_PATH || path.join(__dirname, "data", "blogging-platform.sqlite"));
+const databasePath = path.resolve(process.env.DATABASE_PATH || path.join(__dirname, "..", "..", "data", "blogging-platform.sqlite"));
 fs.mkdirSync(path.dirname(databasePath), { recursive: true });
 
 const db = new Database(databasePath);

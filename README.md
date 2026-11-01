@@ -28,7 +28,9 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000). For development with automatic server restarts, run `npm run dev`.
 
-The SQLite database is created at `data/blogging-platform.sqlite`; uploaded profile and cover images are stored in `uploads/`. Both directories are ignored by Git. Back up the database and uploads together. SQLite is appropriate for a single-instance, small deployment; use a managed database and shared session store before running multiple server instances.
+The SQLite database is created at `data/blogging-platform.sqlite`; uploaded profile and cover images are stored in `uploads/`. Both directories are ignored by Git and remain at the project root. Back up the database and uploads together. SQLite is appropriate for a single-instance, small deployment; use a managed database and shared session store before running multiple server instances.
+
+The existing application pages are in `public/pages/`, and their shared CSS, JavaScript, and images are in `public/assets/css/`, `public/assets/js/`, and `public/assets/images/`. The Express entry point remains `server.js`; database initialization is in `server/config/database.js`. Tests are in `tests/`. Existing page URLs (such as `/index.html` and `/login.html`) and `/api` endpoints remain unchanged.
 
 ## Features
 
@@ -62,11 +64,11 @@ The API integration test covers registration and validation, duplicate accounts,
 
 ## Main pages
 
-- `index.html` — landing page and subscription form
-- `blogs.html` — searchable public article list
-- `blog.html?id=<id>` — article, likes, comments, and related articles
-- `editor.html` — protected article authoring and editing
-- `dashboard.html` — protected article management and account statistics
-- `profile.html` — public author profile or private account settings
-- `login.html` and `signup.html` — account flows
-- `legal.html` — privacy, service, and affiliate disclosures
+- `public/pages/index.html` — landing page and subscription form
+- `public/pages/blogs.html` — searchable public article list
+- `public/pages/blog.html?id=<id>` — article, likes, comments, and related articles
+- `public/pages/editor.html` — protected article authoring and editing
+- `public/pages/dashboard.html` — protected article management and account statistics
+- `public/pages/profile.html` — public author profile or private account settings
+- `public/pages/login.html` and `public/pages/signup.html` — account flows
+- `public/pages/legal.html` — privacy, service, and affiliate disclosures

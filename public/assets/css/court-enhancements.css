@@ -509,7 +509,7 @@ body > header.navbar {
   border-radius: 28px;
   background:
     linear-gradient(145deg, rgba(23, 23, 23, 0.02), rgba(23, 23, 23, 0.12)),
-    url("1.jpg") center 48% / cover no-repeat;
+    url("/assets/images/1.jpg") center 48% / cover no-repeat;
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.38),
     0 0 70px rgba(167, 139, 250, 0.18);
