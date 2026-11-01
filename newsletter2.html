@@ -5,7 +5,7 @@
 <title>There’s money on the table you’re not collecting | Blogging Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A newsletter article on monetization gaps and practical ways to capture missed creator revenue.">
-<meta name="theme-color" content="#ffc466">
+<meta name="theme-color" content="#171717">
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 
@@ -205,7 +205,7 @@ body{
   <div class="logo">Blogging Platform</div>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
-    <li><a href="editor.html">Vision</a></li>
+    <li><a href="index.html#vision">Vision</a></li>
     <li><a href="Features.html">Features</a></li>
   </ul>
   <div class="hamburger" onclick="toggleMenu()">☰</div>
@@ -245,15 +245,15 @@ body{
 
   <aside class="sidebar">
     <div class="sidebar-box">
-      🔊 <a href="#">Subscribe to my newsletter</a>
+      🔊 <a href="index.html#newsletterTitle">Subscribe to my newsletter</a>
     </div>
   </aside>
 
 </div>
 
 <!-- FLOATING UI -->
-<button class="vault-btn">Join the Vault</button>
-<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<a class="vault-btn" href="signup.html">Join the Vault</a>
+<button class="scroll-top" type="button" aria-label="Back to top">↑</button>
 
 <footer class="site-footer">
   <div class="footer-bottom">
@@ -269,5 +269,7 @@ function toggleMenu(){
 </script>
 
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
 </body>
 </html>

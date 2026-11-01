@@ -5,7 +5,7 @@
 <title>Dashboard | Blogging Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Track your posts, readers, and subscribers from a simple Blogging Platform dashboard.">
-<meta name="theme-color" content="#ffc466">
+<meta name="theme-color" content="#171717">
 
 <style>
 *{
@@ -190,23 +190,33 @@ body{
 
 <!-- HEADER -->
 <div class="header">
-  <h1>Dashboard</h1>
-  <a href="editor.html">+ Write Blog</a>
+  <h1>Creator dashboard</h1>
+  <nav aria-label="Dashboard navigation">
+    <a href="index.html">Home</a>
+    <a href="blogs.html">Explore</a>
+    <a href="profile.html">Profile</a>
+    <a href="editor.html">+ Write Blog</a>
+    <button class="logout-btn" type="button" data-action="logout">Logout</button>
+  </nav>
 </div>
 
 <!-- STATS -->
 <div class="stats">
   <div class="stat">
     <h2 id="totalBlogs">0</h2>
-    <p>Total Blogs</p>
+    <p>Total articles</p>
   </div>
   <div class="stat">
-    <h2 id="readers">0</h2>
-    <p>Readers</p>
+    <h2 id="publishedBlogs">0</h2>
+    <p>Published</p>
+  </div>
+  <div class="stat">
+    <h2 id="draftBlogs">0</h2>
+    <p>Drafts</p>
   </div>
   <div class="stat">
     <h2 id="subscribers">0</h2>
-    <p>Subscribers</p>
+    <p>Newsletter subscribers</p>
   </div>
 </div>
 
@@ -221,116 +231,26 @@ body{
 
   <!-- RIGHT -->
   <div>
-    <!-- AUTHOR -->
     <div class="author">
-      <img src="https://i.pravatar.cc/150" alt="Author">
-      <h3>Ridham Gupta</h3>
-      <p>Founder & Writer</p>
-      <p>Sharing insights on tech, blogging & growth.</p>
+      <img id="dashboardAvatar" alt="Your profile avatar" hidden>
+      <h3 id="dashboardName">Your profile</h3>
+      <p id="dashboardEmail"></p>
+      <a href="profile.html">Manage profile</a>
     </div>
 
-    <!-- SUBSCRIBERS -->
-    <h2 style="margin-bottom:15px;">📩 Newsletter Subscribers</h2>
-    <div id="subscriberList"></div>
+    <section class="author" aria-labelledby="newsletterStatsTitle">
+      <h2 id="newsletterStatsTitle">Newsletter</h2>
+      <p id="subscriberList">Subscribers are stored privately; email campaigns are not configured.</p>
+      <a href="newsletter.html">Read the latest issue</a>
+    </section>
   </div>
-<section class="newsletter">
-  <h2>📩 Join the Newsletter</h2>
-  <p>Get new blogs, tips & updates directly in your inbox.</p>
-
-  <form id="newsletterForm">
-    <input
-      type="email"
-      id="newsletterEmail"
-      placeholder="Enter your email"
-      required
-    />
-    <button type="submit">Subscribe</button>
-  </form>
-
-  <p id="newsletterMsg"></p>
-</section>
-
 </div>
 
-<script>
-/* AUTH PROTECT */
-if(!localStorage.getItem("loggedIn")){
-  window.location.href="login.html";
-}
 
-/* LOAD BLOGS */
-const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
-const blogList = document.getElementById("blogList");
-
-document.getElementById("totalBlogs").innerText = blogs.length;
-document.getElementById("readers").innerText = blogs.length * Math.floor(Math.random() * 0+1 ); // Simulated readers
-
-/* RENDER BLOGS */
-function stripHTML(html){
-  return html.replace(/<[^>]+>/g,"");
-}
-
-blogs.slice(0,5).forEach(blog=>{
-  const div=document.createElement("div");
-  div.className="blog";
-  div.innerHTML=`
-    <h3>${blog.title}</h3>
-    <p>${stripHTML(blog.content).slice(0,120)}...</p>
-    <a href="blog.html?id=${blog.id}">Read →</a>
-  `;
-  blogList.appendChild(div);
-});
-
-/* SUBSCRIBERS */
-const subscribers = JSON.parse(localStorage.getItem("subscribers")) || [];
-const subscriberList = document.getElementById("subscriberList");
-
-document.getElementById("subscribers").innerText = subscribers.length;
-
-if(!subscribers.length){
-  subscriberList.innerHTML="<p style='font-size:14px;color:#777;'>No subscribers yet.</p>";
-}
-
-subscribers.slice(0,6).forEach(email=>{
-  const div=document.createElement("div");
-  div.className="subscriber";
-  div.innerText=email;
-  subscriberList.appendChild(div);
-});
-form.addEventListener("submit", e => {
-  e.preventDefault();
-
-  const email = emailInput.value.trim().toLowerCase();
-  if (!email) return;
-
-  let subscribers = JSON.parse(localStorage.getItem("subscribers")) || [];
-
-  if (subscribers.includes(email)) {
-    msg.innerText = "⚠️ You are already subscribed.";
-    msg.style.color = "#ef4444";
-    return;
-  }
-
-  subscribers.push(email);
-  localStorage.setItem("subscribers", JSON.stringify(subscribers));
-
-  // UI feedback
-  msg.innerText = "✅ Successfully subscribed!";
-  msg.style.color = "#22c55e";
-  emailInput.value = "";
-
-  // 🔥 LIVE UPDATE DASHBOARD
-  document.getElementById("subscribers").innerText = subscribers.length;
-
-  const div = document.createElement("div");
-  div.className = "subscriber";
-  div.innerText = email;
-  subscriberList.prepend(div);
-});
-
-
-</script>
 
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
+<script src="dashboard-page.js"></script>
 </body>
 </html>

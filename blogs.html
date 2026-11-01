@@ -19,9 +19,9 @@
       --text: #111827;
       --muted: #6b7280;
       --line: #d8e2ef;
-      --primary: #3ab7ff;
+      --primary: #A78BFA;
       --primary-dark: #249fe0;
-      --accent: #ffc466;
+      --accent: #E8FF65;
       --shadow: 0 24px 52px rgba(15, 23, 42, 0.11);
     }
 
@@ -708,6 +708,9 @@
 
       <div class="filter-bar">
         <input id="searchInput" type="text" placeholder="Search title, content, tags...">
+        <select id="categorySelect" aria-label="Filter by category">
+          <option value="all">All categories</option>
+        </select>
         <select id="tagSelect">
           <option value="all">All tags</option>
         </select>
@@ -793,15 +796,15 @@
 
       <div class="footer-col">
         <h4>SPONSOR / ADS</h4>
-        <a href="#">Brand Partnership</a>
-        <a href="#">Newsletter Ads</a>
+        <a href="Contact.html#contact-form">Brand Partnership</a>
+        <a href="Contact.html#contact-form">Newsletter Ads</a>
       </div>
 
       <div class="footer-col">
         <h4>DISCLOSURES</h4>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms & Conditions</a>
-        <a href="#">Affiliate Disclosure</a>
+        <a href="legal.html#privacy">Privacy Policy</a>
+        <a href="legal.html#terms">Terms & Conditions</a>
+        <a href="legal.html#affiliate">Affiliate Disclosure</a>
       </div>
     </div>
 
@@ -813,323 +816,10 @@
     </div>
   </footer>
 
-  <script>
-    const menuBtn = document.getElementById("menuBtn");
-    const navLinks = document.getElementById("navLinks");
-    const authArea = document.getElementById("authArea");
-    const blogList = document.getElementById("blogList");
-    const activeFilter = document.getElementById("activeFilter");
-    const searchInput = document.getElementById("searchInput");
-    const sortSelect = document.getElementById("sortSelect");
-    const tagSelect = document.getElementById("tagSelect");
-    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
-    const tagCloud = document.getElementById("tagCloud");
-    const totalPostsEl = document.getElementById("totalPosts");
-    const totalTagsEl = document.getElementById("totalTags");
-    const avgReadEl = document.getElementById("avgRead");
-    const yearEl = document.getElementById("year");
-    const scrollTopBtn = document.getElementById("scrollTop");
 
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-    if (menuBtn && navLinks) {
-      menuBtn.addEventListener("click", () => {
-        const expanded = menuBtn.getAttribute("aria-expanded") === "true";
-        menuBtn.setAttribute("aria-expanded", String(!expanded));
-        navLinks.classList.toggle("active");
-      });
-    }
-
-    function renderAuth() {
-      const isLoggedIn = localStorage.getItem("loggedIn");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-      if (!authArea) return;
-
-      if (isLoggedIn) {
-        authArea.innerHTML = [
-          '<li class="auth-chip">',
-          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
-          (user.name || "User"),
-          '<button class="logout-btn" id="logoutBtn" type="button">Logout</button>',
-          '</li>'
-        ].join(" ");
-
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("loggedIn");
-            window.location.href = "login.html";
-          });
-        }
-      } else {
-        authArea.innerHTML = '<li><a href="login.html">Login</a></li>';
-      }
-    }
-
-    renderAuth();
-
-    function safeArrayParse(key) {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(key) || "[]");
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
-      }
-    }
-
-    function stripHTML(html) {
-      return String(html || "").replace(/<[^>]+>/g, " ");
-    }
-
-    function getWords(text) {
-      const cleaned = String(text || "").trim();
-      if (!cleaned) return 0;
-      return cleaned.split(/\s+/).length;
-    }
-
-    function getReadTimeFromContent(content) {
-      const words = getWords(stripHTML(content));
-      return words > 0 ? Math.max(1, Math.ceil(words / 220)) : 1;
-    }
-
-    function normalizeTags(tags) {
-      if (!Array.isArray(tags)) return [];
-      return tags.map((t) => String(t).trim()).filter(Boolean);
-    }
-
-    function getImageUrl(cover) {
-      if (!cover || typeof cover !== "string") return "";
-      if (cover.startsWith("data:image/")) return cover;
-      if (/^(https?:)?\/\//.test(cover)) return cover;
-      if (/^[\w./-]+$/.test(cover)) return cover;
-      return "";
-    }
-
-    const blogs = safeArrayParse("blogs").map((blog) => {
-      const normalizedTags = normalizeTags(blog.tags);
-      return {
-        id: blog.id || Date.now(),
-        title: String(blog.title || "Untitled post"),
-        content: String(blog.content || ""),
-        tags: normalizedTags,
-        cover: getImageUrl(blog.cover),
-        date: String(blog.date || ""),
-        readTime: getReadTimeFromContent(blog.content || "")
-      };
-    });
-
-    function renderStats(data) {
-      const totalPosts = data.length;
-      const tags = new Set();
-      let totalRead = 0;
-
-      data.forEach((blog) => {
-        blog.tags.forEach((t) => tags.add(t.toLowerCase()));
-        totalRead += blog.readTime;
-      });
-
-      totalPostsEl.textContent = String(totalPosts);
-      totalTagsEl.textContent = String(tags.size);
-      avgReadEl.textContent = totalPosts ? Math.max(1, Math.round(totalRead / totalPosts)) + " min" : "0 min";
-    }
-
-    function getTagFrequency(data) {
-      const freq = {};
-      data.forEach((blog) => {
-        blog.tags.forEach((tag) => {
-          const key = tag.toLowerCase();
-          freq[key] = (freq[key] || 0) + 1;
-        });
-      });
-      return freq;
-    }
-
-    function renderTagFilters(data) {
-      const freq = getTagFrequency(data);
-      const entries = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-
-      tagSelect.innerHTML = '<option value="all">All tags</option>';
-      entries.forEach(([key, count]) => {
-        const option = document.createElement("option");
-        option.value = key;
-        option.textContent = key + " (" + count + ")";
-        tagSelect.appendChild(option);
-      });
-
-      tagCloud.innerHTML = "";
-      entries.slice(0, 14).forEach(([key, count]) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "tag-filter";
-        btn.textContent = key + " (" + count + ")";
-        btn.addEventListener("click", () => {
-          tagSelect.value = key;
-          applyFiltersAndRender();
-        });
-        tagCloud.appendChild(btn);
-      });
-
-      if (!entries.length) {
-        const empty = document.createElement("p");
-        empty.textContent = "No tags yet.";
-        empty.style.color = "#64748b";
-        empty.style.fontSize = "0.85rem";
-        tagCloud.appendChild(empty);
-      }
-    }
-
-    function sortBlogs(data, sortBy) {
-      const sorted = [...data];
-
-      if (sortBy === "oldest") {
-        sorted.sort((a, b) => Number(a.id) - Number(b.id));
-      } else if (sortBy === "title-asc") {
-        sorted.sort((a, b) => a.title.localeCompare(b.title));
-      } else if (sortBy === "title-desc") {
-        sorted.sort((a, b) => b.title.localeCompare(a.title));
-      } else {
-        sorted.sort((a, b) => Number(b.id) - Number(a.id));
-      }
-
-      return sorted;
-    }
-
-    function renderEmptyState() {
-      blogList.innerHTML = "";
-      const wrapper = document.createElement("div");
-      wrapper.className = "empty-state";
-      wrapper.innerHTML = [
-        "<h3>No blogs found</h3>",
-        "<p>Try another search term or reset the filters.</p>",
-        '<div class="empty-actions">',
-        '<a class="btn btn-primary" href="editor.html"><i class="bi bi-pen"></i>Write New Blog</a>',
-        '<button class="btn btn-ghost" id="resetFromEmpty" type="button"><i class="bi bi-arrow-counterclockwise"></i>Reset Filters</button>',
-        "</div>"
-      ].join("");
-      blogList.appendChild(wrapper);
-
-      const resetBtn = document.getElementById("resetFromEmpty");
-      if (resetBtn) {
-        resetBtn.addEventListener("click", resetFilters);
-      }
-    }
-
-    function createBlogCard(blog) {
-      const link = document.createElement("a");
-      link.className = "blog-card";
-      link.href = "blog.html?id=" + encodeURIComponent(blog.id);
-
-      const cover = document.createElement("img");
-      cover.className = "blog-cover";
-      cover.alt = blog.title;
-      cover.src = blog.cover || "1.jpg";
-      link.appendChild(cover);
-
-      const content = document.createElement("div");
-      content.className = "blog-content";
-
-      const title = document.createElement("h2");
-      title.className = "blog-title";
-      title.textContent = blog.title;
-      content.appendChild(title);
-
-      const meta = document.createElement("p");
-      meta.className = "blog-meta";
-      meta.textContent = (blog.date || "Unknown date") + " • " + blog.readTime + " min read";
-      content.appendChild(meta);
-
-      const excerpt = document.createElement("p");
-      excerpt.className = "blog-excerpt";
-      const plain = stripHTML(blog.content).trim();
-      excerpt.textContent = plain ? plain.slice(0, 180) + (plain.length > 180 ? "..." : "") : "No description available.";
-      content.appendChild(excerpt);
-
-      const tags = document.createElement("div");
-      tags.className = "tags";
-
-      if (blog.tags.length) {
-        blog.tags.slice(0, 4).forEach((tagText) => {
-          const tag = document.createElement("span");
-          tag.className = "tag";
-          tag.textContent = "#" + tagText;
-          tags.appendChild(tag);
-        });
-      } else {
-        const tag = document.createElement("span");
-        tag.className = "tag";
-        tag.textContent = "#untagged";
-        tags.appendChild(tag);
-      }
-
-      content.appendChild(tags);
-      link.appendChild(content);
-
-      return link;
-    }
-
-    function updateActiveFilterText(query, tag, sortBy, totalShown) {
-      const parts = [];
-      if (query) parts.push('search: "' + query + '"');
-      if (tag && tag !== "all") parts.push("tag: " + tag);
-      parts.push("sort: " + sortBy);
-
-      activeFilter.textContent = "Showing " + totalShown + " post(s) • " + parts.join(" • ");
-    }
-
-    function applyFiltersAndRender() {
-      const query = searchInput.value.trim().toLowerCase();
-      const selectedTag = tagSelect.value;
-      const sortBy = sortSelect.value;
-
-      let filtered = blogs.filter((blog) => {
-        const combined = [blog.title, stripHTML(blog.content), blog.tags.join(" ")].join(" ").toLowerCase();
-        const matchQuery = query ? combined.includes(query) : true;
-        const matchTag = selectedTag !== "all" ? blog.tags.some((t) => t.toLowerCase() === selectedTag) : true;
-        return matchQuery && matchTag;
-      });
-
-      filtered = sortBlogs(filtered, sortBy);
-      updateActiveFilterText(query, selectedTag, sortBy, filtered.length);
-
-      blogList.innerHTML = "";
-      if (!filtered.length) {
-        renderEmptyState();
-        return;
-      }
-
-      filtered.forEach((blog) => {
-        blogList.appendChild(createBlogCard(blog));
-      });
-    }
-
-    function resetFilters() {
-      searchInput.value = "";
-      tagSelect.value = "all";
-      sortSelect.value = "newest";
-      applyFiltersAndRender();
-    }
-
-    renderStats(blogs);
-    renderTagFilters(blogs);
-    applyFiltersAndRender();
-
-    searchInput.addEventListener("input", applyFiltersAndRender);
-    tagSelect.addEventListener("change", applyFiltersAndRender);
-    sortSelect.addEventListener("change", applyFiltersAndRender);
-    clearFiltersBtn.addEventListener("click", resetFilters);
-
-    if (scrollTopBtn) {
-      const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
-      scrollTopBtn.addEventListener("click", toTop);
-      scrollTopBtn.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          toTop();
-        }
-      });
-    }
-  </script>
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
+<script src="blogs-page.js"></script>
 </body>
 </html>

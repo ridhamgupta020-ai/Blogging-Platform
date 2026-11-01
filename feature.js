@@ -22,12 +22,12 @@ document.querySelectorAll(".feature-card").forEach(card => {
 
     card.style.background =
       `radial-gradient(circle at ${x}px ${y}px,
-        rgba(59,183,255,0.08),
-        #ffffff 60%)`;
+        rgba(167,139,250,0.16),
+        #171717 60%)`;
   });
 
   card.addEventListener("mouseleave", () => {
-    card.style.background = "#ffffff";
+    card.style.background = "#171717";
   });
 });
 document.querySelectorAll(".feature-card[data-scroll]").forEach(card => {

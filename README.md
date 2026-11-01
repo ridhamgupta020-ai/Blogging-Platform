@@ -1,67 +1,72 @@
-# Blogging-Platform
-IBM_OJT Project
+# Blogging Platform
 
-# ✍️ Blogging Platform (The Side Blogger Style)
+A responsive editorial blogging platform built from the existing HTML, CSS, and vanilla JavaScript site, with an Express API and SQLite persistence.
 
-A modern, distraction-free blogging platform inspired by **The Side Blogger** — built using **HTML, CSS, and JavaScript** with `localStorage` for data persistence.
+## Requirements
 
-This project includes:
-- A rich blog editor
-- Newsletter system
-- Blog listing & single blog pages
-- Dashboard with stats
-- SEO-friendly layouts
-- Clean, minimal UI
+- Node.js 20 or newer
+- npm
 
----
+## Install and run
 
-## 🚀 Features
+```sh
+npm install
+cp .env.example .env
+```
 
-### ✨ Writing & Publishing
-- Distraction-free rich text editor
-- Inline image upload
-- Cover image support
-- SEO, blog, tutorial, case study & review templates
-- Auto-save drafts
-- Word count, read time & basic SEO score
+Set `SESSION_SECRET` in `.env` to a random value of at least 32 characters. For example:
 
-### 📰 Blog System
-- Blog listing page (cards)
-- Clickable blog → opens full article page
-- Newsletter-style article layout
-- Affiliate disclosure support
-- Sticky sidebar CTA
+```sh
+openssl rand -hex 32
+```
 
-### 📩 Newsletter
-- Newsletter subscription form
-- Emails stored in `localStorage`
-- Newsletter issue layout (Side Blogger style)
-- Dashboard subscriber list
+Then start the site:
 
-### 📊 Dashboard
-- Total blogs count
-- Readers estimate
-- Subscribers count
-- Recent blogs preview
-- Author profile card
+```sh
+npm start
+```
 
-### 🎨 UI & UX
-- Responsive design (mobile friendly)
-- Floating “Join the Vault” CTA
-- Scroll-to-top button
-- Minimal, premium typography
-- Inspired by real content businesses
+Open [http://localhost:3000](http://localhost:3000). For development with automatic server restarts, run `npm run dev`.
 
----
+The SQLite database is created at `data/blogging-platform.sqlite`; uploaded profile and cover images are stored in `uploads/`. Both directories are ignored by Git. Back up the database and uploads together. SQLite is appropriate for a single-instance, small deployment; use a managed database and shared session store before running multiple server instances.
 
-## 🛠️ Tech Stack
+## Features
 
-- **HTML5**
-- **CSS3**
-- **Vanilla JavaScript**
-- **LocalStorage (No backend required)**
+- Registration with normalized unique emails and password rules (12+ characters, upper/lowercase and a number); passwords are bcrypt-hashed.
+- Login, logout, persistent server-side SQLite sessions, HTTP-only same-site cookies, and protected authoring/dashboard/profile routes. No demo credentials are configured.
+- Article drafts and publishing with descriptions, categories, tags, sanitized rich text, cover-image upload, inline-image upload, preview, and edit mode.
+- Owner-scoped edit, publish/unpublish, and delete actions.
+- Public article reading, author profiles, related articles, likes, and comments with author-only edit/delete.
+- Database-backed search, category/tag filters, newest/oldest/title sorting, pagination, and empty states.
+- Profile name/email editing, profile-image upload, password change, and published-article listing.
+- Persisted newsletter subscriptions with validation and duplicate prevention. No email is sent because no email service is configured.
+- A one-time, user-confirmed import of old browser-only articles and drafts after signing in. Legacy plaintext credentials are not imported.
+- Premium Lemon, Charcoal, and Electric Lavender styling across the existing pages.
 
----
+## Data and security notes
 
-## 📂 Project Structure
+- SQLite is the source of truth for accounts, articles, comments, likes, newsletter subscribers, and sessions. Authentication does not trust localStorage.
+- Existing localStorage article/draft content can be imported from the sign-in flow. The old localStorage password is discarded; users must register again because it cannot be migrated safely.
+- Uploaded images are limited to JPG, PNG, and WebP files up to 5 MB and checked against their file signatures.
+- Article HTML is sanitized on the server before it is stored. Profile and comment text is rendered as text.
+- Configure HTTPS and a strong `SESSION_SECRET` before deployment. Session cookies are marked `Secure` when `NODE_ENV=production`.
+- The app is designed for a trusted single-instance deployment, not as a hardened public multi-tenant SaaS. Add operational monitoring, backups, email verification/recovery, and a production database/session service before broad public use.
 
+## Tests
+
+```sh
+npm test
+```
+
+The API integration test covers registration and validation, duplicate accounts, persistent sessions, draft/publish/read flows, search filters, content sanitization, likes, comments, newsletter subscriptions, legacy imports, owner authorization, and logout.
+
+## Main pages
+
+- `index.html` — landing page and subscription form
+- `blogs.html` — searchable public article list
+- `blog.html?id=<id>` — article, likes, comments, and related articles
+- `editor.html` — protected article authoring and editing
+- `dashboard.html` — protected article management and account statistics
+- `profile.html` — public author profile or private account settings
+- `login.html` and `signup.html` — account flows
+- `legal.html` — privacy, service, and affiliate disclosures

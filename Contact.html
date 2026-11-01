@@ -185,7 +185,7 @@ button:hover {
   </div>
 
   <!-- RIGHT FORM -->
-  <form class="contact-form" onsubmit="submitForm(event)">
+  <form class="contact-form" id="contact-form" onsubmit="submitForm(event)">
     <h2>Send a Message</h2>
 
     <div class="field">
@@ -252,7 +252,7 @@ function submitForm(e) {
 
   localStorage.setItem("contactMessages", JSON.stringify(messages));
 
-  alert("Message sent successfully ✅");
+  alert("Message saved in this browser. No email was sent.");
 
   // Reset form
   document.querySelector("form").reset();
@@ -268,5 +268,7 @@ function validateEmail(email) {
 </script>
 
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
 </body>
 </html>

@@ -8,8 +8,8 @@
 
   <style>
     :root {
-      --brand-blue: #3ab7ff;
-      --brand-orange: #ffc466;
+      --brand-blue: #A78BFA;
+      --brand-orange: #E8FF65;
       --surface: #ffffff;
       --text-dark: #111827;
       --text-muted: #6b7280;
@@ -49,7 +49,7 @@
     }
 
     .side {
-      background: linear-gradient(150deg, #111827 0%, #1f2937 45%, #3ab7ff 120%);
+      background: linear-gradient(150deg, #171717 0%, #222 58%, #A78BFA 140%);
       color: #f8fafc;
       padding: 36px 32px;
       display: flex;
@@ -310,11 +310,10 @@
         </ul>
       </div>
 
-      <aside class="extra-card" aria-label="Additional card">
-        <h3>Quick demo account</h3>
-        <p>Use this if you want to test login without creating a new account first.</p>
-        <p>Email: <code>admin@gmail.com</code></p>
-        <p>Password: <code>admin123</code></p>
+      <aside class="extra-card" aria-label="Writing workflow">
+        <h3>Your next idea starts here</h3>
+        <p>Sign in to pick up a saved draft, publish a new article, or review your writing profile.</p>
+        <p>New here? Create an account with an email address you control.</p>
       </aside>
     </section>
 
@@ -356,101 +355,10 @@
     </section>
   </main>
 
-  <script>
-    const loginForm = document.getElementById("loginForm");
-    const loginEmail = document.getElementById("loginEmail");
-    const loginPassword = document.getElementById("loginPassword");
-    const rememberEmail = document.getElementById("rememberEmail");
-    const statusEl = document.getElementById("status");
-    const loginBtn = document.getElementById("loginBtn");
-    const togglePassword = document.getElementById("togglePassword");
 
-    const remembered = localStorage.getItem("rememberedEmail");
-    if (remembered) {
-      loginEmail.value = remembered;
-      rememberEmail.checked = true;
-    }
-
-    function setStatus(message, type) {
-      statusEl.textContent = message;
-      statusEl.className = "status " + type;
-    }
-
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function safeNextPage() {
-      const requested = new URLSearchParams(window.location.search).get("next");
-      if (requested && /^[a-zA-Z0-9._-]+\.html$/.test(requested)) {
-        return requested;
-      }
-      return "dashboard.html";
-    }
-
-    function login(event) {
-      event.preventDefault();
-      setStatus("", "error");
-
-      const email = loginEmail.value.trim().toLowerCase();
-      const password = loginPassword.value.trim();
-
-      if (!email || !password) {
-        setStatus("Please fill in both email and password.", "error");
-        return;
-      }
-
-      if (!isValidEmail(email)) {
-        setStatus("Please enter a valid email address.", "error");
-        return;
-      }
-
-      let savedUser = null;
-      try {
-        savedUser = JSON.parse(localStorage.getItem("user") || "null");
-      } catch (error) {
-        savedUser = null;
-      }
-
-      const isDemoLogin = email === "admin@gmail.com" && password === "admin123";
-      const isSavedUserLogin = savedUser && email === savedUser.email && password === savedUser.password;
-
-      if (!isDemoLogin && !isSavedUserLogin) {
-        setStatus("Invalid email or password.", "error");
-        return;
-      }
-
-      const activeUser = isSavedUserLogin
-        ? { name: savedUser.name || "User", email: savedUser.email }
-        : { name: "Admin", email: "admin@gmail.com" };
-
-      localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("user", JSON.stringify(activeUser));
-
-      if (rememberEmail.checked) {
-        localStorage.setItem("rememberedEmail", email);
-      } else {
-        localStorage.removeItem("rememberedEmail");
-      }
-
-      loginBtn.disabled = true;
-      loginBtn.textContent = "Signing in...";
-      setStatus("Login successful. Redirecting...", "success");
-
-      window.setTimeout(() => {
-        window.location.href = safeNextPage();
-      }, 650);
-    }
-
-    loginForm.addEventListener("submit", login);
-
-    togglePassword.addEventListener("click", () => {
-      const show = loginPassword.type === "password";
-      loginPassword.type = show ? "text" : "password";
-      togglePassword.textContent = show ? "HIDE" : "SHOW";
-      togglePassword.setAttribute("aria-label", show ? "Hide password" : "Show password");
-    });
-  </script>
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
+<script src="auth-page.js"></script>
 </body>
 </html>

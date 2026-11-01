@@ -5,7 +5,7 @@
 <title id="seo-title">Read Blog</title>
 <link rel="stylesheet" href="style.css">
 <meta id="seo-description" name="description" content="Read in-depth blog posts with clean formatting, SEO metadata, and social sharing.">
-<meta name="theme-color" content="#ffc466">
+<meta name="theme-color" content="#171717">
 
 <meta property="og:type" content="article">
 <meta id="og-title" property="og:title">
@@ -222,23 +222,23 @@ body.dark .export{background:#2563eb}
       <h4>RESOURCES</h4>
       <a href="blogs.html">→ Newsletter</a>
       <a href="blogs.html">→ Blog</a>
-      <a href="#">→ Tools & Resources</a>
-      <a href="#">→ Membership</a>
+      <a href="Features.html">→ Tools & Resources</a>
+      <a href="signup.html">→ Membership</a>
     </div>
 
     <!-- SPONSOR -->
     <div class="footer-col">
       <h4>SPONSOR / ADS</h4>
-      <a href="#">→ Brand Partnership</a>
-      <a href="#">→ Newsletter Ads</a>
+      <a href="Contact.html#contact-form">→ Brand Partnership</a>
+      <a href="Contact.html#contact-form">→ Newsletter Ads</a>
     </div>
 
     <!-- DISCLOSURES -->
     <div class="footer-col">
       <h4>DISCLOSURES</h4>
-      <a href="#">→ Privacy Policy</a>
-      <a href="#">→ Terms & Conditions</a>
-      <a href="#">→ Affiliate Disclosure</a>
+      <a href="legal.html#privacy">→ Privacy Policy</a>
+      <a href="legal.html#terms">→ Terms & Conditions</a>
+      <a href="legal.html#affiliate">→ Affiliate Disclosure</a>
     </div>
 
   </div>
@@ -250,71 +250,17 @@ body.dark .export{background:#2563eb}
       This site uses affiliate links and cookies. By continuing to use this site, you consent to all cookies.
     </p>
 
-    <button class="vault-btn">Join the Vault</button>
+    <a class="vault-btn" href="signup.html">Join the Vault</a>
     <div class="scroll-top">↑</div>
   </div>
 
 </footer>
 
-<script>
-/* LOAD BLOG */
-const id=new URLSearchParams(location.search).get("id");
-const blogs=JSON.parse(localStorage.getItem("blogs"))||[];
-const blog=blogs.find(b=>b.id==id);
-const blogEl=document.getElementById("blog");
 
-if(!blog){
-  blogEl.innerHTML+="<p>Blog not found.</p>";
-}else{
-  const text=blog.content.replace(/<[^>]+>/g,"");
-  const read=Math.ceil(text.split(" ").length/200);
-
-  blogEl.innerHTML+=`
-    ${blog.cover?`<img src="${blog.cover}">`:``}
-    <h1>${blog.title}</h1>
-    <div class="meta">
-      <span>${blog.date}</span>
-      <span>${read} min read</span>
-    </div>
-    <div class="content">${blog.content}</div>
-
-    <div class="tags">
-      ${blog.tags.map(t=>`<span>#${t}</span>`).join("")}
-    </div>
-
-    <div class="share">
-      <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(blog.title)}" target="_blank">X</a>
-      <a href="https://wa.me/?text=${encodeURIComponent(location.href)}" target="_blank">WhatsApp</a>
-      <a href="#" onclick="navigator.clipboard.writeText(location.href)">Copy Link</a>
-    </div>
-  `;
-
-  document.title=blog.title+" | VYONIC";
-  document.getElementById("seo-description").content=text.slice(0,155);
-  document.getElementById("og-title").content=blog.title;
-  document.getElementById("og-description").content=text.slice(0,160);
-  document.getElementById("og-url").content=location.href;
-  if(blog.cover) document.getElementById("og-image").content=blog.cover;
-}
-
-/* DARK MODE */
-function toggleTheme(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem("theme",
-    document.body.classList.contains("dark")?"dark":"light");
-}
-if(localStorage.getItem("theme")==="dark"){
-  document.body.classList.add("dark");
-}
-
-/* PROGRESS */
-window.addEventListener("scroll",()=>{
-  const h=document.documentElement;
-  const p=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
-  document.getElementById("progress").style.width=p+"%";
-});
-</script>
 
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
+<script src="blog-page.js"></script>
 </body>
 </html>

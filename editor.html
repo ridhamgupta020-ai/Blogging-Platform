@@ -20,9 +20,9 @@
       --text: #111827;
       --muted: #6b7280;
       --line: #dbe3ef;
-      --primary: #3ab7ff;
+      --primary: #A78BFA;
       --primary-dark: #249fe0;
-      --accent: #ffc466;
+      --accent: #E8FF65;
       --danger: #dc2626;
       --success: #0f9d58;
       --shadow: 0 24px 54px rgba(15, 23, 42, 0.12);
@@ -543,6 +543,9 @@
         <label class="field-label" for="title">Title</label>
         <input id="title" type="text" placeholder="Blog title..." />
 
+        <label class="field-label" for="description">Description</label>
+        <textarea id="description" rows="3" maxlength="500" placeholder="A short summary for readers and search results..."></textarea>
+
         <div class="meta-grid">
           <div>
             <label class="field-label" for="templateSelect">Template</label>
@@ -556,6 +559,17 @@
               <option value="review">Product Review</option>
               <option value="markdown">Markdown</option>
             </select>
+          </div>
+          <div>
+            <label class="field-label" for="category">Category</label>
+            <input id="category" list="categoryOptions" type="text" maxlength="80" placeholder="Choose or enter a category..." />
+            <datalist id="categoryOptions">
+              <option value="Business"></option>
+              <option value="Culture"></option>
+              <option value="Marketing"></option>
+              <option value="Technology"></option>
+              <option value="Writing"></option>
+            </datalist>
           </div>
           <div>
             <label class="field-label" for="tags">Tags</label>
@@ -573,7 +587,7 @@
         </div>
 
         <label class="field-label" for="coverInput">Cover Image</label>
-        <input id="coverInput" class="cover-input" type="file" accept="image/*" />
+        <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" />
         <img id="coverPreview" alt="Cover preview">
 
         <label class="field-label" for="content">Content</label>
@@ -621,7 +635,7 @@
           <h2>Draft Snapshot</h2>
           <div class="snapshot-line"><span>Last saved</span><strong id="lastSaved">Never</strong></div>
           <div class="snapshot-line"><span>Tag count</span><strong id="tagCount">0</strong></div>
-          <div class="snapshot-line"><span>Draft key</span><strong>draftBlog</strong></div>
+          <div class="snapshot-line"><span>Storage</span><strong>Private account</strong></div>
         </section>
       </aside>
     </section>
@@ -641,260 +655,10 @@
     <p>Tip: publish only after all Content Court checks pass.</p>
   </footer>
 
-  <script src="script.js"></script>
-  <script>
-    const titleEl = document.getElementById("title");
-    const tagsEl = document.getElementById("tags");
-    const contentEl = document.getElementById("content");
-    const coverPreviewEl = document.getElementById("coverPreview");
-    const coverInputEl = document.getElementById("coverInput");
 
-    const wordCountEl = document.getElementById("wordCount");
-    const readTimeEl = document.getElementById("readTime");
-    const headingCountEl = document.getElementById("headingCount");
-    const seoScoreEl = document.getElementById("seoScore");
-    const saveStateEl = document.getElementById("saveState");
-
-    const lastSavedEl = document.getElementById("lastSaved");
-    const tagCountEl = document.getElementById("tagCount");
-
-    const publishBtn = document.getElementById("publishBtn");
-    const saveDraftBtn = document.getElementById("saveDraftBtn");
-    const clearDraftBtn = document.getElementById("clearDraftBtn");
-    const previewBtn = document.getElementById("previewBtn");
-
-    const previewModal = document.getElementById("previewModal");
-    const previewBody = document.getElementById("previewBody");
-    const closePreviewBtn = document.getElementById("closePreviewBtn");
-
-    function insertLink() {
-      const url = window.prompt("Enter URL");
-      if (!url) return;
-      cmd("createLink", url);
-    }
-
-    function debounce(fn, delay) {
-      let timer = null;
-      return function debounced(...args) {
-        window.clearTimeout(timer);
-        timer = window.setTimeout(() => fn.apply(this, args), delay);
-      };
-    }
-
-    function setSaveState(text, tone) {
-      saveStateEl.textContent = text;
-      saveStateEl.style.color = tone === "ok" ? "#0f9d58" : tone === "error" ? "#dc2626" : "#6b7280";
-    }
-
-    function markCheck(id, pass) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.toggle("pass", pass);
-      const icon = el.querySelector("i");
-      if (icon) icon.className = pass ? "bi bi-check-circle-fill" : "bi bi-circle";
-    }
-
-    function getTagsArray() {
-      return tagsEl.value.split(",").map((t) => t.trim()).filter(Boolean);
-    }
-
-    function getHeadingCount() {
-      return contentEl.querySelectorAll("h1, h2, h3").length;
-    }
-
-    function computeSeoScore(words, tagCount, headingCount) {
-      let score = 0;
-      const titleLength = titleEl.value.trim().length;
-
-      if (titleLength >= 40) score += 30;
-      else if (titleLength >= 24) score += 15;
-
-      if (words >= 300) score += 30;
-      else if (words >= 160) score += 15;
-
-      if (tagCount >= 3) score += 20;
-      else if (tagCount >= 1) score += 10;
-
-      if (coverImage) score += 10;
-      if (headingCount >= 2) score += 10;
-
-      return Math.min(100, score);
-    }
-
-    function updateStats() {
-      const plainText = contentEl.innerText.trim();
-      const words = plainText ? plainText.split(/\s+/).length : 0;
-      const readMins = words > 0 ? Math.max(1, Math.ceil(words / 200)) : 0;
-      const headingCount = getHeadingCount();
-      const tags = getTagsArray();
-      const seo = computeSeoScore(words, tags.length, headingCount);
-
-      wordCountEl.textContent = words + " words";
-      readTimeEl.textContent = readMins + " min read";
-      headingCountEl.textContent = headingCount + " headings";
-      seoScoreEl.textContent = "SEO " + seo + "%";
-      tagCountEl.textContent = String(tags.length);
-
-      markCheck("checkTitle", titleEl.value.trim().length >= 40);
-      markCheck("checkWords", words >= 300);
-      markCheck("checkTags", tags.length >= 3);
-      markCheck("checkCover", Boolean(coverImage));
-      markCheck("checkHeadings", headingCount >= 2);
-    }
-
-    function formatSavedTime(timestamp) {
-      if (!timestamp) return "Never";
-      return new Date(timestamp).toLocaleString();
-    }
-
-    function saveDraftLocal() {
-      try {
-        const draft = {
-          title: titleEl.value,
-          tags: tagsEl.value,
-          content: contentEl.innerHTML,
-          cover: coverImage || null,
-          savedAt: Date.now()
-        };
-        localStorage.setItem("draftBlog", JSON.stringify(draft));
-        lastSavedEl.textContent = formatSavedTime(draft.savedAt);
-        setSaveState("Saved", "ok");
-      } catch (error) {
-        setSaveState("Save failed", "error");
-      }
-    }
-
-    function loadDraftLocal() {
-      if (typeof editingId !== "undefined" && editingId) return;
-
-      const raw = localStorage.getItem("draftBlog");
-      if (!raw) return;
-
-      try {
-        const draft = JSON.parse(raw);
-        if (!draft) return;
-
-        if (draft.title && !titleEl.value) titleEl.value = draft.title;
-        if (draft.tags && !tagsEl.value) tagsEl.value = draft.tags;
-        if (draft.content && !contentEl.innerHTML.trim()) contentEl.innerHTML = draft.content;
-
-        if (draft.cover && !coverImage) {
-          coverImage = draft.cover;
-          coverPreviewEl.src = coverImage;
-          coverPreviewEl.style.display = "block";
-        }
-
-        lastSavedEl.textContent = formatSavedTime(draft.savedAt);
-      } catch (error) {
-        localStorage.removeItem("draftBlog");
-      }
-    }
-
-    function clearDraftLocal() {
-      if (!window.confirm("Clear current draft from this editor?")) return;
-      localStorage.removeItem("draftBlog");
-      titleEl.value = "";
-      tagsEl.value = "";
-      contentEl.innerHTML = "";
-      coverImage = null;
-      coverPreviewEl.removeAttribute("src");
-      coverPreviewEl.style.display = "none";
-      if (coverInputEl) coverInputEl.value = "";
-      lastSavedEl.textContent = "Never";
-      setSaveState("Draft cleared", "ok");
-      updateStats();
-    }
-
-    function openPreview() {
-      const previewTitle = titleEl.value.trim() || "Untitled Post";
-      const coverHtml = coverImage ? '<img alt="Cover image" src="' + coverImage + '">' : "";
-      previewBody.innerHTML = "<h1>" + previewTitle + "</h1>" + coverHtml + contentEl.innerHTML;
-      previewModal.hidden = false;
-    }
-
-    function closePreview() {
-      previewModal.hidden = true;
-    }
-
-    const autoSave = debounce(() => {
-      saveDraftLocal();
-      updateStats();
-    }, 700);
-
-    [titleEl, tagsEl, contentEl].forEach((el) => {
-      el.addEventListener("input", () => {
-        setSaveState("Saving...", "idle");
-        autoSave();
-      });
-    });
-
-    if (coverInputEl) {
-      coverInputEl.addEventListener("change", () => {
-        const file = coverInputEl.files && coverInputEl.files[0];
-
-        if (!file) {
-          coverImage = null;
-          coverPreviewEl.removeAttribute("src");
-          coverPreviewEl.style.display = "none";
-          setSaveState("Saving...", "idle");
-          autoSave();
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          coverImage = reader.result;
-          coverPreviewEl.src = coverImage;
-          coverPreviewEl.style.display = "block";
-          setSaveState("Saving...", "idle");
-          autoSave();
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    saveDraftBtn.addEventListener("click", () => {
-      saveDraftLocal();
-      updateStats();
-    });
-
-    clearDraftBtn.addEventListener("click", clearDraftLocal);
-    previewBtn.addEventListener("click", openPreview);
-    closePreviewBtn.addEventListener("click", closePreview);
-    previewModal.addEventListener("click", (event) => {
-      if (event.target === previewModal) closePreview();
-    });
-
-    publishBtn.addEventListener("click", () => {
-      publish();
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
-        event.preventDefault();
-        saveDraftLocal();
-        updateStats();
-      }
-
-      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-        event.preventDefault();
-        publish();
-      }
-
-      if (event.altKey && event.key.toLowerCase() === "p") {
-        event.preventDefault();
-        openPreview();
-      }
-
-      if (event.key === "Escape" && !previewModal.hidden) {
-        closePreview();
-      }
-    });
-
-    loadDraftLocal();
-    updateStats();
-    setSaveState("Ready", "idle");
-  </script>
 <script src="court-enhancements.js"></script>
+<script src="api.js"></script>
+<script src="platform.js"></script>
+<script src="editor-page.js"></script>
 </body>
 </html>
