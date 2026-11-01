@@ -1,5 +1,5 @@
 node_modules/
 .env
-data/
-uploads/
+Backend/data/
+Backend/uploads/
 npm-debug.log*

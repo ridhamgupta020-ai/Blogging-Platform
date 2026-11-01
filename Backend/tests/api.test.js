@@ -11,7 +11,7 @@ process.env.DATABASE_PATH = path.join(testDirectory, "test.sqlite");
 process.env.UPLOADS_PATH = path.join(testDirectory, "uploads");
 process.env.SESSION_SECRET = "test-session-secret-with-at-least-32-characters";
 
-const { app, db } = require("../server");
+const { app, db } = require("../../server");
 
 test("authenticated blog workflows persist and enforce ownership", async (t) => {
   const server = app.listen(0);
