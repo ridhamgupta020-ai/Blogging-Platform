@@ -5,9 +5,16 @@
   const status = document.getElementById("status");
   const signupForm = document.getElementById("signupForm");
 
-  function showStatus(message, type) {
+  function showStatus(message, type, action) {
     if (status) {
-      status.textContent = message;
+      status.replaceChildren(document.createTextNode(message));
+      if (action) {
+        status.append(document.createTextNode(" "));
+        const link = document.createElement("a");
+        link.href = action.href;
+        link.textContent = action.label;
+        status.append(link);
+      }
       status.className = `status ${type}`;
       status.setAttribute("role", "status");
       return;
@@ -80,7 +87,11 @@
         ? requested
         : "dashboard.html";
     } catch (error) {
-      showStatus(error.message, "error");
+      const duplicateSignup = isSignup && error.status === 409;
+      showStatus(error.message, "error", duplicateSignup ? {
+        href: `login.html?email=${encodeURIComponent(email)}`,
+        label: "Log in instead"
+      } : undefined);
       if (button) {
         button.disabled = false;
         button.textContent = originalText;
@@ -90,10 +101,15 @@
 
   const emailInput = document.getElementById("loginEmail");
   const rememberInput = document.getElementById("rememberEmail");
+  const requestedEmail = new URLSearchParams(location.search).get("email");
   const remembered = localStorage.getItem("rememberedEmail");
-  if (emailInput && remembered) {
-    emailInput.value = remembered;
-    if (rememberInput) rememberInput.checked = true;
+  if (emailInput) {
+    if (requestedEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requestedEmail)) {
+      emailInput.value = requestedEmail;
+    } else if (remembered) {
+      emailInput.value = remembered;
+      if (rememberInput) rememberInput.checked = true;
+    }
   }
 
   const togglePassword = document.getElementById("togglePassword");

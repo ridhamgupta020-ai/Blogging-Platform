@@ -343,8 +343,16 @@ app.use((error, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Blogging Platform listening at http://localhost:${port}`);
+  });
+  server.on("error", (error) => {
+    if (error.code === "EADDRINUSE") {
+      console.error(`Port ${port} is already in use. Stop the process using it or set PORT to another available port.`);
+    } else {
+      console.error("Failed to start the Blogging Platform server:", error);
+    }
+    process.exitCode = 1;
   });
 }
 

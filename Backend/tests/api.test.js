@@ -46,6 +46,8 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
   assert.ok(ownerCookie);
   assert.equal(registration.payload.user.email, "riley@example.com");
   assert.equal("password" in registration.payload.user, false);
+  assert.equal((await request("dashboard")).response.status, 401);
+  assert.equal((await request("auth/me")).payload.user, null);
 
   const imageForm = new FormData();
   imageForm.append("image", new Blob([Uint8Array.of(0xff, 0xd8, 0xff, 0xd9)], { type: "image/jpeg" }), "cover.jpg");
@@ -61,6 +63,32 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
     body: { name: "Someone Else", email: "RILEY@example.com", password: "SecurePass1234!" }
   });
   assert.equal(duplicate.response.status, 409);
+  assert.match(duplicate.payload.error, /already exists/i);
+  assert.equal(db.prepare("SELECT COUNT(*) AS count FROM users").get().count, 1);
+  assert.equal(db.prepare("SELECT display_name FROM users WHERE email = ?").get("riley@example.com").display_name, "Riley Writer");
+
+  const incorrectPassword = await request("auth/login", {
+    method: "POST",
+    body: { email: "riley@example.com", password: "IncorrectPass123!" }
+  });
+  assert.equal(incorrectPassword.response.status, 401);
+
+  const unknownAccount = await request("auth/login", {
+    method: "POST",
+    body: { email: "missing@example.com", password: "IncorrectPass123!" }
+  });
+  assert.equal(unknownAccount.response.status, 401);
+  assert.equal(unknownAccount.payload.error, incorrectPassword.payload.error);
+
+  const login = await request("auth/login", {
+    method: "POST",
+    body: { email: "RILEY@example.com", password: "SecurePass1234!" }
+  });
+  assert.equal(login.response.status, 200);
+  assert.ok(login.cookie);
+  assert.equal(login.payload.user.id, registration.payload.user.id);
+  assert.equal((await request("auth/me", {}, login.cookie)).payload.user.email, "riley@example.com");
+  assert.equal((await request("dashboard", {}, login.cookie)).response.status, 200);
 
   const weakPassword = await request("auth/register", {
     method: "POST",
@@ -182,4 +210,6 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
   const logout = await request("auth/logout", { method: "POST" }, ownerCookie);
   assert.equal(logout.response.status, 200);
   assert.equal((await request("profile", {}, ownerCookie)).response.status, 401);
+  assert.equal((await request("auth/me", {}, ownerCookie)).payload.user, null);
+  assert.equal((await request("dashboard", {}, ownerCookie)).response.status, 401);
 });

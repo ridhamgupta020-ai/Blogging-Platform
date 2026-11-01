@@ -38,6 +38,7 @@ The existing backend uses parameterized SQLite statements directly rather than a
 
 - Registration with normalized unique emails and password rules (12+ characters, upper/lowercase and a number); passwords are bcrypt-hashed.
 - Login, logout, persistent server-side SQLite sessions, HTTP-only same-site cookies, and protected authoring/dashboard/profile routes. No demo credentials are configured.
+- Duplicate registrations preserve the existing account and offer a sign-in link with the email prefilled. Password reset is not available until a trusted email delivery provider is configured; the app never reveals or resets an existing password automatically.
 - Article drafts and publishing with descriptions, categories, tags, sanitized rich text, cover-image upload, inline-image upload, preview, and edit mode.
 - Owner-scoped edit, publish/unpublish, and delete actions.
 - Public article reading, author profiles, related articles, likes, and comments with author-only edit/delete.
