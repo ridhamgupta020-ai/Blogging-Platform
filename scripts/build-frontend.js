@@ -5,7 +5,9 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const source = path.join(root, "Frontend");
-const output = path.join(root, "dist");
+// Vercel resolves outputDirectory relative to its configured Root Directory,
+// which is also the working directory used for the build command.
+const output = path.resolve(process.cwd(), "dist");
 const configuredApi = (process.env.FRONTEND_API_URL || "").trim().replace(/\/$/, "");
 
 if (process.env.VERCEL && !configuredApi) {
@@ -31,4 +33,18 @@ for (const directory of ["css", "js", "images"]) {
   fs.cpSync(path.join(source, directory), path.join(output, directory), { recursive: true });
 }
 fs.writeFileSync(path.join(output, "runtime-config.json"), JSON.stringify({ apiBaseUrl: configuredApi }) + "\n");
-console.log(`Frontend built to dist${configuredApi ? ` with API ${new URL(configuredApi).origin}` : " using same-origin API paths"}.`);
+
+const requiredOutput = [
+  "index.html",
+  "css/style.css",
+  "js/api.js",
+  "js/platform.js",
+  "images/1.jpg",
+  "runtime-config.json"
+];
+const missing = requiredOutput.filter((relativePath) => !fs.existsSync(path.join(output, relativePath)));
+if (missing.length) {
+  throw new Error(`Frontend build output is incomplete at ${output}. Missing: ${missing.join(", ")}`);
+}
+
+console.log(`Frontend built to ${output}${configuredApi ? ` with API ${new URL(configuredApi).origin}` : " using same-origin API paths"}.`);
