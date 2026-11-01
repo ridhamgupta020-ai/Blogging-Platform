@@ -27,6 +27,12 @@ const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret || sessionSecret.length < 32) {
   throw new Error("SESSION_SECRET must contain at least 32 characters. Copy .env.example to .env and set a random value.");
 }
+if (isProduction && !supabase.configured) {
+  throw new Error("Production requires SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, and SUPABASE_SECRET_KEY for email authentication.");
+}
+if (isProduction && !process.env.PUBLIC_APP_URL) {
+  throw new Error("Production requires PUBLIC_APP_URL so authentication emails can return to the deployed site.");
+}
 
 fs.mkdirSync(uploadsDirectory, { recursive: true });
 
@@ -94,7 +100,7 @@ const publicUser = (user) => ({
 });
 
 const currentUser = (req) => {
-  if (!req.session.userId) throw new ApiError(401, "Please sign in to continue.");
+  if (!req.session.userId || !req.session.supabaseAccessToken) throw new ApiError(401, "Please sign in to continue.");
   const user = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(req.session.userId);
   if (!user) throw new ApiError(401, "Your session has expired. Please sign in again.");
   return user;
@@ -298,6 +304,28 @@ app.use(session({
     maxAge: 14 * 24 * 60 * 60 * 1000
   }
 }));
+
+const sessionRefreshes = new Map();
+app.use((req, res, next) => {
+  const stored = req.session;
+  if (!stored?.supabaseRefreshToken || !supabase.configured || stored.supabaseExpiresAt > Math.floor(Date.now() / 1000) + 120) return next();
+  const key = req.sessionID;
+  let refresh = sessionRefreshes.get(key);
+  if (!refresh) {
+    refresh = supabase.createAuthClient().auth.refreshSession({ refresh_token: stored.supabaseRefreshToken })
+      .then(({ data, error }) => error ? null : data.session || null)
+      .catch(() => null)
+      .finally(() => sessionRefreshes.delete(key));
+    sessionRefreshes.set(key, refresh);
+  }
+  refresh.then((authSession) => {
+    if (!authSession) return stored.destroy((error) => error ? next(error) : next());
+    stored.supabaseAccessToken = authSession.access_token;
+    stored.supabaseRefreshToken = authSession.refresh_token;
+    stored.supabaseExpiresAt = authSession.expires_at || Math.floor(Date.now() / 1000) + (authSession.expires_in || 3600);
+    next();
+  }).catch(next);
+});
 
 app.use("/uploads", express.static(uploadsDirectory, {
   dotfiles: "deny",

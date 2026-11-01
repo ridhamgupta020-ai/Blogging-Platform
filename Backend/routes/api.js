@@ -1,5 +1,7 @@
 "use strict";
 
+const crypto = require("node:crypto");
+
 function registerApiRoutes(app, dependencies) {
   const {
     db, supabase, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
@@ -24,7 +26,7 @@ app.get("/api/stats", (req, res) => {
 });
 
 app.get("/api/auth/me", (req, res) => {
-  if (!req.session.userId) return res.json({ user: null });
+  if (!req.session.userId || !req.session.supabaseAccessToken) return res.json({ user: null });
   const user = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(req.session.userId);
   if (!user) {
     req.session.destroy(() => {});
@@ -32,6 +34,75 @@ app.get("/api/auth/me", (req, res) => {
   }
   res.json({ user: publicUser(user) });
 });
+
+function authError(error) {
+  const message = String(error?.message || "");
+  const code = String(error?.code || "");
+  if (/already registered|already exists|user already registered/i.test(message)) {
+    return new ApiError(409, "An account with that email already exists. Log in instead.");
+  }
+  if (/email not confirmed|email_not_confirmed/i.test(`${message} ${code}`)) {
+    return new ApiError(403, "Verify your email address before logging in.");
+  }
+  if (/expired|invalid.*token|otp.*expired|token.*not found/i.test(message)) {
+    return new ApiError(400, "This verification or reset link has expired. Request a new email and try again.");
+  }
+  if (/invalid login credentials|invalid email or password/i.test(message)) {
+    return new ApiError(401, "Email or password is incorrect.");
+  }
+  return new ApiError(400, "Authentication request could not be completed. Check the details and try again.");
+}
+
+async function ensureLocalProfile(authUser, bcrypt) {
+  if (!authUser?.email) throw new ApiError(400, "Verified account has no email address.");
+  let local = db.prepare("SELECT id, email, display_name, avatar_path, created_at, supabase_user_id FROM users WHERE supabase_user_id = ?").get(authUser.id);
+  if (!local) local = db.prepare("SELECT id, email, display_name, avatar_path, created_at, supabase_user_id FROM users WHERE email = ?").get(authUser.email.toLowerCase());
+  if (!local) {
+    const passwordHash = await bcrypt.hash(crypto.randomBytes(48).toString("hex"), 12);
+    const name = String(authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email.split("@")[0]).slice(0, 60);
+    const result = db.prepare("INSERT INTO users (email, password_hash, display_name, supabase_user_id) VALUES (?, ?, ?, ?)").run(authUser.email.toLowerCase(), passwordHash, name, authUser.id);
+    local = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
+  } else if (local.supabase_user_id !== authUser.id) {
+    db.prepare("UPDATE users SET supabase_user_id = ? WHERE id = ?").run(authUser.id, local.id);
+    local.supabase_user_id = authUser.id;
+  }
+  return local;
+}
+
+function saveAuthSession(req, authSession, localUser) {
+  req.session.userId = localUser.id;
+  req.session.supabaseAccessToken = authSession.access_token;
+  req.session.supabaseRefreshToken = authSession.refresh_token;
+  req.session.supabaseExpiresAt = authSession.expires_at || Math.floor(Date.now() / 1000) + (authSession.expires_in || 3600);
+}
+
+app.get("/auth/callback", asyncRoute(async (req, res) => {
+  const { token_hash: tokenHash, type } = req.query;
+  if (typeof tokenHash !== "string" || !["signup", "email", "email_change", "recovery"].includes(type)) {
+    return res.redirect("/login.html?auth_error=invalid_link");
+  }
+  let result;
+  try {
+    result = await supabase.createAuthClient().auth.verifyOtp({ token_hash: tokenHash, type });
+  } catch {
+    return res.redirect("/login.html?auth_error=expired_link");
+  }
+  if (result.error || !result.data.user || !result.data.session) {
+    return res.redirect("/login.html?auth_error=expired_link");
+  }
+  let localUser;
+  if (type === "email_change") {
+    const linked = db.prepare("SELECT id FROM users WHERE supabase_user_id = ?").get(result.data.user.id);
+    if (!linked) return res.redirect("/login.html?auth_error=invalid_link");
+    db.prepare("UPDATE users SET email = ? WHERE id = ?").run(result.data.user.email.toLowerCase(), linked.id);
+    localUser = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(linked.id);
+  } else {
+    localUser = await ensureLocalProfile(result.data.user, bcrypt);
+  }
+  await new Promise((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
+  saveAuthSession(req, result.data.session, localUser);
+  res.redirect(type === "recovery" ? "/reset-password.html" : "/dashboard.html");
+}));
 
 app.post("/api/auth/register", authLimiter, asyncRoute(async (req, res) => {
   const name = text(req.body.name, "Name", 60, { required: true });
@@ -41,37 +112,76 @@ app.post("/api/auth/register", authLimiter, asyncRoute(async (req, res) => {
   if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
     throw new ApiError(400, "Include at least one lowercase letter, one uppercase letter, and one number.");
   }
-  if (db.prepare("SELECT id FROM users WHERE email = ?").get(email)) {
-    throw new ApiError(409, "An account with that email already exists.");
+  const { data, error } = await supabase.createAuthClient().auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: name },
+      emailRedirectTo: `${supabase.siteUrl}/auth/callback?type=signup`
+    }
+  });
+  if (error) throw authError(error);
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    throw new ApiError(409, "An account with that email already exists. Log in instead.");
   }
-
-  const passwordHash = await bcrypt.hash(password, 12);
-  const result = db.prepare("INSERT INTO users (email, password_hash, display_name) VALUES (?, ?, ?)").run(email, passwordHash, name);
-  await new Promise((resolve, reject) => {
-    req.session.regenerate((error) => error ? reject(error) : resolve());
-  });
-  req.session.userId = Number(result.lastInsertRowid);
-  res.status(201).json({
-    user: publicUser(db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(result.lastInsertRowid))
-  });
+  res.status(202).json({ message: "Check your email and follow the verification link to activate your account.", email: data.user?.email || email });
 }));
 
 app.post("/api/auth/login", authLimiter, asyncRoute(async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const password = passwordInput(req.body.password, "Password");
-  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-    throw new ApiError(401, "Email or password is incorrect.");
+  let result;
+  try {
+    result = await supabase.createAuthClient().auth.signInWithPassword({ email, password });
+  } catch (error) {
+    throw authError(error);
   }
-  await new Promise((resolve, reject) => {
-    req.session.regenerate((error) => error ? reject(error) : resolve());
+  if (result.error) throw authError(result.error);
+  if (!result.data.user?.email_confirmed_at || !result.data.session) throw new ApiError(403, "Verify your email address before logging in.");
+  const localUser = await ensureLocalProfile(result.data.user, bcrypt);
+  await new Promise((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
+  saveAuthSession(req, result.data.session, localUser);
+  res.json({ user: publicUser(localUser) });
+}));
+
+app.post("/api/auth/forgot-password", authLimiter, asyncRoute(async (req, res) => {
+  const email = normalizeEmail(req.body.email);
+  const { error } = await supabase.createAuthClient().auth.resetPasswordForEmail(email, {
+    redirectTo: `${supabase.siteUrl}/auth/callback?type=recovery`
   });
-  req.session.userId = user.id;
-  res.json({ user: publicUser(user) });
+  if (error) throw authError(error);
+  res.json({ message: "If an account exists for that email, a password reset link has been sent." });
+}));
+
+app.post("/api/auth/update-password", requireAuth, asyncRoute(async (req, res) => {
+  const password = passwordInput(req.body.password, "Password");
+  if (password.length < 12 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+    throw new ApiError(400, "Use at least 12 characters with lowercase, uppercase, and a number.");
+  }
+  // updateUser requires the Supabase session established by login or recovery.
+  if (!req.session.supabaseAccessToken) throw new ApiError(401, "Your password reset session has expired. Request a new reset link.");
+  const client = supabase.createAuthClient();
+  const { error: sessionError } = await client.auth.setSession({
+    access_token: req.session.supabaseAccessToken,
+    refresh_token: req.session.supabaseRefreshToken
+  });
+  if (sessionError) throw new ApiError(401, "Your password reset session has expired. Request a new reset link.");
+  const updated = await client.auth.updateUser({ password });
+  if (updated.error) throw authError(updated.error);
+  res.json({ success: true });
 }));
 
 app.post("/api/auth/logout", asyncRoute(async (req, res) => {
   if (!req.session) return res.json({ success: true });
+  if (req.session.supabaseAccessToken && req.session.supabaseRefreshToken && supabase.configured) {
+    try {
+      const client = supabase.createAuthClient();
+      await client.auth.setSession({ access_token: req.session.supabaseAccessToken, refresh_token: req.session.supabaseRefreshToken });
+      await client.auth.signOut();
+    } catch {
+      // Always revoke the local server session, even if the remote token has expired.
+    }
+  }
   await new Promise((resolve, reject) => {
     req.session.destroy((error) => error ? reject(error) : resolve());
   });
@@ -94,13 +204,13 @@ app.patch("/api/profile", requireAuth, asyncRoute(async (req, res) => {
   const email = normalizeEmail(req.body.email);
   if (email !== req.user.email) {
     const password = passwordInput(req.body.currentPassword, "Current password");
-    const credentials = db.prepare("SELECT password_hash FROM users WHERE id = ?").get(req.user.id);
-    if (!(await bcrypt.compare(password, credentials.password_hash))) throw new ApiError(403, "Current password is incorrect.");
-    if (db.prepare("SELECT id FROM users WHERE email = ? AND id != ?").get(email, req.user.id)) {
-      throw new ApiError(409, "An account with that email already exists.");
-    }
+    const client = supabase.createAuthClient();
+    const verified = await client.auth.signInWithPassword({ email: req.user.email, password });
+    if (verified.error) throw new ApiError(403, "Current password is incorrect.");
+    const updated = await client.auth.updateUser({ email }, { emailRedirectTo: `${supabase.siteUrl}/auth/callback?type=email_change` });
+    if (updated.error) throw authError(updated.error);
   }
-  db.prepare("UPDATE users SET display_name = ?, email = ? WHERE id = ?").run(name, email, req.user.id);
+  db.prepare("UPDATE users SET display_name = ? WHERE id = ?").run(name, req.user.id);
   res.json({ user: publicUser(db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(req.user.id)) });
 }));
 
@@ -110,9 +220,15 @@ app.patch("/api/profile/password", requireAuth, asyncRoute(async (req, res) => {
   if (newPassword.length < 12 || !/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
     throw new ApiError(400, "Use at least 12 characters with lowercase, uppercase, and a number.");
   }
-  const user = db.prepare("SELECT password_hash FROM users WHERE id = ?").get(req.user.id);
-  if (!(await bcrypt.compare(currentPassword, user.password_hash))) throw new ApiError(403, "Current password is incorrect.");
-  db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(await bcrypt.hash(newPassword, 12), req.user.id);
+  if (!req.session.supabaseAccessToken || !req.session.supabaseRefreshToken) throw new ApiError(401, "Your session has expired. Please sign in again.");
+  const client = supabase.createAuthClient();
+  const { error: sessionError } = await client.auth.setSession({ access_token: req.session.supabaseAccessToken, refresh_token: req.session.supabaseRefreshToken });
+  if (sessionError) throw new ApiError(401, "Your session has expired. Please sign in again.");
+  const verified = await client.auth.signInWithPassword({ email: req.user.email, password: currentPassword });
+  if (verified.error) throw new ApiError(403, "Current password is incorrect.");
+  const { error } = await client.auth.updateUser({ password: newPassword });
+  if (error) throw authError(error);
+  if (verified.data.session) saveAuthSession(req, verified.data.session, req.user);
   res.json({ success: true });
 }));
 

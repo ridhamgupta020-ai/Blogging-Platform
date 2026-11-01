@@ -79,4 +79,11 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS sessions_expiry_idx ON sessions(expires_at);
 `);
 
+// Additive link between the existing SQLite author IDs and verified Supabase Auth users.
+const userColumns = db.pragma("table_info(users)");
+if (!userColumns.some((column) => column.name === "supabase_user_id")) {
+  db.exec("ALTER TABLE users ADD COLUMN supabase_user_id TEXT");
+}
+db.exec("CREATE UNIQUE INDEX IF NOT EXISTS users_supabase_user_id_idx ON users(supabase_user_id) WHERE supabase_user_id IS NOT NULL");
+
 module.exports = db;

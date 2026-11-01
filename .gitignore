@@ -3,3 +3,6 @@ node_modules/
 Backend/data/
 Backend/uploads/
 npm-debug.log*
+
+# Supabase CLI local state can contain credentials
+supabase/.temp/

@@ -44,9 +44,37 @@
 
   document.addEventListener("submit", async (event) => {
     const form = event.target;
-    if (!form.matches("#loginForm, #signupForm")) return;
+    if (!form.matches("#loginForm, #signupForm, #forgotPasswordForm, #resetPasswordForm")) return;
     event.preventDefault();
     event.stopImmediatePropagation();
+
+    if (form.id === "forgotPasswordForm") {
+      const email = form.querySelector('input[type="email"]').value.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showStatus("Enter a valid email address.", "error");
+      try {
+        const result = await api.request("auth/forgot-password", { method: "POST", body: { email } });
+        showStatus(result.message, "success");
+      } catch (error) {
+        showStatus(error.message, "error");
+      }
+      return;
+    }
+
+    if (form.id === "resetPasswordForm") {
+      const password = form.querySelector("#newPassword").value;
+      const confirmation = form.querySelector("#confirmPassword").value;
+      if (password.length < 12 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+        return showStatus("Use at least 12 characters with lowercase, uppercase, and a number.", "error");
+      }
+      if (password !== confirmation) return showStatus("The passwords do not match.", "error");
+      try {
+        await api.request("auth/update-password", { method: "POST", body: { password } });
+        showStatus("Your password has been updated. You can now log in.", "success", { href: "login.html", label: "Go to login" });
+      } catch (error) {
+        showStatus(error.message, "error");
+      }
+      return;
+    }
 
     const isSignup = form.id === "signupForm";
     const name = isSignup ? form.querySelector("#signupName").value.trim() : "";
@@ -69,9 +97,15 @@
 
     try {
       if (isSignup) {
-        await api.request("auth/register", { method: "POST", body: { name, email, password } });
-        await importLegacyBrowserData();
-        location.href = "dashboard.html";
+        const result = await api.request("auth/register", { method: "POST", body: { name, email, password } });
+        showStatus(result.message || "Check your email and follow the verification link to activate your account.", "success", {
+          href: `login.html?email=${encodeURIComponent(email)}`,
+          label: "Continue to login after verification"
+        });
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
         return;
       }
 
@@ -124,4 +158,8 @@
   if (signupForm && new URLSearchParams(location.search).has("next")) {
     signupForm.querySelector("#signupName")?.focus();
   }
+
+  const authError = new URLSearchParams(location.search).get("auth_error");
+  if (authError === "expired_link") showStatus("This verification or reset link has expired. Request a fresh email and try again.", "error");
+  else if (authError) showStatus("This authentication link is invalid. Request a fresh email and try again.", "error");
 })();

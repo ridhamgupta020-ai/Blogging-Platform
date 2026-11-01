@@ -36,7 +36,7 @@ session cookies work through Render's HTTPS proxy. The server refuses to start i
 
 ## Supabase schema setup
 
-The repository includes a Supabase CLI project config and an additive SQL migration in `supabase/migrations/`. The backend client reads `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` from the server environment; no Supabase key belongs in frontend files. Copy the placeholders in `.env.example` into your private `.env`. Rotate any Supabase secret key that has ever been committed or shared.
+The repository includes a Supabase CLI project config and an additive SQL migration in `supabase/migrations/`. Signup/login/recovery use Supabase Auth; the backend exchanges email OTP links and keeps access/refresh tokens in its server-side SQLite session store. The existing blog, comment, like, newsletter, and profile APIs still use the SQLite data store. The backend client reads `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` from the server environment; no Supabase key belongs in frontend files.
 
 Install the CLI on macOS with `brew install supabase/tap/supabase`, then:
 
@@ -54,7 +54,15 @@ supabase db push --linked
 supabase migration list --linked
 ```
 
-The project URL is `https://tsmkeivqvqnyfcmaqbhb.supabase.co`. The CLI prompts for the database password during linking; enter it only in that prompt and do not put it in source, a command argument, or committed files. If it contains reserved characters, the CLI prompt avoids connection-string encoding concerns. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, and `SESSION_SECRET` in Render's private environment settings. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
+The project URL is `https://tsmkeivqvqnyfcmaqbhb.supabase.co`. The CLI prompts for the database password during linking; enter it only in that prompt and do not put it in source, a command argument, or committed files. If it contains reserved characters, the CLI prompt avoids connection-string encoding concerns. Configure `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `SESSION_SECRET`, and `PUBLIC_APP_URL` in Render's private environment settings. `PUBLIC_APP_URL` must be the deployed origin such as `https://your-service.onrender.com`. Keep `SUPABASE_SECRET_KEY` on the backend only. `/api/health` probes whether the Supabase `profiles` relation is queryable after migration.
+
+In Supabase Auth settings, enable email confirmations and set password minimum length to 12 with lowercase, uppercase, and numeric characters required. Add `${PUBLIC_APP_URL}/auth/callback*` to the allowed redirect URLs. Customize both the Confirm signup and Reset Password email templates so their link uses the supplied redirect and token hash, for example:
+
+```html
+<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}">Continue</a>
+```
+
+The signup redirect includes `type=signup`; the password recovery redirect includes `type=recovery`. The backend callback verifies the one-time token and creates the server session. Without those template and URL settings, confirmation/recovery links will not complete.
 
 Then start the site:
 
@@ -72,9 +80,9 @@ The existing backend uses parameterized SQLite statements directly rather than a
 
 ## Features
 
-- Registration with normalized unique emails and password rules (12+ characters, upper/lowercase and a number); passwords are bcrypt-hashed.
-- Login, logout, persistent server-side SQLite sessions, HTTP-only same-site cookies, and protected authoring/dashboard/profile routes. No demo credentials are configured.
-- Duplicate registrations preserve the existing account and offer a sign-in link with the email prefilled. Password reset is not available until a trusted email delivery provider is configured; the app never reveals or resets an existing password automatically.
+- Supabase email registration and verification, login, logout, forgot-password and recovery, with 12+ character upper/lowercase/numeric password rules.
+- Persistent server-side SQLite sessions with HTTP-only same-site cookies; Supabase tokens remain server-side. Protected authoring/dashboard/profile routes require a verified Supabase session.
+- Duplicate registrations preserve existing accounts and offer a sign-in link. Password reset uses Supabase Auth email delivery and never reveals an existing password.
 - Article drafts and publishing with descriptions, categories, tags, sanitized rich text, cover-image upload, inline-image upload, preview, and edit mode.
 - Owner-scoped edit, publish/unpublish, and delete actions.
 - Public article reading, author profiles, related articles, likes, and comments with author-only edit/delete.
@@ -86,7 +94,7 @@ The existing backend uses parameterized SQLite statements directly rather than a
 
 ## Data and security notes
 
-- SQLite is the source of truth for accounts, articles, comments, likes, newsletter subscribers, and sessions. Authentication does not trust localStorage.
+- Supabase Auth is the source of truth for verified credentials; SQLite mirrors verified user profiles and remains the source of truth for articles, comments, likes, newsletter subscribers, and server-side sessions. Authentication does not trust localStorage.
 - Existing localStorage article/draft content can be imported from the sign-in flow. The old localStorage password is discarded; users must register again because it cannot be migrated safely.
 - Uploaded images are limited to JPG, PNG, and WebP files up to 5 MB and checked against their file signatures.
 - Article HTML is sanitized on the server before it is stored. Profile and comment text is rendered as text.

@@ -102,7 +102,8 @@ alter table public.likes enable row level security;
 alter table public.newsletter_subscribers enable row level security;
 
 revoke all on public.profiles, public.categories, public.blogs, public.comments, public.likes, public.newsletter_subscribers from anon, authenticated;
-grant select on public.profiles, public.categories, public.blogs, public.comments, public.likes to anon, authenticated;
+grant select (id, full_name, avatar_url, created_at, updated_at) on public.profiles to anon, authenticated;
+grant select on public.categories, public.blogs, public.comments, public.likes to anon, authenticated;
 grant update (full_name, avatar_url) on public.profiles to authenticated;
 grant insert, update, delete on public.blogs to authenticated;
 grant insert, update, delete on public.comments to authenticated;
