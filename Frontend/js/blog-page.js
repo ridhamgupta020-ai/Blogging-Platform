@@ -5,7 +5,7 @@
   const blogId = new URLSearchParams(location.search).get("id");
   const article = document.getElementById("blog");
   if (!article) return;
-  if (!blogId || !/^\d+$/.test(blogId)) {
+  if (!blogId || !(/^[0-9]+$/.test(blogId) || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(blogId))) {
     api.notice("Choose an article from the blog list.", "error", article);
     return;
   }

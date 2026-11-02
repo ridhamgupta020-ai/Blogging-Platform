@@ -15,6 +15,7 @@ const sanitizeHtml = require("sanitize-html");
 const db = require("./Backend/config/database");
 const supabase = require("./Backend/config/supabase");
 const registerApiRoutes = require("./Backend/routes/api");
+const { createSupabaseContent } = require("./Backend/services/supabase-content");
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -90,6 +91,8 @@ class ApiError extends Error {
   }
 }
 
+const contentStore = supabase.adminClient ? createSupabaseContent(supabase.adminClient, ApiError) : null;
+
 const asyncRoute = (handler) => (req, res, next) => {
   Promise.resolve(handler(req, res, next)).catch(next);
 };
@@ -104,7 +107,7 @@ const publicUser = (user) => ({
 
 const currentUser = (req) => {
   if (!req.session.userId || !req.session.supabaseAccessToken) throw new ApiError(401, "Please sign in to continue.");
-  const user = db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(req.session.userId);
+  const user = db.prepare("SELECT id, email, display_name, avatar_path, created_at, supabase_user_id FROM users WHERE id = ?").get(req.session.userId);
   if (!user) throw new ApiError(401, "Your session has expired. Please sign in again.");
   return user;
 };
@@ -347,6 +350,11 @@ app.use("/uploads", express.static(uploadsDirectory, {
   maxAge: "7d",
   immutable: true
 }));
+app.use("/api", (req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+  next();
+});
 app.use((req, res, next) => {
   let requestedPath;
   try {
@@ -386,7 +394,7 @@ app.use(express.static(publicPagesDirectory, { dotfiles: "ignore", index: "index
 registerApiRoutes(app, {
   db, supabase, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
   importLegacyContent, text, passwordInput, normalizeEmail, normalizeTags,
-  normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter
+  normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter, contentStore
 });
 
 app.use("/api", (req, res, next) => next(new ApiError(404, "API endpoint not found.")));

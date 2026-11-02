@@ -83,12 +83,7 @@
 
     <section class="testimonials soft-testimonials" aria-labelledby="testimonialTitle"><p class="eyebrow">Writers’ words</p><h2 id="testimonialTitle">A little encouragement goes a long way.</h2><div class="testimonial-grid soft-stagger"><article class="tab-card lavender"><span class="tab-label">A creator’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article><article class="tab-card cream-card"><span class="tab-label">A reader’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article><article class="tab-card sage-card"><span class="tab-label">A writer’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article></div></section>
 
-    <section class="showcase soft-gallery" aria-labelledby="showcaseTitle"><p class="eyebrow">Made by the community</p><h2 id="showcaseTitle">A few stories to get you started.</h2><div class="gallery-track" tabindex="0" aria-label="Featured Draftly stories">
-      <a class="gallery-card" href="short.html"><img src="/images/7.png" alt="Cover image for a story about communication" loading="lazy"><span>Creator stories</span><h3>Let’s talk about love languages</h3></a>
-      <a class="gallery-card" id="gallerySecond" href="newsletter2.html"><img src="/images/8.webp" alt="Cover image for a story about content revenue" loading="lazy"><span>Growth</span><h3>There’s money on the table you’re not collecting</h3></a>
-      <a class="gallery-card" href="newsletter.html"><img src="/images/3.jpg" alt="Cover image for an article about learning SEO" loading="lazy"><span>Discovery</span><h3>Can’t you learn SEO from YouTube and ChatGPT?</h3></a>
-      <a class="gallery-card" href="blogs.html"><img src="/images/6.jpg" alt="Cover image for a writing routine story" loading="lazy"><span>Writing</span><h3>How to build a 30-day writing streak</h3></a>
-    </div><a class="soft-button" href="blogs.html">See what creators publish <span aria-hidden="true">→</span></a><a class="gallery-next" href="#gallerySecond" aria-label="Scroll to more stories">→</a></section>
+    <section class="showcase soft-gallery" aria-labelledby="showcaseTitle"><p class="eyebrow">Made by the community</p><h2 id="showcaseTitle">A few stories to get you started.</h2><div class="gallery-track" tabindex="0" aria-label="Featured Draftly stories" aria-live="polite" aria-busy="true"><p role="status">Loading published stories…</p></div><a class="soft-button" href="blogs.html">See what creators publish <span aria-hidden="true">→</span></a><a class="gallery-next" href="blogs.html" aria-label="Browse all published stories">→</a></section>
 
     <section class="pricing soft-pricing" aria-labelledby="pricingTitle"><p class="eyebrow">Choose your pace</p><h2 id="pricingTitle">Room to grow, your way.</h2><p>Start with the essentials and find the workflow that fits your work.</p><div class="pricing-grid"><article class="plan-card"><span class="plan-label">FREE</span><h3>A place to begin</h3><p>Build a steady writing habit with the essentials.</p><ul><li>Focused writing workspace</li><li>Publish and manage stories</li><li>Simple creator dashboard</li></ul><a href="signup.html">Create an account <span>→</span></a></article><article class="plan-card featured-plan"><span class="plan-label">PRO · FOR YOUR NEXT CHAPTER</span><h3>Make more of your ideas</h3><p>A deeper toolkit for a growing publishing practice.</p><ul><li>Everything in Free</li><li>Organized content workflow</li><li>Reader newsletter tools</li></ul><a href="signup.html">Get started <span>→</span></a></article><article class="plan-card"><span class="plan-label">TEAM</span><h3>Build together</h3><p>Bring a shared editorial rhythm to your team.</p><ul><li>Collaborative planning</li><li>Shared publishing calendar</li><li>Team-ready workspace</li></ul><a href="Contact.html">Talk to us <span>→</span></a></article></div></section>
 
@@ -134,51 +129,6 @@
       });
     }
 
-    function renderAuth() {
-      const isLoggedIn = localStorage.getItem("loggedIn");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-      if (!authArea) return;
-
-      if (isLoggedIn) {
-        authArea.innerHTML = [
-          '<span class="auth-chip">',
-          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
-          (user.name || "User"),
-          '<button class="logout-btn" type="button" id="logoutBtn">Logout</button>',
-          '</span>'
-        ].join(" ");
-
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("loggedIn");
-            window.location.href = "login.html";
-          });
-        }
-      } else {
-        authArea.innerHTML = '<a href="login.html" class="login-btn">Login</a>';
-      }
-    }
-
-    renderAuth();
-
-    if (newsletterForm && newsletterEmail && newsletterFeedback) {
-      newsletterForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const email = newsletterEmail.value.trim();
-
-        if (!email) {
-          newsletterFeedback.textContent = "Please enter your email address.";
-          return;
-        }
-
-        localStorage.setItem("newsletterEmail", email);
-        newsletterFeedback.textContent = "Thanks for subscribing. Updates are on the way.";
-        newsletterForm.reset();
-      });
-    }
-
     if (scrollTopBtn) {
       const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
       scrollTopBtn.addEventListener("click", scrollToTop);
@@ -193,5 +143,6 @@
 <script src="/js/api.js"></script>
 <script src="/js/oauth-callback-fallback.js"></script>
 <script src="/js/platform.js"></script>
+<script src="/js/home-blog-preview.js"></script>
 </body>
 </html>

@@ -6,24 +6,35 @@ function registerApiRoutes(app, dependencies) {
   const {
     db, supabase, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
     importLegacyContent, text, passwordInput, normalizeEmail, normalizeTags,
-    normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter
+    normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter, contentStore
   } = dependencies;
+const useSupabaseContent = Boolean(contentStore) && process.env.NODE_ENV !== "test";
+
+function viewerId(req) {
+  if (!useSupabaseContent || !req.session?.userId) return null;
+  return db.prepare("SELECT supabase_user_id FROM users WHERE id = ?").get(req.session.userId)?.supabase_user_id || null;
+}
+
+function validSupabaseId(value) {
+  return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
 
 app.get("/api/health", asyncRoute(async (req, res) => {
   const supabaseStatus = await supabase.checkConnection();
   res.status(supabaseStatus.connected ? 200 : supabaseStatus.configured ? 503 : 200).json({
     status: "ok",
-    database: "sqlite",
+    database: useSupabaseContent ? "supabase" : "sqlite",
     supabase: supabaseStatus
   });
 }));
 
-app.get("/api/stats", (req, res) => {
+app.get("/api/stats", asyncRoute(async (req, res) => {
+  if (useSupabaseContent) return res.json(await contentStore.getStats());
   const published = db.prepare("SELECT COUNT(*) AS count FROM blogs WHERE status = 'published'").get().count;
   const creators = db.prepare("SELECT COUNT(DISTINCT user_id) AS count FROM blogs WHERE status = 'published'").get().count;
   const subscribers = db.prepare("SELECT COUNT(*) AS count FROM newsletter_subscribers").get().count;
   res.json({ published, creators, subscribers });
-});
+}));
 
 app.get("/api/auth/me", (req, res) => {
   if (!req.session.userId || !req.session.supabaseAccessToken) return res.json({ user: null });
@@ -72,6 +83,7 @@ async function ensureLocalProfile(authUser, bcrypt) {
     db.prepare("UPDATE users SET supabase_user_id = ? WHERE id = ?").run(authUser.id, local.id);
     local.supabase_user_id = authUser.id;
   }
+  if (useSupabaseContent) await contentStore.upsertProfile(authUser);
   return local;
 }
 
@@ -242,7 +254,15 @@ app.post("/api/auth/logout", asyncRoute(async (req, res) => {
   res.json({ success: true });
 }));
 
-app.get("/api/profile", requireAuth, (req, res) => {
+app.get("/api/profile", requireAuth, asyncRoute(async (req, res) => {
+  if (useSupabaseContent) {
+    const [profile, counts] = await Promise.all([
+      contentStore.getProfile(req.user.supabase_user_id, { privateFields: true }),
+      contentStore.getDashboardCounts(req.user.supabase_user_id)
+    ]);
+    if (!profile) throw new ApiError(404, "Profile not found.");
+    return res.json({ user: { id: profile.id, name: profile.full_name, email: profile.email, avatar: profile.avatar_url, createdAt: profile.created_at }, counts });
+  }
   const counts = db.prepare(`
     SELECT COUNT(*) AS total,
       SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) AS published,
@@ -250,7 +270,7 @@ app.get("/api/profile", requireAuth, (req, res) => {
     FROM blogs WHERE user_id = ?
   `).get(req.user.id);
   res.json({ user: publicUser(req.user), counts });
-});
+}));
 
 app.patch("/api/profile", requireAuth, asyncRoute(async (req, res) => {
   const name = text(req.body.name, "Name", 60, { required: true });
@@ -264,6 +284,10 @@ app.patch("/api/profile", requireAuth, asyncRoute(async (req, res) => {
     if (updated.error) throw authError(updated.error);
   }
   db.prepare("UPDATE users SET display_name = ? WHERE id = ?").run(name, req.user.id);
+  if (useSupabaseContent) {
+    const updatedProfile = await contentStore.updateProfile(req.user.supabase_user_id, { full_name: name });
+    return res.json({ user: { id: updatedProfile.id, name: updatedProfile.full_name, email: updatedProfile.email, avatar: updatedProfile.avatar_url, createdAt: updatedProfile.created_at } });
+  }
   res.json({ user: publicUser(db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(req.user.id)) });
 }));
 
@@ -285,18 +309,29 @@ app.patch("/api/profile/password", requireAuth, asyncRoute(async (req, res) => {
   res.json({ success: true });
 }));
 
-app.post("/api/profile/avatar", requireAuth, upload.single("image"), (req, res, next) => {
+app.post("/api/profile/avatar", requireAuth, upload.single("image"), asyncRoute(async (req, res) => {
   try {
+    if (useSupabaseContent) {
+      const avatar = await contentStore.uploadImage(req.user.supabase_user_id, req.file);
+      await contentStore.updateProfile(req.user.supabase_user_id, { avatar_url: avatar });
+      db.prepare("UPDATE users SET avatar_path = ? WHERE id = ?").run(avatar, req.user.id);
+      return res.status(201).json({ avatar });
+    }
     const avatar = saveImage(req.file);
     if (!avatar) throw new ApiError(400, "Choose an image to upload.");
     db.prepare("UPDATE users SET avatar_path = ? WHERE id = ?").run(avatar, req.user.id);
     res.status(201).json({ avatar });
   } catch (error) {
-    next(error);
+    throw error;
   }
-});
+}));
 
-app.get("/api/profile/blogs", requireAuth, (req, res) => {
+app.get("/api/profile/blogs", requireAuth, asyncRoute(async (req, res) => {
+  if (useSupabaseContent) {
+    const status = ["draft", "published"].includes(req.query.status) ? req.query.status : undefined;
+    const result = await contentStore.listBlogs({ authorId: req.user.supabase_user_id, status, page: 1, limit: 100, sort: "newest", viewerId: req.user.supabase_user_id });
+    return res.json({ blogs: result.blogs });
+  }
   const status = ["draft", "published"].includes(req.query.status) ? req.query.status : null;
   const rows = db.prepare(`
     ${blogSelect}
@@ -304,7 +339,7 @@ app.get("/api/profile/blogs", requireAuth, (req, res) => {
     ORDER BY b.updated_at DESC, b.id DESC
   `).all(req.user.id, req.user.id, status, status);
   res.json({ blogs: rows.map((row) => blogRow(row, req.user.id)) });
-});
+}));
 
 app.post("/api/migrate/local", requireAuth, (req, res, next) => {
   try {
@@ -358,33 +393,55 @@ app.post("/api/migrate/local", requireAuth, (req, res, next) => {
   }
 });
 
-app.get("/api/users/:id", (req, res, next) => {
+app.get("/api/users/:id", asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    const user = await contentStore.getProfile(req.params.id);
+    if (!user) return next(new ApiError(404, "Author not found."));
+    return res.json({ user: { id: user.id, name: user.full_name, avatar: user.avatar_url, createdAt: user.created_at } });
+  }
   const id = Number(req.params.id);
   if (!Number.isSafeInteger(id) || id < 1) return next(new ApiError(400, "Invalid author."));
   const user = db.prepare("SELECT id, display_name, avatar_path, created_at FROM users WHERE id = ?").get(id);
   if (!user) return next(new ApiError(404, "Author not found."));
   res.json({ user: { id: user.id, name: user.display_name, avatar: user.avatar_path, createdAt: user.created_at } });
-});
+}));
 
-app.get("/api/users/:id/blogs", (req, res, next) => {
+app.get("/api/users/:id/blogs", asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    const result = await contentStore.listBlogs({ authorId: req.params.id, status: "published", page: 1, limit: 100, sort: "newest", viewerId: viewerId(req) });
+    return res.json({ blogs: result.blogs });
+  }
   const id = Number(req.params.id);
   if (!Number.isSafeInteger(id) || id < 1) return next(new ApiError(400, "Invalid author."));
   if (!db.prepare("SELECT id FROM users WHERE id = ?").get(id)) return next(new ApiError(404, "Author not found."));
   const rows = db.prepare(`${blogSelect} WHERE b.user_id = ? AND b.status = 'published' ORDER BY b.published_at DESC`).all(req.session.userId || 0, id);
   res.json({ blogs: rows.map((row) => blogRow(row, req.session.userId || null)) });
-});
+}));
 
-app.post("/api/uploads/images", requireAuth, upload.single("image"), (req, res, next) => {
+app.post("/api/uploads/images", requireAuth, upload.single("image"), asyncRoute(async (req, res) => {
   try {
+    if (useSupabaseContent) {
+      const image = await contentStore.uploadImage(req.user.supabase_user_id, req.file);
+      return res.status(201).json({ image });
+    }
     const image = saveImage(req.file);
     if (!image) throw new ApiError(400, "Choose an image to upload.");
     res.status(201).json({ image });
   } catch (error) {
-    next(error);
+    throw error;
   }
-});
+}));
 
-app.get("/api/blogs", (req, res) => {
+app.get("/api/blogs", asyncRoute(async (req, res) => {
+  if (useSupabaseContent) {
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(24, Math.max(1, Number.parseInt(req.query.limit, 10) || 9));
+    const query = text(typeof req.query.q === "string" ? req.query.q : "", "Search", 120).toLowerCase();
+    const category = text(typeof req.query.category === "string" ? req.query.category : "", "Category", 80);
+    const tag = text(typeof req.query.tag === "string" ? req.query.tag : "", "Tag", 32).toLowerCase();
+    const sort = ["title-asc", "title-desc", "oldest"].includes(req.query.sort) ? req.query.sort : "newest";
+    return res.json(await contentStore.listBlogs({ page, limit, query, category, tag, sort, viewerId: viewerId(req) }));
+  }
   const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
   const limit = Math.min(24, Math.max(1, Number.parseInt(req.query.limit, 10) || 9));
   const query = text(typeof req.query.q === "string" ? req.query.q : "", "Search", 120).toLowerCase();
@@ -429,9 +486,19 @@ app.get("/api/blogs", (req, res) => {
     categories,
     tags
   });
-});
+}));
 
-app.get("/api/blogs/:id", (req, res, next) => {
+app.get("/api/blogs/:id", asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    try {
+      const blog = await contentStore.getBlog(req.params.id, { publicOnly: true, viewerId: viewerId(req) });
+      const related = await contentStore.getRelated(blog);
+      return res.json({ blog, related });
+    } catch (error) {
+      if (error.status === 404) return next(error);
+      throw error;
+    }
+  }
   const id = Number(req.params.id);
   if (!Number.isSafeInteger(id) || id < 1) return next(new ApiError(400, "Invalid article."));
   const row = db.prepare(`${blogSelect} WHERE b.id = ? AND b.status = 'published'`).get(req.session.userId || 0, id);
@@ -444,9 +511,9 @@ app.get("/api/blogs/:id", (req, res, next) => {
     ORDER BY b.published_at DESC LIMIT 3
   `).all(req.session.userId || 0, id, row.category, row.tags);
   res.json({ blog: blogRow(row, req.session.userId || null), related: related.map((item) => blogRow(item, req.session.userId || null)) });
-});
+}));
 
-app.post("/api/blogs", requireAuth, (req, res, next) => {
+app.post("/api/blogs", requireAuth, asyncRoute(async (req, res, next) => {
   try {
     const title = text(req.body.title, "Title", 160, { required: true });
     const description = text(req.body.description, "Description", 500);
@@ -456,6 +523,10 @@ app.post("/api/blogs", requireAuth, (req, res, next) => {
     const tags = normalizeTags(req.body.tags);
     const status = req.body.status === "published" ? "published" : "draft";
     if (status === "published" && !content) throw new ApiError(400, "Add content before publishing.");
+    if (useSupabaseContent) {
+      const blog = await contentStore.saveBlog({ authorId: req.user.supabase_user_id, title, description, content, coverImage, category, tags, status });
+      return res.status(201).json({ blog });
+    }
     const result = db.prepare(`
       INSERT INTO blogs (user_id, title, description, content, cover_image, category, tags, status, published_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? = 'published' THEN datetime('now') ELSE NULL END)
@@ -463,12 +534,26 @@ app.post("/api/blogs", requireAuth, (req, res, next) => {
     const row = db.prepare(`${blogSelect} WHERE b.id = ?`).get(req.user.id, result.lastInsertRowid);
     res.status(201).json({ blog: blogRow(row, req.user.id) });
   } catch (error) {
-    next(error);
+    if (error instanceof ApiError) return next(error);
+    throw error;
   }
-});
+}));
 
-app.patch("/api/blogs/:id", requireAuth, (req, res, next) => {
+app.patch("/api/blogs/:id", requireAuth, asyncRoute(async (req, res, next) => {
   try {
+    if (useSupabaseContent && validSupabaseId(req.params.id)) {
+      const id = req.params.id;
+      const title = text(req.body.title, "Title", 160, { required: true });
+      const description = text(req.body.description, "Description", 500);
+      const content = sanitizeContent(req.body.content);
+      const coverImage = normalizeImage(req.body.coverImage);
+      const category = text(req.body.category, "Category", 80);
+      const tags = normalizeTags(req.body.tags);
+      const status = req.body.status === "published" ? "published" : "draft";
+      if (status === "published" && !content) throw new ApiError(400, "Add content before publishing.");
+      const blog = await contentStore.saveBlog({ id, authorId: req.user.supabase_user_id, title, description, content, coverImage, category, tags, status });
+      return res.json({ blog });
+    }
     const id = Number(req.params.id);
     if (!Number.isSafeInteger(id) || id < 1) throw new ApiError(400, "Invalid article.");
     const existing = db.prepare("SELECT * FROM blogs WHERE id = ?").get(id);
@@ -491,19 +576,27 @@ app.patch("/api/blogs/:id", requireAuth, (req, res, next) => {
     const row = db.prepare(`${blogSelect} WHERE b.id = ?`).get(req.user.id, id);
     res.json({ blog: blogRow(row, req.user.id) });
   } catch (error) {
-    next(error);
+    if (error instanceof ApiError) return next(error);
+    throw error;
   }
-});
+}));
 
-app.delete("/api/blogs/:id", requireAuth, (req, res, next) => {
+app.delete("/api/blogs/:id", requireAuth, asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    await contentStore.deleteBlog(req.params.id, req.user.supabase_user_id);
+    return res.status(204).end();
+  }
   const id = Number(req.params.id);
   if (!Number.isSafeInteger(id) || id < 1) return next(new ApiError(400, "Invalid article."));
   const result = db.prepare("DELETE FROM blogs WHERE id = ? AND user_id = ?").run(id, req.user.id);
   if (!result.changes) return next(new ApiError(404, "Article not found."));
   res.status(204).end();
-});
+}));
 
-app.post("/api/blogs/:id/like", requireAuth, (req, res, next) => {
+app.post("/api/blogs/:id/like", requireAuth, asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    return res.json(await contentStore.like(req.params.id, req.user.supabase_user_id));
+  }
   const id = Number(req.params.id);
   const blog = db.prepare("SELECT id FROM blogs WHERE id = ? AND status = 'published'").get(id);
   if (!blog) return next(new ApiError(404, "Article not found."));
@@ -512,9 +605,13 @@ app.post("/api/blogs/:id/like", requireAuth, (req, res, next) => {
   else db.prepare("INSERT INTO likes (user_id, blog_id) VALUES (?, ?)").run(req.user.id, id);
   const likes = db.prepare("SELECT COUNT(*) AS count FROM likes WHERE blog_id = ?").get(id).count;
   res.json({ liked: !existing, likes });
-});
+}));
 
-app.get("/api/blogs/:id/comments", (req, res, next) => {
+app.get("/api/blogs/:id/comments", asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    const comments = await contentStore.listComments(req.params.id, viewerId(req));
+    return res.json({ comments });
+  }
   const id = Number(req.params.id);
   const exists = db.prepare("SELECT id FROM blogs WHERE id = ? AND status = 'published'").get(id);
   if (!exists) return next(new ApiError(404, "Article not found."));
@@ -533,10 +630,15 @@ app.get("/api/blogs/:id/comments", (req, res, next) => {
       canEdit: req.session.userId === comment.user_id
     }))
   });
-});
+}));
 
-app.post("/api/blogs/:id/comments", requireAuth, (req, res, next) => {
+app.post("/api/blogs/:id/comments", requireAuth, asyncRoute(async (req, res, next) => {
   try {
+    if (useSupabaseContent && validSupabaseId(req.params.id)) {
+      const body = text(req.body.body, "Comment", 2000, { required: true });
+      const comment = await contentStore.addComment(req.params.id, req.user, body);
+      return res.status(201).json({ comment });
+    }
     const id = Number(req.params.id);
     const body = text(req.body.body, "Comment", 2000, { required: true });
     if (!db.prepare("SELECT id FROM blogs WHERE id = ? AND status = 'published'").get(id)) throw new ApiError(404, "Article not found.");
@@ -551,37 +653,59 @@ app.post("/api/blogs/:id/comments", requireAuth, (req, res, next) => {
       }
     });
   } catch (error) {
-    next(error);
+    if (error instanceof ApiError) return next(error);
+    throw error;
   }
-});
+}));
 
-app.patch("/api/comments/:id", requireAuth, (req, res, next) => {
+app.patch("/api/comments/:id", requireAuth, asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    const body = text(req.body.body, "Comment", 2000, { required: true });
+    return res.json(await contentStore.editComment(req.params.id, req.user.supabase_user_id, body));
+  }
   const id = Number(req.params.id);
   const body = text(req.body.body, "Comment", 2000, { required: true });
   const result = db.prepare("UPDATE comments SET body = ?, updated_at = datetime('now') WHERE id = ? AND user_id = ?").run(body, id, req.user.id);
   if (!result.changes) return next(new ApiError(404, "Comment not found."));
   res.json({ id, body });
-});
+}));
 
-app.delete("/api/comments/:id", requireAuth, (req, res, next) => {
+app.delete("/api/comments/:id", requireAuth, asyncRoute(async (req, res, next) => {
+  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+    await contentStore.deleteComment(req.params.id, req.user.supabase_user_id);
+    return res.status(204).end();
+  }
   const result = db.prepare("DELETE FROM comments WHERE id = ? AND user_id = ?").run(Number(req.params.id), req.user.id);
   if (!result.changes) return next(new ApiError(404, "Comment not found."));
   res.status(204).end();
-});
+}));
 
-app.post("/api/newsletter", (req, res, next) => {
+app.post("/api/newsletter", asyncRoute(async (req, res, next) => {
   try {
     const email = normalizeEmail(req.body.email);
     const name = text(req.body.name, "Name", 60);
+    if (useSupabaseContent) {
+      await contentStore.subscribe(email, name);
+      return res.status(201).json({ message: "You're subscribed. No email has been sent yet." });
+    }
     const result = db.prepare("INSERT OR IGNORE INTO newsletter_subscribers (email, name) VALUES (?, ?)").run(email, name);
     if (!result.changes) throw new ApiError(409, "This email is already subscribed.");
     res.status(201).json({ message: "You're subscribed. No email has been sent yet." });
   } catch (error) {
-    next(error);
+    if (error instanceof ApiError) return next(error);
+    throw error;
   }
-});
+}));
 
-app.get("/api/dashboard", requireAuth, (req, res) => {
+app.get("/api/dashboard", requireAuth, asyncRoute(async (req, res) => {
+  if (useSupabaseContent) {
+    const [counts, result, stats] = await Promise.all([
+      contentStore.getDashboardCounts(req.user.supabase_user_id),
+      contentStore.listBlogs({ authorId: req.user.supabase_user_id, page: 1, limit: 10, sort: "newest", viewerId: req.user.supabase_user_id }),
+      contentStore.getStats()
+    ]);
+    return res.json({ user: publicUser(req.user), counts, blogs: result.blogs, subscribers: stats.subscribers });
+  }
   const counts = db.prepare(`
     SELECT COUNT(*) AS total,
       SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) AS published,
@@ -592,7 +716,7 @@ app.get("/api/dashboard", requireAuth, (req, res) => {
     .map((row) => blogRow(row, req.user.id));
   const subscribers = db.prepare("SELECT COUNT(*) AS count FROM newsletter_subscribers").get().count;
   res.json({ user: publicUser(req.user), counts, blogs, subscribers });
-});
+}));
 }
 
 module.exports = registerApiRoutes;

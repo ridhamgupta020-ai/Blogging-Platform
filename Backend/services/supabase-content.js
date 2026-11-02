@@ -113,11 +113,29 @@ function createSupabaseContent(client, ApiError) {
     return mapped;
   }
 
-  async function listBlogs({ page = 1, limit = 9, query, category, tag, sort = "newest", authorId, status, viewerId } = {}) {
+  function publicBlog(row, counts = {}) {
+    return {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      excerpt: row.excerpt || "",
+      cover_url: row.featured_image || null,
+      tags: Array.isArray(row.tags) ? row.tags : [],
+      category: row.category?.name || "",
+      read_time: readTime(row.content),
+      published_at: row.published_at,
+      author: row.author ? { id: row.author.id, name: row.author.full_name || "Writer", avatar: row.author.avatar_url || null } : { name: "Writer", avatar: null },
+      like_count: counts.likes || 0,
+      comment_count: counts.comments || 0,
+      liked: Boolean(counts.liked)
+    };
+  }
+
+  async function listBlogs({ page = 1, limit = 9, query, category, tag, sort = "newest", authorId, status, viewerId, includePrivateContent = false } = {}) {
     let request = client.from("blogs").select(BLOG_SELECT, { count: "exact" });
     if (authorId) request = request.eq("author_id", authorId);
     if (status) request = request.eq("status", status);
-    else request = request.eq("status", "published");
+    else if (!authorId) request = request.eq("status", "published");
     if (query) {
       const escaped = query.replace(/[%,()]/g, " ").trim();
       if (escaped) request = request.or(`title.ilike.%${escaped}%,excerpt.ilike.%${escaped}%,content.ilike.%${escaped}%`);
@@ -136,7 +154,7 @@ function createSupabaseContent(client, ApiError) {
     const counts = await loadCounts(rows, viewerId);
     const [categories, tags] = await Promise.all([listCategories(), listTags()]);
     return {
-      blogs: rows.map((row) => mapBlog(row, counts.get(row.id), { includeContent: false, includeStatus: false })),
+      blogs: rows.map((row) => includePrivateContent ? mapBlog(row, counts.get(row.id)) : publicBlog(row, counts.get(row.id))),
       total: result.count || 0,
       page,
       pages: Math.ceil((result.count || 0) / limit),
@@ -174,7 +192,10 @@ function createSupabaseContent(client, ApiError) {
   async function getRelated(blog) {
     let request = client.from("blogs").select(BLOG_SELECT).eq("status", "published").neq("id", blog.id)
       .order("published_at", { ascending: false }).limit(3);
-    if (blog.category_id) request = request.eq("category_id", blog.category_id);
+    if (blog.category) {
+      const category = await unwrap(client.from("categories").select("id").eq("name", blog.category).maybeSingle(), "Related category lookup");
+      if (category.data) request = request.eq("category_id", category.data.id);
+    }
     const result = await unwrap(request, "Related articles lookup");
     const counts = await loadCounts(result.data || []);
     return (result.data || []).map((row) => mapBlog(row, counts.get(row.id), { includeContent: false, includeStatus: false }));
@@ -191,7 +212,7 @@ function createSupabaseContent(client, ApiError) {
     };
     let result;
     if (id) {
-      const existing = await unwrap(client.from("blogs").select("id,author_id,published_at").eq("id", id).maybeSingle(), "Article ownership check");
+      const existing = await unwrap(client.from("blogs").select("id,author_id,published_at,status").eq("id", id).maybeSingle(), "Article ownership check");
       if (!existing.data) throw new ApiError(404, "Article not found.");
       if (existing.data.author_id !== authorId) throw new ApiError(403, "You cannot edit this article.");
       if (existing.data.status === "published" && status === "published") record.published_at = existing.data.published_at;
@@ -235,6 +256,8 @@ function createSupabaseContent(client, ApiError) {
 
   async function upsertProfile(user) {
     if (!user?.id || !user.email) return;
+    const existing = await unwrap(client.from("profiles").select("id").eq("id", user.id).maybeSingle(), "Profile lookup");
+    if (existing.data) return;
     const full_name = String(user.user_metadata?.full_name || user.user_metadata?.name || user.email.split("@")[0]).slice(0, 120);
     const avatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
     await unwrap(client.from("profiles").upsert({ id: user.id, full_name, email: user.email.toLowerCase(), avatar_url: avatar }, { onConflict: "id" }), "Profile sync");
@@ -252,6 +275,15 @@ function createSupabaseContent(client, ApiError) {
       unwrap(client.from("blogs").select("author_id").eq("status", "published"), "Creator count")
     ]);
     return { published: published.count || 0, creators: new Set((authors.data || []).map((row) => row.author_id)).size, subscribers: subscriberResult.count || 0 };
+  }
+
+  async function getDashboardCounts(authorId) {
+    const [total, published, drafts] = await Promise.all([
+      unwrap(client.from("blogs").select("id", { count: "exact", head: true }).eq("author_id", authorId), "Article count"),
+      unwrap(client.from("blogs").select("id", { count: "exact", head: true }).eq("author_id", authorId).eq("status", "published"), "Published count"),
+      unwrap(client.from("blogs").select("id", { count: "exact", head: true }).eq("author_id", authorId).eq("status", "draft"), "Draft count")
+    ]);
+    return { total: total.count || 0, published: published.count || 0, drafts: drafts.count || 0 };
   }
 
   async function like(id, userId) {
@@ -303,7 +335,7 @@ function createSupabaseContent(client, ApiError) {
     if (result.error) { const failure = new ApiError(503, "Subscription could not be saved. Please try again."); failure.cause = result.error; throw failure; }
   }
 
-  return { listBlogs, listCategories, listTags, getBlog, getRelated, saveBlog, deleteBlog, uploadImage, getProfile, upsertProfile, updateProfile, getStats, like, listComments, addComment, editComment, deleteComment, subscribe, mapBlog };
+  return { listBlogs, listCategories, listTags, getBlog, getRelated, saveBlog, deleteBlog, uploadImage, getProfile, upsertProfile, updateProfile, getStats, getDashboardCounts, like, listComments, addComment, editComment, deleteComment, subscribe, mapBlog };
 }
 
 module.exports = { createSupabaseContent };

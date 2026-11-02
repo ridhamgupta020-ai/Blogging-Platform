@@ -336,54 +336,8 @@
       updateCourtScore();
     }
 
-    function renderAuth() {
-      const isLoggedIn = localStorage.getItem("loggedIn");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-      if (!authArea) return;
-
-      if (isLoggedIn) {
-        authArea.innerHTML = [
-          '<li class="auth-chip">',
-          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
-          (user.name || "User"),
-          '<button class="logout-btn" id="logoutBtn" type="button">Logout</button>',
-          '</li>'
-        ].join(" ");
-
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("loggedIn");
-            window.location.href = "login.html";
-          });
-        }
-      } else {
-        authArea.innerHTML = '<li><a href="login.html">Login</a></li>';
-      }
-    }
-
-    renderAuth();
     courtChecks.forEach((check) => check.addEventListener("change", updateCourtScore));
     loadCourtScoreState();
-
-    if (newsletterForm) {
-      newsletterForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const name = newsletterName.value.trim();
-        const email = newsletterEmail.value.trim();
-        if (!name || !email) {
-          newsletterFeedback.textContent = "Please add your name and email.";
-          return;
-        }
-
-        localStorage.setItem("newsletterName", name);
-        localStorage.setItem("newsletterEmail", email);
-        newsletterFeedback.textContent = "You are subscribed. Weekly insights will be sent soon.";
-        newsletterForm.reset();
-      });
-    }
 
     if (scrollTopBtn) {
       const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
