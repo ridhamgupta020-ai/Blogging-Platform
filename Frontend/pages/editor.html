@@ -35,10 +35,10 @@
         <p class="editor-subtitle">Shape your ideas in a focused space, then save or publish when you’re ready.</p>
 
         <label class="field-label" for="title">Title</label>
-        <input id="title" type="text" placeholder="Blog title..." />
+        <input id="title" type="text" placeholder="Give your story a title..." />
 
         <label class="field-label" for="description">Description</label>
-        <textarea id="description" rows="3" maxlength="500" placeholder="A short summary for readers and search results..."></textarea>
+        <textarea id="description" rows="3" maxlength="500" placeholder="Write a short summary for readers and search results..."></textarea>
 
         <div class="meta-grid">
           <div>
@@ -67,31 +67,34 @@
           </div>
           <div>
             <label class="field-label" for="tags">Tags</label>
-            <input id="tags" type="text" placeholder="security, cloud, ai" />
+            <input id="tags" type="text" placeholder="Add tags separated by commas..." />
           </div>
         </div>
 
-        <div class="toolbar" aria-label="Editor toolbar">
-          <button type="button" onclick="cmd('bold')" title="Bold"><i class="bi bi-type-bold"></i></button>
-          <button type="button" onclick="cmd('italic')" title="Italic"><i class="bi bi-type-italic"></i></button>
-          <button type="button" onclick="cmd('insertUnorderedList')" title="Bullet list"><i class="bi bi-list-ul"></i></button>
-          <button type="button" onclick="cmd('formatBlock', 'h2')" title="Heading"><i class="bi bi-type-h2"></i></button>
-          <button type="button" onclick="insertLink()" title="Insert link"><i class="bi bi-link-45deg"></i></button>
-          <button type="button" onclick="uploadImage()" title="Insert image"><i class="bi bi-image"></i></button>
-        </div>
-
-        <label class="field-label" for="coverInput">Cover image</label>
-        <div class="cover-upload-box">
-          <i class="bi bi-image" aria-hidden="true"></i>
-          <span>Choose a cover image</span>
-          <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" />
-          <img id="coverPreview" alt="Cover preview" hidden>
+        <div class="toolbar" role="toolbar" aria-label="Editor formatting">
+          <button type="button" onclick="cmd('bold')" title="Bold" aria-label="Bold"><i class="bi bi-type-bold" aria-hidden="true"></i></button>
+          <button type="button" onclick="cmd('italic')" title="Italic" aria-label="Italic"><i class="bi bi-type-italic" aria-hidden="true"></i></button>
+          <button type="button" onclick="cmd('insertUnorderedList')" title="Bullet list" aria-label="Bullet list"><i class="bi bi-list-ul" aria-hidden="true"></i></button>
+          <button type="button" onclick="cmd('formatBlock', 'h2')" title="Heading" aria-label="Heading"><i class="bi bi-type-h2" aria-hidden="true"></i></button>
+          <button type="button" onclick="insertLink()" title="Insert link" aria-label="Insert link"><i class="bi bi-link-45deg" aria-hidden="true"></i></button>
+          <button type="button" onclick="uploadImage()" title="Insert image" aria-label="Insert image"><i class="bi bi-image" aria-hidden="true"></i></button>
         </div>
 
         <label class="field-label" for="content">Content</label>
-        <div id="content" class="editor-canvas" contenteditable="true" role="textbox" aria-multiline="true"></div>
+        <div id="content" class="editor-canvas" contenteditable="true" role="textbox" aria-label="Article content" aria-multiline="true"></div>
 
-        <div class="status-row">
+        <label class="field-label" for="coverInput">Cover image</label>
+        <div class="cover-upload-box">
+          <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+          <span class="cover-upload-title">Choose a cover image</span>
+          <span class="cover-file-name" id="coverFileName" aria-live="polite">No image selected</span>
+          <label class="cover-select-btn" for="coverInput">Browse images</label>
+          <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="coverFileName" />
+          <img id="coverPreview" alt="Cover preview" hidden>
+          <button class="cover-remove-btn" id="removeCoverBtn" type="button" disabled>Remove cover</button>
+        </div>
+
+        <div class="status-row" aria-label="Draft statistics">
           <span class="chip" id="wordCount">0 words</span>
           <span class="chip" id="readTime">0 min read</span>
           <span class="chip" id="headingCount">0 headings</span>
@@ -100,10 +103,10 @@
         </div>
 
         <div class="action-row">
-          <button class="btn btn-primary" id="publishBtn" type="button"><i class="bi bi-send"></i>Publish Blog</button>
-          <button class="btn btn-secondary" id="saveDraftBtn" type="button"><i class="bi bi-save2"></i>Save Draft</button>
-          <button class="btn btn-ghost" id="clearDraftBtn" type="button"><i class="bi bi-trash3"></i>Clear Draft</button>
-          <button class="btn btn-ghost" id="previewBtn" type="button"><i class="bi bi-eye"></i>Preview</button>
+          <button class="btn btn-secondary" id="saveDraftBtn" type="button"><i class="bi bi-save2" aria-hidden="true"></i>Save Draft</button>
+          <button class="btn btn-ghost" id="previewBtn" type="button"><i class="bi bi-eye" aria-hidden="true"></i>Preview</button>
+          <button class="btn btn-primary" id="publishBtn" type="button"><i class="bi bi-send" aria-hidden="true"></i>Publish Blog</button>
+          <button class="btn btn-ghost" id="clearDraftBtn" type="button"><i class="bi bi-trash3" aria-hidden="true"></i>Clear Draft</button>
         </div>
       </article>
 
