@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Manage your drafts, published stories, and creator profile in Draftly.">
 <meta name="theme-color" content="#171717">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Dashboard | Draftly">
@@ -20,7 +21,7 @@
   <a class="dashboard-brand" href="/" aria-label="Draftly home">
     <img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36">
   </a>
-  <h1>Creator dashboard</h1>
+  <h1>Welcome back, <span id="dashboardName">creator</span></h1>
   <nav aria-label="Dashboard navigation">
     <a href="index.html">Home</a>
     <a href="blogs.html">Blogs</a>
@@ -34,18 +35,22 @@
 <!-- STATS -->
 <div class="stats">
   <div class="stat">
+    <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-journal-text"></i></span>
     <h2 id="totalBlogs">0</h2>
     <p>Total articles</p>
   </div>
   <div class="stat">
+    <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-send-check"></i></span>
     <h2 id="publishedBlogs">0</h2>
     <p>Published</p>
   </div>
   <div class="stat">
+    <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
     <h2 id="draftBlogs">0</h2>
     <p>Drafts</p>
   </div>
   <div class="stat">
+    <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-envelope"></i></span>
     <h2 id="subscribers">0</h2>
     <p>Newsletter subscribers</p>
   </div>
@@ -64,10 +69,16 @@
   <div>
     <div class="author">
       <img id="dashboardAvatar" alt="Your profile avatar" hidden>
-      <h3 id="dashboardName">Your profile</h3>
       <p id="dashboardEmail"></p>
       <a href="profile.html">Manage profile</a>
     </div>
+
+    <section class="author dashboard-quick-actions" aria-labelledby="quickActionsTitle">
+      <h2 id="quickActionsTitle">Quick actions</h2>
+      <a href="editor.html"><i class="bi bi-plus-circle"></i> Write an article</a>
+      <a href="blogs.html"><i class="bi bi-compass"></i> Explore published stories</a>
+      <a href="profile.html"><i class="bi bi-person-gear"></i> Update your profile</a>
+    </section>
 
     <section class="author" aria-labelledby="newsletterStatsTitle">
       <h2 id="newsletterStatsTitle">Newsletter</h2>

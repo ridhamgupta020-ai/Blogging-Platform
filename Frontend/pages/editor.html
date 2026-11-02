@@ -37,8 +37,8 @@
   <main class="editor-page">
     <section class="editor-layout">
       <article class="editor-panel">
-        <h1>Write Blog</h1>
-        <p class="editor-subtitle">Use templates, formatting tools, and live quality checks to publish faster.</p>
+        <h1>Write your next story</h1>
+        <p class="editor-subtitle">Shape your ideas in a focused space, then save or publish when you’re ready.</p>
 
         <label class="field-label" for="title">Title</label>
         <input id="title" type="text" placeholder="Blog title..." />
@@ -86,9 +86,13 @@
           <button type="button" onclick="uploadImage()" title="Insert image"><i class="bi bi-image"></i></button>
         </div>
 
-        <label class="field-label" for="coverInput">Cover Image</label>
-        <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" />
-        <img id="coverPreview" alt="Cover preview">
+        <label class="field-label" for="coverInput">Cover image</label>
+        <div class="cover-upload-box">
+          <i class="bi bi-image" aria-hidden="true"></i>
+          <span>Choose a cover image</span>
+          <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" />
+          <img id="coverPreview" alt="Cover preview" hidden>
+        </div>
 
         <label class="field-label" for="content">Content</label>
         <div id="content" class="editor-canvas" contenteditable="true" role="textbox" aria-multiline="true"></div>
@@ -110,9 +114,9 @@
       </article>
 
       <aside class="side-panel">
-        <section class="info-card" aria-label="Additional court card">
-          <h2>Content Court</h2>
-          <p>Check these signals before publishing for better readability and SEO health.</p>
+        <section class="info-card" aria-label="Publishing checklist">
+          <h2>Publishing checklist</h2>
+          <p>A few helpful checks for a clear, reader-friendly article.</p>
           <ul class="checklist">
             <li id="checkTitle"><i class="bi bi-circle"></i><span>Title is at least 40 characters.</span></li>
             <li id="checkWords"><i class="bi bi-circle"></i><span>Post has at least 300 words.</span></li>
@@ -155,7 +159,7 @@
   <div class="footer-top">
     <div class="footer-col brand-col">
       <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-      <p>Draft it. Publish it. Grow it.</p><p>Tip: publish only after all Content Court checks pass.</p>
+      <p>Draft it. Publish it. Grow it.</p><p>Tip: preview your story before publishing.</p>
     </div>
     <div class="footer-col">
       <h2>Product</h2>

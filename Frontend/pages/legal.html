@@ -16,11 +16,14 @@
 <body>
   <header class="navbar">
     <div class="logo"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></div>
-    <nav class="profile-nav" aria-label="Disclosure navigation">
+    <nav class="profile-nav" aria-label="Legal navigation">
       <a href="index.html">Home</a>
       <a href="blogs.html">Blogs</a>
-      <a href="Contact.html">Contact</a>
+      <a href="editor.html">Write</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profile.html">Profile</a>
     </nav>
+    <ul class="auth-links" id="authArea" aria-label="Account actions"></ul>
   </header>
   <main class="profile-page legal-page">
     <h1>Disclosures</h1>
@@ -40,7 +43,13 @@
     </section>
   </main>
   <footer class="site-footer">
-    <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a><div class="footer-bottom"><p>© 2026 Draftly</p></div></footer>
+    <div class="footer-top">
+      <div class="footer-col brand-col"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a><p>Draft it. Publish it. Grow it.</p></div>
+      <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="editor.html">Write</a><a href="dashboard.html">Dashboard</a></div>
+      <div class="footer-col"><h2>Legal</h2><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="Contact.html">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 Draftly</p></div>
+  </footer>
   <script src="/js/court-enhancements.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/platform.js"></script>

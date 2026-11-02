@@ -12,322 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="/css/style.css">
-
-  <style>
-    :root {
-      --brand-blue: #A78BFA;
-      --brand-orange: #E8FF65;
-      --text-dark: #111;
-      --text-light: #f4f4f4;
-      --surface: #ffffff;
-      --surface-soft: #f7fbff;
-      --shadow-soft: 0 18px 36px rgba(0, 0, 0, 0.08);
-    }
-
-    .skip-link {
-      position: absolute;
-      left: -9999px;
-      top: 0;
-      background: var(--text-dark);
-      color: var(--surface);
-      padding: 10px 14px;
-      border-radius: 8px;
-      z-index: 1200;
-    }
-
-    .skip-link:focus {
-      left: 16px;
-      top: 16px;
-    }
-
-    .navbar {
-      backdrop-filter: saturate(140%) blur(6px);
-    }
-
-    .logo a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .hamburger {
-      border: 0;
-      background: transparent;
-      color: var(--text-dark);
-      font-size: 1.8rem;
-      cursor: pointer;
-    }
-
-    .hero-content {
-      max-width: 640px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(58, 183, 255, 0.35);
-      color: #0f172a;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .hero-content p {
-      max-width: 580px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .hero-btn.secondary {
-      background: rgba(0, 0, 0, 0.75);
-      color: #fff;
-    }
-
-    .hero-stats {
-      margin-top: 22px;
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      background: rgba(255, 255, 255, 0.88);
-      border-radius: 12px;
-      padding: 10px 14px;
-      min-width: 140px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .stat strong {
-      font-size: 1.1rem;
-      color: #0f172a;
-    }
-
-    .vision-list {
-      margin: 10px 0 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 10px;
-    }
-
-    .vision-list li {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      color: #333;
-      line-height: 1.45;
-    }
-
-    .vision-list i {
-      color: var(--brand-blue);
-      margin-top: 2px;
-    }
-
-    .features .subtitle {
-      margin-top: 12px;
-      color: #4b5563;
-      font-size: 1rem;
-    }
-
-    .cards {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    }
-
-    .card {
-      text-align: left;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 26px 50px rgba(0, 0, 0, 0.12);
-    }
-
-    .quick-start {
-      background: linear-gradient(180deg, var(--surface-soft), var(--surface));
-      padding: 80px 80px 90px;
-    }
-
-    .quick-start h2 {
-      text-align: center;
-      font-size: 2rem;
-      color: #0f172a;
-      margin-bottom: 34px;
-    }
-
-    .steps {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-    }
-
-    .step {
-      background: var(--surface);
-      border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .step-number {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--brand-orange);
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 12px;
-    }
-
-    .step h3 {
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-      color: #0f172a;
-    }
-
-    .step p {
-      color: #4b5563;
-      line-height: 1.55;
-    }
-
-    .newsletter-cta {
-      max-width: 1100px;
-      margin: 0 auto 90px;
-      background: linear-gradient(135deg, #111827, #1f2937);
-      color: var(--text-light);
-      border-radius: 24px;
-      padding: 36px;
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 24px;
-      box-shadow: 0 28px 48px rgba(17, 24, 39, 0.24);
-    }
-
-    .newsletter-cta h3 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-    }
-
-    .newsletter-cta p {
-      color: #cbd5e1;
-      line-height: 1.6;
-    }
-
-    .newsletter-form {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .newsletter-form input {
-      flex: 1 1 220px;
-      border-radius: 999px;
-      border: 1px solid #475569;
-      padding: 12px 14px;
-      background: #0f172a;
-      color: #e2e8f0;
-    }
-
-    .newsletter-form button {
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 600;
-      cursor: pointer;
-      background: var(--brand-orange);
-      color: #111827;
-    }
-
-    .newsletter-feedback {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #93c5fd;
-      min-height: 1rem;
-    }
-
-    #authArea {
-      margin-left: 10px;
-    }
-
-    .auth-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-    }
-
-    .logout-btn {
-      border: 0;
-      border-radius: 999px;
-      background: #111827;
-      color: #fff;
-      cursor: pointer;
-      padding: 6px 12px;
-      font-size: 0.82rem;
-    }
-
-    .scroll-top {
-      user-select: none;
-    }
-
-    @media (max-width: 1024px) {
-      .quick-start {
-        padding: 72px 30px;
-      }
-
-      .newsletter-cta {
-        margin: 0 20px 80px;
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .hero-content h1 {
-        font-size: 2.7rem;
-      }
-
-      .steps {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-btn.secondary {
-        background: #111827;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .hero-stats {
-        gap: 10px;
-      }
-
-      .stat {
-        min-width: 120px;
-      }
-
-      .newsletter-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .newsletter-feedback {
-        width: 100%;
-      }
-    }
-  </style>
   <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Draftly | Draft it. Publish it. Grow it.">
@@ -350,6 +34,8 @@
       <li><a href="#features">Features</a></li>
       <li><a href="blogs.html">Blogs</a></li>
       <li><a href="editor.html" class="login-btn">Write</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="profile.html">Profile</a></li>
       <li id="authArea"><a href="login.html" class="login-btn">Login</a></li>
     </ul>
   </nav>
@@ -362,12 +48,20 @@
           <i class="bi bi-stars"></i>
           Draft it. Publish it. Grow it.
         </div>
-        <h1>Write Better.<br><span>Publish Faster.</span></h1>
-        <p>Turn your best ideas into thoughtful stories. Write, organize, and publish from one focused workspace built for independent creators.</p>
+        <h1>Write better.<br><span>Publish faster.</span></h1>
+        <p>Turn your best ideas into thoughtful stories in one focused workspace for independent creators.</p>
         <div class="hero-actions">
-          <a href="editor.html" class="hero-btn">Start Writing <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
-          <a href="blogs.html" class="hero-btn secondary">Explore Platform</a>
+          <a href="editor.html" class="hero-btn">Start writing free <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+          <a href="#quick-start" class="hero-btn secondary">See how it works</a>
         </div>
+      </div>
+      <div class="hero-product" aria-label="Draftly editor preview">
+        <div class="browser-mockup">
+          <div class="browser-chrome"><i></i><i></i><i></i><span>draftly.app / editor</span></div>
+          <div class="browser-editor"><small>YOUR NEXT STORY</small><h2>Make room for the work that matters</h2><span class="mock-rule"></span><span class="mock-rule short"></span><span class="mock-rule"></span><span class="mock-rule medium"></span><div class="mock-toolbar"><b>B</b><i>I</i><span>↗</span><small>Draft saved</small></div></div>
+        </div>
+        <div class="hero-float-card hero-float-check"><i class="bi bi-check-circle-fill"></i><span><b>Ready to publish</b><small>Your story is taking shape</small></span></div>
+        <div class="hero-float-card hero-float-tag"><i class="bi bi-tags-fill"></i><span><b>Ideas, organized</b><small>#writing&nbsp; #ideas</small></span></div>
       </div>
     </header>
 
@@ -377,9 +71,9 @@
     </section>
 
     <section class="stats-strip" aria-label="Live platform statistics">
-      <div><strong data-platform-stat="published">0</strong><span>Published posts</span></div>
-      <div><strong data-platform-stat="creators">0</strong><span>Published creators</span></div>
-      <div><strong data-platform-stat="subscribers">0</strong><span>Newsletter subscribers</span></div>
+      <div><strong data-platform-stat="published"></strong><span>Published posts</span></div>
+      <div><strong data-platform-stat="creators"></strong><span>Published creators</span></div>
+      <div><strong data-platform-stat="subscribers"></strong><span>Newsletter subscribers</span></div>
     </section>
 
     <section class="features" id="features">
@@ -396,28 +90,32 @@
       <h2 class="stories-heading">A little inspiration for your next story.</h2>
       <div class="cards">
         <article class="card">
-          <img src="/images/7.png" alt="Content strategy article preview">
+          <img src="/images/7.png" alt="Content strategy article preview" loading="lazy">
+          <span class="article-category">Creator stories</span>
           <h3>Let’s talk about love languages</h3>
           <p>Not all marketing works the same way for all prospects, just as the same love language is not for everyone.</p>
           <a href="short.html" class="card-btn">Read →</a>
         </article>
 
         <article class="card">
-          <img src="/images/8.webp" alt="Monetization strategy article preview">
+          <img src="/images/8.webp" alt="Monetization strategy article preview" loading="lazy">
+          <span class="article-category">Growth</span>
           <h3>There’s money on the table you’re not collecting</h3>
           <p>You may already have everything you need to start generating revenue from your existing content.</p>
           <a href="newsletter2.html" class="card-btn">Read →</a>
         </article>
 
         <article class="card">
-          <img src="/images/3.jpg" alt="SEO training article preview">
+          <img src="/images/3.jpg" alt="SEO training article preview" loading="lazy">
+          <span class="article-category">Discovery</span>
           <h3>Can’t you learn SEO from YouTube and ChatGPT?</h3>
           <p>Understand when free advice is enough and when a structured learning path gives better long-term results.</p>
           <a href="newsletter.html" class="card-btn">Read →</a>
         </article>
 
         <article class="card">
-          <img src="/images/6.jpg" alt="Consistency and writing routine article preview">
+          <img src="/images/6.jpg" alt="Consistency and writing routine article preview" loading="lazy">
+          <span class="article-category">Writing</span>
           <h3>How to build a 30-day writing streak</h3>
           <p>Use a repeatable content cadence with practical prompts so you can publish consistently without burnout.</p>
           <a href="blogs.html" class="card-btn">Read →</a>
@@ -494,46 +192,26 @@
 
   <footer class="site-footer">
     <div class="footer-top">
-      <div class="footer-col brand">
+      <div class="footer-col brand-col">
         <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-        <a href="about.html">About</a>
+        <p>Draft it. Publish it. Grow it.</p>
+      </div>
+      <div class="footer-col">
+        <h2>Product</h2>
+        <a href="blogs.html">Blogs</a>
+        <a href="editor.html">Write</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="signup.html">Create an account</a>
+      </div>
+      <div class="footer-col">
+        <h2>Legal</h2>
+        <a href="about.html">About Draftly</a>
+        <a href="legal.html#privacy">Privacy</a>
+        <a href="legal.html#terms">Terms</a>
         <a href="Contact.html">Contact</a>
-        <div class="socials" aria-label="Social media links">
-          <span class="bi bi-youtube" aria-hidden="true"></span>
-          <span class="bi bi-pinterest" aria-hidden="true"></span>
-          <span class="bi bi-instagram" aria-hidden="true"></span>
-          <span class="bi bi-twitter-x" aria-hidden="true"></span>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h4>RESOURCES</h4>
-        <a href="blogs.html">→ Newsletter</a>
-        <a href="blogs.html">→ Blog</a>
-        <a href="Features.html">→ Tools & Resources</a>
-        <a href="dashboard.html">→ Dashboard</a>
-      </div>
-
-      <div class="footer-col">
-        <h4>SPONSOR / ADS</h4>
-        <a href="Contact.html#contact-form">→ Brand Partnership</a>
-        <a href="Contact.html#contact-form">→ Newsletter Ads</a>
-      </div>
-
-      <div class="footer-col">
-        <h4>DISCLOSURES</h4>
-        <a href="legal.html#privacy">→ Privacy Policy</a>
-        <a href="legal.html#terms">→ Terms & Conditions</a>
-        <a href="legal.html#affiliate">→ Affiliate Disclosure</a>
       </div>
     </div>
-
-    <div class="footer-bottom">
-      <p>© 2026 Draftly</p>
-      <p class="cookie">This site uses affiliate links and cookies.</p>
-      <button class="vault-btn" type="button" onclick="window.location.href='signup.html'">Join the Vault</button>
-      <div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div>
-    </div>
+    <div class="footer-bottom"><p>© 2026 Draftly</p><div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div></div>
   </footer>
 
   <script>
