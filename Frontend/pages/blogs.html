@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Blogs | Draftly">
   <meta property="og:description" content="Explore published stories, search topics, and filter articles with Draftly.">
@@ -28,15 +27,7 @@
         <i class="bi bi-list"></i>
       </button>
 
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="blogs.html" aria-current="page">Blogs</a></li>
-        <li><a href="editor.html">Write</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="Contact.html">Contact</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="profile.html">Profile</a></li>
-      </ul>
+      <ul class="nav-links" id="navLinks"><li><a href="index.html">Home</a></li><li><a href="blogs.html" aria-current="page">Blogs</a></li><li><a href="Features.html">Features</a></li><li><a href="about.html">About</a></li><li><a href="Contact.html">Contact</a></li><li class="write-entry"><a href="editor.html">Write</a></li></ul>
 
       <ul class="auth-links" id="authArea"></ul>
     </div>
@@ -82,7 +73,7 @@
         <div class="blog-grid" id="blogList"></div>
         <a class="blogs-empty-write" href="editor.html">Write your first article</a>
 
-        <section class="additional-court" id="blogCourt">
+        <section class="article-featured-method" id="blogCourt">
           <h2>How we feature articles</h2>
           <ul class="feature-criteria"><li>Clear, useful titles that set reader expectations.</li><li>Practical ideas supported by examples and detail.</li><li>Readable structure that respects the reader’s time.</li></ul>
         </section>
@@ -100,7 +91,7 @@
           <div class="tag-cloud" id="tagCloud"></div>
         </section>
 
-        <section class="sidebar-card court-box">
+        <section class="sidebar-card">
           <h3>Helpful article cues</h3>
           <ul class="court-list">
             <li><i class="bi bi-check2-circle"></i><span>Title promises one clear outcome.</span></li>
@@ -112,30 +103,15 @@
     </section>
   </main>
 
-<footer class="site-footer">
+<footer class="site-footer shared-footer">
   <div class="footer-top">
-    <div class="footer-col brand-col">
-      <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-      <p>Draft it. Publish it. Grow it.</p>
-    </div>
-    <div class="footer-col">
-      <h2>Product</h2>
-      <a href="blogs.html">Blogs</a>
-      <a href="editor.html">Write</a>
-      <a href="dashboard.html">Dashboard</a>
-    </div>
-    <div class="footer-col">
-      <h2>Legal</h2>
-      <a href="legal.html#privacy">Privacy</a>
-      <a href="legal.html#terms">Terms</a>
-      <a href="Contact.html">Contact</a>
-    </div>
+    <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p><div class="footer-social" aria-label="Community links"><a href="Contact.html">Get in touch</a><a href="newsletter.html">Newsletter</a></div></div>
+    <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+    <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="dashboard.html">Dashboard</a></div>
+    <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
   </div>
-  <div class="footer-bottom"><p>© 2026 Draftly</p><div class="scroll-top" id="scrollTop" role="button" tabindex="0" aria-label="Back to top">↑</div></div>
+  <div class="footer-bottom"><p>© 2026 Draftly</p><button class="scroll-top" type="button" id="scrollTop" aria-label="Back to top">↑</button></div>
 </footer>
-
-
-<script src="/js/court-enhancements.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/platform.js"></script>
 <script src="/js/blogs-page.js"></script>
