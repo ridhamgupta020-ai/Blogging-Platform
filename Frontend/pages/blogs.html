@@ -63,53 +63,36 @@
       </div>
 
       <div class="filter-bar">
-        <input id="searchInput" type="text" placeholder="Search title, content, tags...">
-        <select id="categorySelect" aria-label="Filter by category">
-          <option value="all">All categories</option>
-        </select>
-        <select id="tagSelect">
-          <option value="all">All tags</option>
-        </select>
-        <select id="sortSelect">
-          <option value="newest">Sort: Newest</option>
-          <option value="oldest">Sort: Oldest</option>
-          <option value="title-asc">Sort: Title A-Z</option>
-          <option value="title-desc">Sort: Title Z-A</option>
-        </select>
+        <div class="filter-field"><label for="searchInput">Search</label><input id="searchInput" type="text" placeholder="Search title, content, tags..."></div>
+        <div class="filter-field"><label for="categorySelect">Category</label><select id="categorySelect" aria-label="Filter by category"><option value="all">All categories</option></select></div>
+        <div class="filter-field"><label for="tagSelect">Tag</label><select id="tagSelect"><option value="all">All tags</option></select></div>
+        <div class="filter-field"><label for="sortSelect">Sort</label><select id="sortSelect"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="title-asc">Title A-Z</option><option value="title-desc">Title Z-A</option></select></div>
         <button id="clearFiltersBtn" class="clear-btn" type="button">Clear</button>
       </div>
     </section>
+
+    <a class="featured-blog-card" href="#blogList">
+      <span class="featured-blog-art" aria-hidden="true"><i class="bi bi-journal-richtext"></i></span>
+      <span class="featured-blog-copy"><small>FEATURED ON DRAFTLY</small><strong>Stories worth your time, ideas worth sharing.</strong><span>Explore thoughtful writing from the creator community.</span><b>Explore articles <i class="bi bi-arrow-right"></i></b></span>
+    </a>
 
     <section class="layout">
       <article>
         <p class="active-filter" id="activeFilter"></p>
         <div class="blog-grid" id="blogList"></div>
+        <a class="blogs-empty-write" href="editor.html">Write your first article</a>
 
         <section class="additional-court" id="blogCourt">
-          <h2>Blog Court (Additional Court)</h2>
-          <p>Before an article gets featured, we run it through these courts to maintain quality and reader value.</p>
-          <div class="court-grid">
-            <article class="court-card">
-              <h4>Discovery Court</h4>
-              <p>Checks search intent match, title clarity, and keyword relevance.</p>
-            </article>
-            <article class="court-card">
-              <h4>Quality Court</h4>
-              <p>Reviews structure, examples, and usefulness for real creators.</p>
-            </article>
-            <article class="court-card">
-              <h4>Engagement Court</h4>
-              <p>Validates readability, CTA strength, and shareability signals.</p>
-            </article>
-          </div>
+          <h2>How we feature articles</h2>
+          <ul class="feature-criteria"><li>Clear, useful titles that set reader expectations.</li><li>Practical ideas supported by examples and detail.</li><li>Readable structure that respects the reader’s time.</li></ul>
         </section>
       </article>
 
       <aside class="sidebar">
         <section class="sidebar-card">
-          <h3>The Vault</h3>
-          <p>Members unlock courses, writing systems, and deep-dive tutorials.</p>
-          <a class="btn btn-primary" href="signup.html"><i class="bi bi-box-arrow-in-right"></i>Join Now</a>
+          <h3>Build your writing habit</h3>
+          <p>Open a focused workspace and turn your next idea into a story.</p>
+          <a class="btn btn-primary" href="editor.html"><i class="bi bi-pencil-square"></i>Write</a>
         </section>
 
         <section class="sidebar-card">
@@ -118,7 +101,7 @@
         </section>
 
         <section class="sidebar-card court-box">
-          <h3>Mini Court Check</h3>
+          <h3>Helpful article cues</h3>
           <ul class="court-list">
             <li><i class="bi bi-check2-circle"></i><span>Title promises one clear outcome.</span></li>
             <li><i class="bi bi-check2-circle"></i><span>At least 3 practical takeaways.</span></li>
