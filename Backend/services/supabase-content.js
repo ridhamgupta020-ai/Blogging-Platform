@@ -117,7 +117,7 @@ function createSupabaseContent(client, ApiError) {
     let request = client.from("blogs").select(BLOG_SELECT, { count: "exact" });
     if (authorId) request = request.eq("author_id", authorId);
     if (status) request = request.eq("status", status);
-    else request = request.eq("status", "published");
+    else if (!authorId) request = request.eq("status", "published");
     if (query) {
       const escaped = query.replace(/[%,()]/g, " ").trim();
       if (escaped) request = request.or(`title.ilike.%${escaped}%,excerpt.ilike.%${escaped}%,content.ilike.%${escaped}%`);
@@ -254,6 +254,15 @@ function createSupabaseContent(client, ApiError) {
     return { published: published.count || 0, creators: new Set((authors.data || []).map((row) => row.author_id)).size, subscribers: subscriberResult.count || 0 };
   }
 
+  async function getDashboardCounts(authorId) {
+    const [total, published, drafts] = await Promise.all([
+      unwrap(client.from("blogs").select("id", { count: "exact", head: true }).eq("author_id", authorId), "Article count"),
+      unwrap(client.from("blogs").select("id", { count: "exact", head: true }).eq("author_id", authorId).eq("status", "published"), "Published count"),
+      unwrap(client.from("blogs").select("id", { count: "exact", head: true }).eq("author_id", authorId).eq("status", "draft"), "Draft count")
+    ]);
+    return { total: total.count || 0, published: published.count || 0, drafts: drafts.count || 0 };
+  }
+
   async function like(id, userId) {
     const article = await unwrap(client.from("blogs").select("id").eq("id", id).eq("status", "published").maybeSingle(), "Article lookup");
     if (!article.data) throw new ApiError(404, "Article not found.");
@@ -303,7 +312,7 @@ function createSupabaseContent(client, ApiError) {
     if (result.error) { const failure = new ApiError(503, "Subscription could not be saved. Please try again."); failure.cause = result.error; throw failure; }
   }
 
-  return { listBlogs, listCategories, listTags, getBlog, getRelated, saveBlog, deleteBlog, uploadImage, getProfile, upsertProfile, updateProfile, getStats, like, listComments, addComment, editComment, deleteComment, subscribe, mapBlog };
+  return { listBlogs, listCategories, listTags, getBlog, getRelated, saveBlog, deleteBlog, uploadImage, getProfile, upsertProfile, updateProfile, getStats, getDashboardCounts, like, listComments, addComment, editComment, deleteComment, subscribe, mapBlog };
 }
 
 module.exports = { createSupabaseContent };

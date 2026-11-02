@@ -6,24 +6,35 @@ function registerApiRoutes(app, dependencies) {
   const {
     db, supabase, bcrypt, ApiError, asyncRoute, publicUser, requireAuth, upload, saveImage,
     importLegacyContent, text, passwordInput, normalizeEmail, normalizeTags,
-    normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter
+    normalizeImage, sanitizeContent, blogRow, blogSelect, authLimiter, contentStore
   } = dependencies;
+const useSupabaseContent = Boolean(contentStore) && process.env.NODE_ENV !== "test";
+
+function viewerId(req) {
+  if (!useSupabaseContent || !req.session?.userId) return null;
+  return db.prepare("SELECT supabase_user_id FROM users WHERE id = ?").get(req.session.userId)?.supabase_user_id || null;
+}
+
+function validSupabaseId(value) {
+  return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
 
 app.get("/api/health", asyncRoute(async (req, res) => {
   const supabaseStatus = await supabase.checkConnection();
   res.status(supabaseStatus.connected ? 200 : supabaseStatus.configured ? 503 : 200).json({
     status: "ok",
-    database: "sqlite",
+    database: useSupabaseContent ? "supabase" : "sqlite",
     supabase: supabaseStatus
   });
 }));
 
-app.get("/api/stats", (req, res) => {
+app.get("/api/stats", asyncRoute(async (req, res) => {
+  if (useSupabaseContent) return res.json(await contentStore.getStats());
   const published = db.prepare("SELECT COUNT(*) AS count FROM blogs WHERE status = 'published'").get().count;
   const creators = db.prepare("SELECT COUNT(DISTINCT user_id) AS count FROM blogs WHERE status = 'published'").get().count;
   const subscribers = db.prepare("SELECT COUNT(*) AS count FROM newsletter_subscribers").get().count;
   res.json({ published, creators, subscribers });
-});
+}));
 
 app.get("/api/auth/me", (req, res) => {
   if (!req.session.userId || !req.session.supabaseAccessToken) return res.json({ user: null });
@@ -72,6 +83,7 @@ async function ensureLocalProfile(authUser, bcrypt) {
     db.prepare("UPDATE users SET supabase_user_id = ? WHERE id = ?").run(authUser.id, local.id);
     local.supabase_user_id = authUser.id;
   }
+  if (useSupabaseContent) await contentStore.upsertProfile(authUser);
   return local;
 }
 
@@ -242,7 +254,15 @@ app.post("/api/auth/logout", asyncRoute(async (req, res) => {
   res.json({ success: true });
 }));
 
-app.get("/api/profile", requireAuth, (req, res) => {
+app.get("/api/profile", requireAuth, asyncRoute(async (req, res) => {
+  if (useSupabaseContent) {
+    const [profile, counts] = await Promise.all([
+      contentStore.getProfile(req.user.supabase_user_id, { privateFields: true }),
+      contentStore.getDashboardCounts(req.user.supabase_user_id)
+    ]);
+    if (!profile) throw new ApiError(404, "Profile not found.");
+    return res.json({ user: { id: profile.id, name: profile.full_name, email: profile.email, avatar: profile.avatar_url, createdAt: profile.created_at }, counts });
+  }
   const counts = db.prepare(`
     SELECT COUNT(*) AS total,
       SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) AS published,
@@ -250,7 +270,7 @@ app.get("/api/profile", requireAuth, (req, res) => {
     FROM blogs WHERE user_id = ?
   `).get(req.user.id);
   res.json({ user: publicUser(req.user), counts });
-});
+}));
 
 app.patch("/api/profile", requireAuth, asyncRoute(async (req, res) => {
   const name = text(req.body.name, "Name", 60, { required: true });
@@ -264,6 +284,10 @@ app.patch("/api/profile", requireAuth, asyncRoute(async (req, res) => {
     if (updated.error) throw authError(updated.error);
   }
   db.prepare("UPDATE users SET display_name = ? WHERE id = ?").run(name, req.user.id);
+  if (useSupabaseContent) {
+    const updatedProfile = await contentStore.updateProfile(req.user.supabase_user_id, { full_name: name });
+    return res.json({ user: { id: updatedProfile.id, name: updatedProfile.full_name, email: updatedProfile.email, avatar: updatedProfile.avatar_url, createdAt: updatedProfile.created_at } });
+  }
   res.json({ user: publicUser(db.prepare("SELECT id, email, display_name, avatar_path, created_at FROM users WHERE id = ?").get(req.user.id)) });
 }));
 
@@ -285,18 +309,29 @@ app.patch("/api/profile/password", requireAuth, asyncRoute(async (req, res) => {
   res.json({ success: true });
 }));
 
-app.post("/api/profile/avatar", requireAuth, upload.single("image"), (req, res, next) => {
+app.post("/api/profile/avatar", requireAuth, upload.single("image"), asyncRoute(async (req, res) => {
   try {
+    if (useSupabaseContent) {
+      const avatar = await contentStore.uploadImage(req.user.supabase_user_id, req.file);
+      await contentStore.updateProfile(req.user.supabase_user_id, { avatar_url: avatar });
+      db.prepare("UPDATE users SET avatar_path = ? WHERE id = ?").run(avatar, req.user.id);
+      return res.status(201).json({ avatar });
+    }
     const avatar = saveImage(req.file);
     if (!avatar) throw new ApiError(400, "Choose an image to upload.");
     db.prepare("UPDATE users SET avatar_path = ? WHERE id = ?").run(avatar, req.user.id);
     res.status(201).json({ avatar });
   } catch (error) {
-    next(error);
+    throw error;
   }
-});
+}));
 
-app.get("/api/profile/blogs", requireAuth, (req, res) => {
+app.get("/api/profile/blogs", requireAuth, asyncRoute(async (req, res) => {
+  if (useSupabaseContent) {
+    const status = ["draft", "published"].includes(req.query.status) ? req.query.status : undefined;
+    const result = await contentStore.listBlogs({ authorId: req.user.supabase_user_id, status, page: 1, limit: 100, sort: "newest", viewerId: req.user.supabase_user_id });
+    return res.json({ blogs: result.blogs });
+  }
   const status = ["draft", "published"].includes(req.query.status) ? req.query.status : null;
   const rows = db.prepare(`
     ${blogSelect}
@@ -304,7 +339,7 @@ app.get("/api/profile/blogs", requireAuth, (req, res) => {
     ORDER BY b.updated_at DESC, b.id DESC
   `).all(req.user.id, req.user.id, status, status);
   res.json({ blogs: rows.map((row) => blogRow(row, req.user.id)) });
-});
+}));
 
 app.post("/api/migrate/local", requireAuth, (req, res, next) => {
   try {
