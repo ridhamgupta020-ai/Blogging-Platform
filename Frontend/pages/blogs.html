@@ -33,12 +33,12 @@
     </div>
   </header>
 
-  <main class="page-wrap" id="mainContent">
-    <section class="hero">
+  <main class="page-wrap blogs-page" id="mainContent">
+    <section class="hero blogs-hero">
       <h1>Explore Articles That Help You Publish Better</h1>
       <p>Search and filter practical writing guides, SEO lessons, and monetization insights from the platform.</p>
 
-      <div class="meta-stats">
+      <div class="meta-stats" aria-label="Article statistics">
         <div class="meta-card">
           <strong id="totalPosts">0</strong>
           <span>Total posts</span>
@@ -62,14 +62,14 @@
       </div>
     </section>
 
-    <a class="featured-blog-card" href="#blogList">
-      <span class="featured-blog-art" aria-hidden="true"><i class="bi bi-journal-richtext"></i></span>
-      <span class="featured-blog-copy"><small>FEATURED ON DRAFTLY</small><strong>Stories worth your time, ideas worth sharing.</strong><span>Explore thoughtful writing from the creator community.</span><b>Explore articles <i class="bi bi-arrow-right"></i></b></span>
+    <a class="featured-blog-card" id="featuredBlog" href="#blogList" hidden>
+      <div class="featured-blog-art" aria-hidden="true"></div>
+      <div class="featured-blog-copy"><small>FEATURED ON DRAFTLY</small><span class="featured-blog-category" data-featured-category></span><strong data-featured-title></strong><span data-featured-description></span><span class="featured-blog-meta" data-featured-meta></span><b>Read full story <i class="bi bi-arrow-right"></i></b></div>
     </a>
 
-    <section class="layout">
-      <article>
-        <p class="active-filter" id="activeFilter"></p>
+    <section class="layout blogs-layout">
+      <article class="blogs-results" aria-labelledby="publishedHeading">
+        <div class="blogs-results-heading"><h2 id="publishedHeading">Published articles</h2><p class="active-filter" id="activeFilter" role="status" aria-live="polite"></p></div>
         <div class="blog-grid" id="blogList"></div>
         <a class="blogs-empty-write" href="editor.html">Write your first article</a>
 
@@ -79,7 +79,7 @@
         </section>
       </article>
 
-      <aside class="sidebar">
+      <aside class="sidebar blogs-support" aria-label="Writing resources">
         <section class="sidebar-card">
           <h3>Build your writing habit</h3>
           <p>Open a focused workspace and turn your next idea into a story.</p>

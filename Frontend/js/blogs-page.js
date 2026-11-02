@@ -15,6 +15,7 @@
   const totalTags = document.getElementById("totalTags");
   const averageRead = document.getElementById("avgRead");
   const tagCloud = document.getElementById("tagCloud");
+  const featured = document.getElementById("featuredBlog");
   const filterBar = document.querySelector(".filter-bar");
   const pagination = document.createElement("nav");
   pagination.className = "pagination";
@@ -80,20 +81,63 @@
     return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 220));
   }
 
+  function createBlogMedia(blog, className, decorative = false) {
+    const media = document.createElement("div");
+    media.className = className;
+    const image = document.createElement("img");
+    image.className = "blog-cover";
+    const fallback = "/images/6.jpg";
+    const source = typeof blog.coverImage === "string" && blog.coverImage.trim()
+      ? blog.coverImage.trim()
+      : fallback;
+    image.alt = decorative ? "" : source === fallback ? "Illustration of creators working on a story" : `Cover image for ${blog.title}`;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.dataset.fallbackUsed = source === fallback ? "true" : "false";
+    image.addEventListener("error", () => {
+      if (image.dataset.fallbackUsed === "true") {
+        image.hidden = true;
+        media.classList.add("is-fallback");
+        return;
+      }
+      image.dataset.fallbackUsed = "true";
+      image.alt = decorative ? "" : "Illustration of creators working on a story";
+      image.src = fallback;
+    });
+    image.src = source;
+    media.append(image);
+    return media;
+  }
+
+  function renderFeatured(blog) {
+    if (!featured) return;
+    if (!blog) {
+      featured.hidden = true;
+      return;
+    }
+    featured.href = `blog.html?id=${encodeURIComponent(blog.id)}`;
+    featured.querySelector(".featured-blog-art")?.replaceChildren(createBlogMedia(blog, "featured-blog-media", true));
+    const categoryLabel = featured.querySelector("[data-featured-category]");
+    const title = featured.querySelector("[data-featured-title]");
+    const description = featured.querySelector("[data-featured-description]");
+    const meta = featured.querySelector("[data-featured-meta]");
+    if (categoryLabel) categoryLabel.textContent = blog.category || "Featured story";
+    if (title) title.textContent = blog.title;
+    if (description) description.textContent = blog.description || blog.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+    if (meta) meta.textContent = `${blog.author?.name || "Writer"} · ${readTime(blog)} min read`;
+    featured.hidden = false;
+  }
+
   function createBlogCard(blog) {
     const link = document.createElement("a");
     link.className = "blog-card";
     link.href = `blog.html?id=${encodeURIComponent(blog.id)}`;
-    if (blog.coverImage) {
-      const image = document.createElement("img");
-      image.className = "blog-cover";
-      image.src = blog.coverImage;
-      image.alt = blog.title;
-      image.loading = "lazy";
-      link.append(image);
-    }
+    link.append(createBlogMedia(blog, "blog-media"));
     const content = document.createElement("div");
     content.className = "blog-content";
+    const categoryBadge = document.createElement("span");
+    categoryBadge.className = "blog-category";
+    categoryBadge.textContent = blog.category || "Story";
     const heading = document.createElement("h2");
     heading.className = "blog-title";
     heading.textContent = blog.title;
@@ -110,7 +154,10 @@
       badge.textContent = `#${value}`;
       tags.append(badge);
     });
-    content.append(heading, meta, description, tags);
+    const readLink = document.createElement("span");
+    readLink.className = "blog-read-link";
+    readLink.textContent = "Read story →";
+    content.append(categoryBadge, heading, meta, description, tags, readLink);
     link.append(content);
     return link;
   }
@@ -150,6 +197,7 @@
       if (currentRequest !== requestId) return;
       list.replaceChildren();
       result.blogs.forEach((blog) => list.append(createBlogCard(blog)));
+      renderFeatured(result.blogs[0]);
       if (!result.blogs.length) {
         const empty = document.createElement("div");
         empty.className = "empty-state";
@@ -180,6 +228,7 @@
     } catch (error) {
       if (currentRequest === requestId) {
         list.replaceChildren();
+        renderFeatured(null);
         api.notice(error.message, "error", activeFilter);
       }
     } finally {
