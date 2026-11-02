@@ -15,71 +15,78 @@
 
 <body>
 
-<!-- HEADER -->
-<header class="header">
+<!-- DASHBOARD NAVIGATION -->
+<header class="header dashboard-header">
   <a class="dashboard-brand" href="/" aria-label="Draftly home">
     <img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36">
   </a>
-  <h1>Welcome back, <span id="dashboardName">creator</span></h1>
   <button class="hamburger" type="button" aria-controls="dashboardNav" aria-expanded="false" aria-label="Toggle navigation">☰</button>
-  <nav id="dashboardNav" aria-label="Dashboard navigation"><a href="index.html">Home</a><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="about.html">About</a><a href="Contact.html">Contact</a><a class="write-entry" href="editor.html">Write</a><a href="dashboard.html" aria-current="page">Dashboard</a><a href="profile.html">Profile</a><button class="logout-btn" type="button" data-action="logout">Logout</button></nav>
+  <nav id="dashboardNav" aria-label="Dashboard navigation"><a href="index.html">Home</a><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="about.html">About</a><a href="Contact.html">Contact</a><a class="write-entry" href="editor.html">Write</a><a href="dashboard.html" aria-current="page">Dashboard</a><a href="profile.html">Profile</a></nav>
+  <div class="dashboard-account"><span class="dashboard-account-name" id="dashboardUserName">creator</span><button class="logout-btn" type="button" data-action="logout">Logout</button></div>
 </header>
 
+<main class="dashboard-page">
+  <section class="dashboard-welcome" aria-labelledby="dashboardWelcomeTitle">
+    <div><p class="dashboard-eyebrow">CREATOR WORKSPACE</p><h1 id="dashboardWelcomeTitle">Welcome back, <span id="dashboardName">creator</span></h1><p>Here's what's happening with your writing.</p></div>
+    <a class="dashboard-new-article" href="editor.html"><i class="bi bi-plus-lg" aria-hidden="true"></i> New article</a>
+  </section>
+
 <!-- STATS -->
-<div class="stats">
+<section class="stats dashboard-stats" aria-label="Your writing statistics">
   <div class="stat">
     <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-journal-text"></i></span>
-    <h2 id="totalBlogs">0</h2>
+    <h2 id="totalBlogs">…</h2>
     <p>Total articles</p>
   </div>
   <div class="stat">
     <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-send-check"></i></span>
-    <h2 id="publishedBlogs">0</h2>
+    <h2 id="publishedBlogs">…</h2>
     <p>Published</p>
   </div>
   <div class="stat">
     <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
-    <h2 id="draftBlogs">0</h2>
+    <h2 id="draftBlogs">…</h2>
     <p>Drafts</p>
   </div>
   <div class="stat">
     <span class="dashboard-stat-icon" aria-hidden="true"><i class="bi bi-envelope"></i></span>
-    <h2 id="subscribers">0</h2>
+    <h2 id="subscribers">…</h2>
     <p>Newsletter subscribers</p>
   </div>
-</div>
+</section>
 
 <!-- MAIN CONTENT -->
-<div class="layout">
+<section class="layout dashboard-layout">
 
-  <!-- LEFT -->
-  <div>
-    <h2 class="dashboard-section-title">Recent Blogs</h2>
-    <div id="blogList"></div>
-  </div>
+  <section class="dashboard-main-column" aria-labelledby="recentBlogsTitle">
+    <div class="dashboard-section-heading"><div><p class="dashboard-eyebrow">YOUR LIBRARY</p><h2 class="dashboard-section-title" id="recentBlogsTitle">Recent articles</h2></div><a href="editor.html">Write a story <span aria-hidden="true">→</span></a></div>
+    <div id="blogList" class="dashboard-blog-list" aria-live="polite" aria-busy="true"></div>
+  </section>
 
-  <!-- RIGHT -->
-  <div>
-    <div class="author">
-      <img id="dashboardAvatar" alt="Your profile avatar" hidden>
-      <p id="dashboardEmail"></p>
-      <a href="profile.html">Manage profile</a>
-    </div>
-
-    <section class="author dashboard-quick-actions" aria-labelledby="quickActionsTitle">
-      <h2 id="quickActionsTitle">Quick actions</h2>
-      <a href="editor.html"><i class="bi bi-plus-circle"></i> Write an article</a>
-      <a href="blogs.html"><i class="bi bi-compass"></i> Explore published stories</a>
-      <a href="profile.html"><i class="bi bi-person-gear"></i> Update your profile</a>
+  <aside class="dashboard-sidebar" aria-label="Account and writing tools">
+    <section class="dashboard-profile-card" aria-label="Profile summary">
+      <div class="dashboard-profile-avatar"><img id="dashboardAvatar" alt="" hidden><span id="dashboardAvatarFallback" aria-hidden="true">D</span></div>
+      <div class="dashboard-profile-copy"><h2 id="dashboardProfileName">Creator</h2><p id="dashboardEmail"></p></div>
+      <a href="profile.html">Manage profile <span aria-hidden="true">→</span></a>
     </section>
 
-    <section class="author" aria-labelledby="newsletterStatsTitle">
+    <section class="dashboard-side-card dashboard-quick-actions" aria-labelledby="quickActionsTitle">
+      <h2 id="quickActionsTitle">Quick Actions</h2>
+      <a href="editor.html"><i class="bi bi-pencil-square" aria-hidden="true"></i><span>Write an article</span><b aria-hidden="true">→</b></a>
+      <a href="blogs.html"><i class="bi bi-compass" aria-hidden="true"></i><span>Explore published stories</span><b aria-hidden="true">→</b></a>
+      <a href="profile.html"><i class="bi bi-person-gear" aria-hidden="true"></i><span>Update your profile</span><b aria-hidden="true">→</b></a>
+    </section>
+
+    <section class="dashboard-side-card dashboard-newsletter" aria-labelledby="newsletterStatsTitle">
       <h2 id="newsletterStatsTitle">Newsletter</h2>
-      <p id="subscriberList">Subscribers are stored privately; email campaigns are not configured.</p>
-      <a href="newsletter.html">Read the latest issue</a>
+      <p>Draftly's newsletter audience, one thoughtful update at a time.</p>
+      <p class="dashboard-subscriber-total"><strong id="sidebarSubscribers">…</strong> subscribers</p>
+      <p class="dashboard-campaign-note" id="subscriberList">Subscriber management and email campaigns aren't configured yet.</p>
+      <a href="newsletter.html">Browse newsletter stories <span aria-hidden="true">→</span></a>
     </section>
-  </div>
-</div>
+  </aside>
+</section>
+</main>
 
 
 <footer class="site-footer shared-footer">
