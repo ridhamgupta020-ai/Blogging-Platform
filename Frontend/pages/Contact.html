@@ -5,148 +5,7 @@
 <title>Contact | Draftly</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Contact Draftly for support, partnerships, or general inquiries.">
-
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Inter, system-ui, sans-serif;
-}
-
-body {
-  background: #f6f4f1;
-  color: #222;
-}
-
-/* NAVBAR */
-.navbar {
-  background: #ffc466;
-  padding: 18px 50px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,.05);
-}
-
-.logo {
-  font-size: 22px;
-  font-weight: 600;
-  color: #3ab7ff;
-}
-
-.navbar a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-}
-
-/* CONTACT WRAP */
-.contact-wrap {
-  max-width: 1100px;
-  margin: 80px auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  padding: 0 30px;
-}
-
-/* LEFT INFO */
-.contact-info h1 {
-  font-size: 42px;
-  margin-bottom: 20px;
-}
-
-.contact-info p {
-  font-size: 17px;
-  line-height: 1.7;
-  color: #555;
-  margin-bottom: 30px;
-}
-
-.info-box {
-  margin-bottom: 20px;
-}
-
-.info-box strong {
-  display: block;
-  margin-bottom: 6px;
-}
-
-/* FORM */
-.contact-form {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 22px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.08);
-}
-
-.contact-form h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
-.field {
-  margin-bottom: 18px;
-}
-
-.field label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: #555;
-}
-
-.field input,
-.field textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 15px;
-}
-
-.field textarea {
-  resize: vertical;
-  min-height: 120px;
-}
-
-button {
-  margin-top: 10px;
-  padding: 14px;
-  width: 100%;
-  border-radius: 30px;
-  border: none;
-  background: #3ab7ff;
-  color: #fff;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #289edc;
-}
-
-/* FOOTER */
-.footer {
-  text-align: center;
-  padding: 40px;
-  font-size: 14px;
-  color: #777;
-}
-
-/* RESPONSIVE */
-@media(max-width: 900px) {
-  .contact-wrap {
-    grid-template-columns: 1fr;
-  }
-
-  .contact-info h1 {
-    font-size: 32px;
-  }
-}
-</style>
-  <link rel="stylesheet" href="/css/court-enhancements.css">
+<link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Contact | Draftly">
   <meta property="og:description" content="Contact Draftly for support, partnerships, or general inquiries.">
@@ -166,6 +25,8 @@ button:hover {
       <li><a href="editor.html">Write</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="Contact.html" aria-current="page">Contact</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="profile.html">Profile</a></li>
     </ul>
     <ul class="auth-links" id="authArea"><li><a href="login.html" class="login-btn">Login</a></li></ul>
   </div>
@@ -224,9 +85,26 @@ button:hover {
 </section>
 
 <!-- FOOTER -->
-<footer class="footer">
-    <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-  © 2026 Draftly
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-col brand-col">
+      <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
+      <p>Draft it. Publish it. Grow it.</p>
+    </div>
+    <div class="footer-col">
+      <h2>Product</h2>
+      <a href="blogs.html">Blogs</a>
+      <a href="editor.html">Write</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="footer-col">
+      <h2>Legal</h2>
+      <a href="legal.html#privacy">Privacy</a>
+      <a href="legal.html#terms">Terms</a>
+      <a href="Contact.html">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Draftly</p></div>
 </footer>
 
 <script>
