@@ -26,7 +26,9 @@
   }
 
   const currentId = new URLSearchParams(location.search).get("id");
-  let blogId = currentId && /^\d+$/.test(currentId) ? Number(currentId) : null;
+  const numericId = currentId && /^\d+$/.test(currentId);
+  const uuidId = currentId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(currentId);
+  let blogId = numericId ? Number(currentId) : uuidId ? currentId : null;
   let coverImage = null;
   let saveTimer;
   let savePromise = null;

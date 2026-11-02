@@ -77,6 +77,8 @@
   }
 
   function readTime(blog) {
+    const savedReadTime = blog.read_time ?? blog.readTime;
+    if (Number.isFinite(Number(savedReadTime))) return Math.max(1, Number(savedReadTime));
     const text = blog.content.replace(/<[^>]*>/g, " ").trim();
     return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 220));
   }
@@ -87,8 +89,9 @@
     const image = document.createElement("img");
     image.className = "blog-cover";
     const fallback = "/images/6.jpg";
-    const source = typeof blog.coverImage === "string" && blog.coverImage.trim()
-      ? blog.coverImage.trim()
+    const coverUrl = blog.cover_url || blog.coverImage;
+    const source = typeof coverUrl === "string" && coverUrl.trim()
+      ? coverUrl.trim()
       : fallback;
     image.alt = decorative ? "" : source === fallback ? "Illustration of creators working on a story" : `Cover image for ${blog.title}`;
     image.loading = "lazy";
@@ -123,7 +126,7 @@
     const meta = featured.querySelector("[data-featured-meta]");
     if (categoryLabel) categoryLabel.textContent = blog.category || "Featured story";
     if (title) title.textContent = blog.title;
-    if (description) description.textContent = blog.description || blog.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+    if (description) description.textContent = blog.excerpt || blog.description || "A newly published story from the Draftly community.";
     if (meta) meta.textContent = `${blog.author?.name || "Writer"} · ${readTime(blog)} min read`;
     featured.hidden = false;
   }
@@ -143,13 +146,13 @@
     heading.textContent = blog.title;
     const meta = document.createElement("p");
     meta.className = "blog-meta";
-    meta.textContent = `${blog.author?.name || "Writer"} · ${new Date(blog.publishedAt || blog.createdAt).toLocaleDateString()} · ${readTime(blog)} min read`;
+    meta.textContent = `${blog.author?.name || "Writer"} · ${new Date(blog.published_at || blog.publishedAt || blog.createdAt).toLocaleDateString()} · ${readTime(blog)} min read`;
     const description = document.createElement("p");
     description.className = "blog-excerpt";
-    description.textContent = blog.description || blog.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+    description.textContent = blog.excerpt || blog.description || "A newly published story from the Draftly community.";
     const tags = document.createElement("div");
     tags.className = "tags";
-    blog.tags.forEach((value) => {
+    (Array.isArray(blog.tags) ? blog.tags : []).forEach((value) => {
       const badge = document.createElement("span");
       badge.textContent = `#${value}`;
       tags.append(badge);
