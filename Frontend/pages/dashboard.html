@@ -7,7 +7,6 @@
 <meta name="description" content="Manage your drafts, published stories, and creator profile in Draftly.">
 <meta name="theme-color" content="#171717">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Dashboard | Draftly">
   <meta property="og:description" content="Manage your drafts, published stories, and creator profile in Draftly.">
@@ -17,20 +16,14 @@
 <body>
 
 <!-- HEADER -->
-<div class="header">
+<header class="header">
   <a class="dashboard-brand" href="/" aria-label="Draftly home">
     <img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36">
   </a>
   <h1>Welcome back, <span id="dashboardName">creator</span></h1>
-  <nav aria-label="Dashboard navigation">
-    <a href="index.html">Home</a>
-    <a href="blogs.html">Blogs</a>
-    <a href="editor.html">Write</a>
-    <a href="dashboard.html" aria-current="page">Dashboard</a>
-    <a href="profile.html">Profile</a>
-    <button class="logout-btn" type="button" data-action="logout">Logout</button>
-  </nav>
-</div>
+  <button class="hamburger" type="button" aria-controls="dashboardNav" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+  <nav id="dashboardNav" aria-label="Dashboard navigation"><a href="index.html">Home</a><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="about.html">About</a><a href="Contact.html">Contact</a><a class="write-entry" href="editor.html">Write</a><a href="dashboard.html" aria-current="page">Dashboard</a><a href="profile.html">Profile</a><button class="logout-btn" type="button" data-action="logout">Logout</button></nav>
+</header>
 
 <!-- STATS -->
 <div class="stats">
@@ -89,29 +82,15 @@
 </div>
 
 
-<footer class="site-footer">
+<footer class="site-footer shared-footer">
   <div class="footer-top">
-    <div class="footer-col brand-col">
-      <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-      <p>Draft it. Publish it. Grow it.</p>
-    </div>
-    <div class="footer-col">
-      <h2>Product</h2>
-      <a href="blogs.html">Blogs</a>
-      <a href="editor.html">Write</a>
-      <a href="dashboard.html">Dashboard</a>
-    </div>
-    <div class="footer-col">
-      <h2>Legal</h2>
-      <a href="legal.html#privacy">Privacy</a>
-      <a href="legal.html#terms">Terms</a>
-      <a href="Contact.html">Contact</a>
-    </div>
+    <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p><div class="footer-social" aria-label="Community links"><a href="Contact.html">Get in touch</a><a href="newsletter.html">Newsletter</a></div></div>
+    <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+    <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="dashboard.html">Dashboard</a></div>
+    <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
   </div>
-  <div class="footer-bottom"><p>© 2026 Draftly</p></div>
+  <div class="footer-bottom"><p>© 2026 Draftly</p><button class="scroll-top" type="button" aria-label="Back to top">↑</button></div>
 </footer>
-
-<script src="/js/court-enhancements.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/platform.js"></script>
 <script src="/js/dashboard-page.js"></script>

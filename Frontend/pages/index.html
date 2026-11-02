@@ -11,8 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Draftly | Draft it. Publish it. Grow it.">
   <meta property="og:description" content="Draft it, publish it, and grow your audience with Draftly, a focused writing and publishing workspace.">
@@ -21,199 +19,91 @@
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <nav class="navbar" aria-label="Main navigation">
-    <div class="logo"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></div>
-
-    <button class="hamburger" id="navToggle" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="bi bi-list"></i>
-    </button>
-
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#vision">Vision</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="blogs.html">Blogs</a></li>
-      <li><a href="editor.html" class="login-btn">Write</a></li>
-      <li><a href="dashboard.html">Dashboard</a></li>
-      <li><a href="profile.html">Profile</a></li>
-      <li id="authArea"><a href="login.html" class="login-btn">Login</a></li>
-    </ul>
+  <nav class="navbar site-header" aria-label="Main navigation">
+    <a class="logo draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a>
+    <button class="hamburger" id="navToggle" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation"><i class="bi bi-list"></i></button>
+    <ul class="nav-links" id="navLinks"><li><a href="index.html" aria-current="page">Home</a></li><li><a href="blogs.html">Blogs</a></li><li><a href="Features.html">Features</a></li><li><a href="about.html">About</a></li><li><a href="Contact.html">Contact</a></li><li class="write-entry"><a href="editor.html">Write</a></li><li id="authArea"><a href="login.html" class="login-btn">Login</a></li></ul>
   </nav>
-
-  <main id="main-content">
-    <header class="hero" id="home">
-      <div class="overlay"></div>
+  <main id="main-content" class="soft-home">
+    <header class="hero soft-hero" id="home">
+      <img class="hero-photo" src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&amp;fit=crop&amp;w=2200&amp;q=85&amp;fm=webp" alt="A notebook and pen ready for a quiet writing session" loading="lazy">
+      <div class="hero-wash" aria-hidden="true"></div>
       <div class="hero-content">
-        <div class="hero-badge">
-          <i class="bi bi-stars"></i>
-          Draft it. Publish it. Grow it.
-        </div>
+        <p class="hero-badge">A calm place for your next story</p>
         <h1>Write better.<br><span>Publish faster.</span></h1>
-        <p>Turn your best ideas into thoughtful stories in one focused workspace for independent creators.</p>
-        <div class="hero-actions">
-          <a href="editor.html" class="hero-btn">Start writing free <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
-          <a href="#quick-start" class="hero-btn secondary">See how it works</a>
-        </div>
+        <p>Turn rough notes into stories people want to read.</p>
+        <div class="hero-actions"><a href="editor.html" class="hero-btn">Start writing free <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
       </div>
-      <div class="hero-product" aria-label="Draftly editor preview">
-        <div class="browser-mockup">
-          <div class="browser-chrome"><i></i><i></i><i></i><span>draftly.app / editor</span></div>
-          <div class="browser-editor"><small>YOUR NEXT STORY</small><h2>Make room for the work that matters</h2><span class="mock-rule"></span><span class="mock-rule short"></span><span class="mock-rule"></span><span class="mock-rule medium"></span><div class="mock-toolbar"><b>B</b><i>I</i><span>↗</span><small>Draft saved</small></div></div>
-        </div>
-        <div class="hero-float-card hero-float-check"><i class="bi bi-check-circle-fill"></i><span><b>Ready to publish</b><small>Your story is taking shape</small></span></div>
-        <div class="hero-float-card hero-float-tag"><i class="bi bi-tags-fill"></i><span><b>Ideas, organized</b><small>#writing&nbsp; #ideas</small></span></div>
-      </div>
+      <svg class="hero-plane" viewBox="0 0 120 90" aria-hidden="true"><path d="M8 39 108 7 78 80 57 52 8 39Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="m57 52 51-45M57 52l-4 28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M8 39 57 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="hero-flower" aria-hidden="true">✳</span>
     </header>
 
-    <section class="social-proof" aria-label="Made for every kind of creator">
-      <p>One home for every kind of creator</p>
-      <div class="creator-types"><span>Writers</span><span>Independent publishers</span><span>Researchers</span><span>Storytellers</span></div>
-    </section>
-
-    <section class="stats-strip" aria-label="Live platform statistics">
-      <div><strong data-platform-stat="published"></strong><span>Published posts</span></div>
-      <div><strong data-platform-stat="creators"></strong><span>Published creators</span></div>
-      <div><strong data-platform-stat="subscribers"></strong><span>Newsletter subscribers</span></div>
-    </section>
-
-    <section class="features" id="features">
-      <div class="section-kicker">A complete publishing workspace</div>
-      <h2>Everything your ideas need to go further.</h2>
-      <p class="subtitle">A thoughtful set of tools for the whole journey, from first draft to published story.</p>
-      <div class="feature-bento">
-        <article class="bento-card bento-editor"><span class="bento-icon"><i class="bi bi-pencil-square"></i></span><h3>Writing, without the noise</h3><p>A focused editor keeps the blank page simple and your ideas moving.</p><div class="mini-editor"><div class="mini-editor-top"><i></i><i></i><i></i><span>Untitled story</span></div><div class="mini-lines"><b></b><b></b><b></b><b></b></div><div class="mini-cursor"></div></div></article>
-        <article class="bento-card"><span class="bento-icon violet"><i class="bi bi-tags"></i></span><h3>Keep your work organized</h3><p>Categories and tags make every story easy to find again.</p><div class="mini-tags"><span>Ideas</span><span>Writing</span><span>Culture</span></div></article>
-        <article class="bento-card"><span class="bento-icon sky"><i class="bi bi-bar-chart-line"></i></span><h3>See your momentum</h3><p>Useful publishing and audience signals live in your dashboard.</p><div class="mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
-        <article class="bento-card"><span class="bento-icon teal"><i class="bi bi-envelope-paper"></i></span><h3>Stay close to readers</h3><p>Invite readers to keep up with your latest writing.</p><div class="mini-mail"><span></span><b></b><i></i></div></article>
-        <article class="bento-card"><span class="bento-icon amber"><i class="bi bi-search"></i></span><h3>Publish with clarity</h3><p>Shape a clear title, summary, and structure before you share.</p><div class="mini-checks"><span>✓ Clear title</span><span>✓ Useful summary</span><span>✓ Ready to publish</span></div></article>
-      </div>
-      <h2 class="stories-heading">A little inspiration for your next story.</h2>
-      <div class="cards">
-        <article class="card">
-          <img src="/images/7.png" alt="Content strategy article preview" loading="lazy">
-          <span class="article-category">Creator stories</span>
-          <h3>Let’s talk about love languages</h3>
-          <p>Not all marketing works the same way for all prospects, just as the same love language is not for everyone.</p>
-          <a href="short.html" class="card-btn">Read →</a>
-        </article>
-
-        <article class="card">
-          <img src="/images/8.webp" alt="Monetization strategy article preview" loading="lazy">
-          <span class="article-category">Growth</span>
-          <h3>There’s money on the table you’re not collecting</h3>
-          <p>You may already have everything you need to start generating revenue from your existing content.</p>
-          <a href="newsletter2.html" class="card-btn">Read →</a>
-        </article>
-
-        <article class="card">
-          <img src="/images/3.jpg" alt="SEO training article preview" loading="lazy">
-          <span class="article-category">Discovery</span>
-          <h3>Can’t you learn SEO from YouTube and ChatGPT?</h3>
-          <p>Understand when free advice is enough and when a structured learning path gives better long-term results.</p>
-          <a href="newsletter.html" class="card-btn">Read →</a>
-        </article>
-
-        <article class="card">
-          <img src="/images/6.jpg" alt="Consistency and writing routine article preview" loading="lazy">
-          <span class="article-category">Writing</span>
-          <h3>How to build a 30-day writing streak</h3>
-          <p>Use a repeatable content cadence with practical prompts so you can publish consistently without burnout.</p>
-          <a href="blogs.html" class="card-btn">Read →</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="vision" id="vision">
+    <section class="vision soft-intro" id="vision" aria-labelledby="visionTitle">
+      <div class="vision-right"><img src="/images/2.jpg" alt="A writer finding a quiet moment to gather ideas" loading="lazy"></div>
       <div class="vision-left">
-        <h2>Our Vision</h2>
-        <p>
-          We believe great ideas should be easy to publish. This platform is built to help you focus on writing, not tool friction.
-        </p>
-        <ul class="vision-list">
-          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Simple editor experience for fast publishing.</span></li>
-          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Content-first workflow designed for consistency.</span></li>
-          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Built-in organization so your blog stays clean.</span></li>
-        </ul>
-        <a href="editor.html" class="arrow-btn" aria-label="Open editor">→</a>
-      </div>
-
-      <div class="vision-right">
-        <img src="/images/2.jpg" alt="Team collaborating on blog strategy">
+        <div class="intro-illustration" aria-hidden="true"><svg viewBox="0 0 180 120"><path d="M27 94c6-33 25-59 57-67 23-6 44 4 56 20-17 2-31 13-37 30-9 24-32 34-76 17Z" fill="#D0C1F3"/><path d="M52 88c14-24 34-39 66-45M61 97l4-20m24 12 4-23m21 8 8-18" fill="none" stroke="#1F2A14" stroke-width="3" stroke-linecap="round"/><circle cx="145" cy="29" r="9" fill="#B9A083"/><path d="M24 24l4 10 10 4-10 4-4 10-4-10-10-4 10-4 4-10Z" fill="#D7EFB1"/></svg></div>
+        <p class="eyebrow">A softer way to create</p>
+        <h2 id="visionTitle">A little room for your ideas to grow.</h2>
+        <p>Draftly is a calm place to turn rough notes into stories people want to read.</p>
+        <p>Write with focus, keep your work close, and publish when it feels ready.</p>
+        <p>One thoughtful workspace for every step from first thought to published.</p>
+        <a href="editor.html" class="soft-button">Find your writing rhythm <span aria-hidden="true">→</span></a>
       </div>
     </section>
 
+    <section class="home-stats" aria-label="Draftly community statistics">
+      <div class="stats-strip"><div><strong data-platform-stat="published"></strong><span>Published stories</span></div><div><strong data-platform-stat="creators"></strong><span>Creators</span></div><div><strong data-platform-stat="subscribers"></strong><span>Readers</span></div></div>
+    </section>
 
-    <section class="quick-start" id="quick-start">
-      <h2>How It Works</h2>
-      <div class="steps">
-        <article class="step">
-          <div class="step-number">1</div>
-          <h3>Draft Quickly</h3>
-          <p>Open the editor and turn ideas into structured posts with clean formatting tools.</p>
-        </article>
-        <article class="step">
-          <div class="step-number">2</div>
-          <h3>Organize Smartly</h3>
-          <p>Use tags and simple management tools to keep all your blog content easy to find.</p>
-        </article>
-        <article class="step">
-          <div class="step-number">3</div>
-          <h3>Publish Confidently</h3>
-          <p>Ship polished content and keep a reliable publishing rhythm that grows audience trust.</p>
-        </article>
+    <section class="features soft-features" id="features" aria-labelledby="featuresTitle">
+      <p class="eyebrow">A thoughtful toolkit</p><h2 id="featuresTitle">Make space for the work that matters.</h2>
+      <div class="feature-bento soft-stagger">
+        <article class="tab-card lavender"><span class="tab-label">Draft quietly</span><p>Settle into a clear page and let the first version be imperfect.</p><img src="/images/3.jpg" alt="Open notebook and notes on a desk" loading="lazy"></article>
+        <article class="tab-card cream-card"><span class="tab-label">Organise gently</span><p>Keep stories easy to find with simple categories and tags.</p><img src="/images/7.png" alt="Colorful editorial planning notes" loading="lazy"></article>
+        <article class="tab-card sage-card"><span class="tab-label">Publish with confidence</span><p>Shape your story, preview the details, and share it on your terms.</p><img src="/images/8.webp" alt="A published story ready for readers" loading="lazy"></article>
       </div>
     </section>
 
-    <section class="showcase" aria-labelledby="showcaseTitle">
-      <div class="section-kicker">Your creative home</div><h2 id="showcaseTitle">From first thought to published.</h2><p>Write in a focused space. Keep the bigger picture close in your dashboard.</p>
-      <div class="showcase-grid"><article class="showcase-window"><div class="window-bar"><span></span><span></span><span></span><b>Writing studio</b></div><div class="window-content"><small>YOUR NEXT STORY</small><h3>Make room for the work that matters</h3><div class="window-rule"></div><div class="window-rule short"></div><div class="window-rule"></div><div class="window-rule medium"></div><div class="window-toolbar"><i>B</i><i>I</i><i>↗</i><span>Draft saved</span></div></div></article><article class="showcase-window dashboard-preview"><div class="window-bar"><span></span><span></span><span></span><b>Creator dashboard</b></div><div class="dashboard-preview-content"><div class="preview-stat"><small>YOUR STORIES</small><strong>Overview</strong></div><div class="preview-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="preview-row"><span></span><b></b><em></em></div><div class="preview-row"><span></span><b></b><em></em></div></div></article></div>
+    <section class="photo-band" aria-label="Draftly writing workspace">
+      <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&amp;fit=crop&amp;w=2000&amp;q=82&amp;fm=webp" alt="Hands writing in a notebook beside a warm cup of tea" loading="lazy">
+      <div><p>From first thought to published, one calm workspace.</p></div>
     </section>
 
-    <section class="testimonials" aria-labelledby="testimonialTitle"><div class="section-kicker">Made for the craft</div><h2 id="testimonialTitle">A better rhythm for your ideas.</h2><div class="testimonial-grid"><article><div class="quote-mark">“</div><p>Give your ideas a place to grow, from the first rough note to the final publish.</p><span>THE WRITING FLOW</span></article><article><div class="quote-mark">“</div><p>Keep your writing, organization, and publishing rhythm together in one calm space.</p><span>THE CREATOR WORKSPACE</span></article><article><div class="quote-mark">“</div><p>Build a consistent practice around the stories you want to put into the world.</p><span>THE PUBLISHING HABIT</span></article></div></section>
-
-    <section class="pricing" aria-labelledby="pricingTitle"><div class="section-kicker">Choose your pace</div><h2 id="pricingTitle">Room to grow, your way.</h2><p>Start with the essentials and find the workflow that fits your work.</p><div class="pricing-grid"><article class="plan-card"><span class="plan-label">FREE</span><h3>A place to begin</h3><p>Build a steady writing habit with the essentials.</p><ul><li>Focused writing workspace</li><li>Publish and manage stories</li><li>Simple creator dashboard</li></ul><a href="signup.html">Create an account <span>→</span></a></article><article class="plan-card featured-plan"><span class="plan-label">PRO · FOR YOUR NEXT CHAPTER</span><h3>Make more of your ideas</h3><p>A deeper toolkit for a growing publishing practice.</p><ul><li>Everything in Free</li><li>Organized content workflow</li><li>Reader newsletter tools</li></ul><a href="signup.html">Get started <span>→</span></a></article><article class="plan-card"><span class="plan-label">TEAM</span><h3>Build together</h3><p>Bring a shared editorial rhythm to your team.</p><ul><li>Collaborative planning</li><li>Shared publishing calendar</li><li>Team-ready workspace</li></ul><a href="Contact.html">Talk to us <span>→</span></a></article></div></section>
-
-    <section class="faq" aria-labelledby="faqTitle"><div><div class="section-kicker">A few helpful answers</div><h2 id="faqTitle">Questions, answered.</h2></div><div class="faq-list"><details><summary>What can I publish here?<i class="bi bi-plus"></i></summary><p>Write and publish articles, essays, guides, and other long-form stories from your creator workspace.</p></details><details><summary>Can I save a draft and finish later?<i class="bi bi-plus"></i></summary><p>Yes. Use the editor’s Save Draft action to keep your work in progress on your account.</p></details><details><summary>How do readers find my posts?<i class="bi bi-plus"></i></summary><p>Published stories appear in the blog experience, where readers can browse, search, and filter content.</p></details><details><summary>Can I manage my writing from a phone?<i class="bi bi-plus"></i></summary><p>The platform adapts to smaller screens, so you can browse and manage your work on mobile.</p></details></div></section>
-
-    <section class="final-cta"><div><span>YOUR NEXT STORY STARTS HERE</span><h2>Make the idea real.</h2><p>Open a clean page and start writing.</p></div><a href="editor.html">Start writing <i class="bi bi-arrow-up-right"></i></a></section>
-
-    <section class="newsletter-cta" aria-labelledby="newsletterTitle">
-      <div>
-        <h3 id="newsletterTitle">A little inspiration, in your inbox.</h3>
-        <p>Sign up for thoughtful writing ideas and new stories from the platform.</p>
+    <section class="quick-start soft-how" id="quick-start" aria-labelledby="howTitle">
+      <p class="eyebrow">A gentle three-step rhythm</p><h2 id="howTitle">From a note to a story.</h2>
+      <svg class="hanging-doodle" viewBox="0 0 240 55" aria-hidden="true"><path d="M8 28c48-36 80 36 125 0s68 1 99-15" fill="none" stroke="#B9A083" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round"/><path d="m222 8 11 5-8 9" fill="none" stroke="#B9A083" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="steps soft-stagger">
+        <article class="tab-card lavender numbered"><span class="step-number">01</span><span class="tab-label">Begin anywhere</span><p>Collect the idea, the question, or the first sentence.</p></article>
+        <article class="tab-card tan-card numbered"><span class="step-number">02</span><span class="tab-label">Find your flow</span><p>Shape the draft with a simple, focused editor.</p></article>
+        <article class="tab-card sage-card numbered"><span class="step-number">03</span><span class="tab-label">Share it proudly</span><p>Publish when your story is ready to meet its readers.</p></article>
       </div>
-      <form class="newsletter-form" id="newsletterForm">
-        <input type="email" id="newsletterEmail" name="newsletterEmail" placeholder="Enter your email" required aria-label="Email address">
-        <button type="submit">Subscribe</button>
-        <p id="newsletterFeedback" class="newsletter-feedback" aria-live="polite"></p>
-      </form>
     </section>
+
+    <section class="testimonials soft-testimonials" aria-labelledby="testimonialTitle"><p class="eyebrow">Writers’ words</p><h2 id="testimonialTitle">A little encouragement goes a long way.</h2><div class="testimonial-grid soft-stagger"><article class="tab-card lavender"><span class="tab-label">A creator’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article><article class="tab-card cream-card"><span class="tab-label">A reader’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article><article class="tab-card sage-card"><span class="tab-label">A writer’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article></div></section>
+
+    <section class="showcase soft-gallery" aria-labelledby="showcaseTitle"><p class="eyebrow">Made by the community</p><h2 id="showcaseTitle">A few stories to get you started.</h2><div class="gallery-track" tabindex="0" aria-label="Featured Draftly stories">
+      <a class="gallery-card" href="short.html"><img src="/images/7.png" alt="Cover image for a story about communication" loading="lazy"><span>Creator stories</span><h3>Let’s talk about love languages</h3></a>
+      <a class="gallery-card" id="gallerySecond" href="newsletter2.html"><img src="/images/8.webp" alt="Cover image for a story about content revenue" loading="lazy"><span>Growth</span><h3>There’s money on the table you’re not collecting</h3></a>
+      <a class="gallery-card" href="newsletter.html"><img src="/images/3.jpg" alt="Cover image for an article about learning SEO" loading="lazy"><span>Discovery</span><h3>Can’t you learn SEO from YouTube and ChatGPT?</h3></a>
+      <a class="gallery-card" href="blogs.html"><img src="/images/6.jpg" alt="Cover image for a writing routine story" loading="lazy"><span>Writing</span><h3>How to build a 30-day writing streak</h3></a>
+    </div><a class="soft-button" href="blogs.html">See what creators publish <span aria-hidden="true">→</span></a><a class="gallery-next" href="#gallerySecond" aria-label="Scroll to more stories">→</a></section>
+
+    <section class="pricing soft-pricing" aria-labelledby="pricingTitle"><p class="eyebrow">Choose your pace</p><h2 id="pricingTitle">Room to grow, your way.</h2><p>Start with the essentials and find the workflow that fits your work.</p><div class="pricing-grid"><article class="plan-card"><span class="plan-label">FREE</span><h3>A place to begin</h3><p>Build a steady writing habit with the essentials.</p><ul><li>Focused writing workspace</li><li>Publish and manage stories</li><li>Simple creator dashboard</li></ul><a href="signup.html">Create an account <span>→</span></a></article><article class="plan-card featured-plan"><span class="plan-label">PRO · FOR YOUR NEXT CHAPTER</span><h3>Make more of your ideas</h3><p>A deeper toolkit for a growing publishing practice.</p><ul><li>Everything in Free</li><li>Organized content workflow</li><li>Reader newsletter tools</li></ul><a href="signup.html">Get started <span>→</span></a></article><article class="plan-card"><span class="plan-label">TEAM</span><h3>Build together</h3><p>Bring a shared editorial rhythm to your team.</p><ul><li>Collaborative planning</li><li>Shared publishing calendar</li><li>Team-ready workspace</li></ul><a href="Contact.html">Talk to us <span>→</span></a></article></div></section>
+
+    <section class="faq soft-faq" aria-labelledby="faqTitle"><div><p class="eyebrow">A few helpful answers</p><h2 id="faqTitle">Questions, answered.</h2></div><div class="faq-list"><details><summary>What can I publish here?<i class="bi bi-plus"></i></summary><p>Write and publish articles, essays, guides, and other long-form stories from your creator workspace.</p></details><details><summary>Can I save a draft and finish later?<i class="bi bi-plus"></i></summary><p>Yes. Use the editor’s Save Draft action to keep your work in progress on your account.</p></details><details><summary>How do readers find my posts?<i class="bi bi-plus"></i></summary><p>Published stories appear in the blog experience, where readers can browse, search, and filter content.</p></details><details><summary>Can I manage my writing from a phone?<i class="bi bi-plus"></i></summary><p>The platform adapts to smaller screens, so you can browse and manage your work on mobile.</p></details></div></section>
+
+    <section class="final-cta soft-final-cta"><img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&amp;fit=crop&amp;w=2000&amp;q=82&amp;fm=webp" alt="A sunlit writing desk with an open book" loading="lazy"><div><p class="eyebrow">Your next story starts here</p><h2>Make the idea real.</h2><p>Open a clean page and start writing.</p><a href="editor.html" class="hero-btn">Start writing free <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div></section>
+
+    <section class="newsletter-cta" aria-labelledby="newsletterTitle"><div><p class="eyebrow">A small note from Draftly</p><h3 id="newsletterTitle">A little inspiration, in your inbox.</h3><p>Sign up for thoughtful writing ideas and new stories from the platform.</p></div><form class="newsletter-form" id="newsletterForm"><label class="visually-hidden" for="newsletterEmail">Email address</label><input type="email" id="newsletterEmail" name="newsletterEmail" placeholder="Enter your email" required aria-label="Email address"><button type="submit">Subscribe</button><p id="newsletterFeedback" class="newsletter-feedback" aria-live="polite"></p></form></section>
   </main>
-
-  <footer class="site-footer">
+  <footer class="site-footer shared-footer">
     <div class="footer-top">
-      <div class="footer-col brand-col">
-        <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-        <p>Draft it. Publish it. Grow it.</p>
-      </div>
-      <div class="footer-col">
-        <h2>Product</h2>
-        <a href="blogs.html">Blogs</a>
-        <a href="editor.html">Write</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="signup.html">Create an account</a>
-      </div>
-      <div class="footer-col">
-        <h2>Legal</h2>
-        <a href="about.html">About Draftly</a>
-        <a href="legal.html#privacy">Privacy</a>
-        <a href="legal.html#terms">Terms</a>
-        <a href="Contact.html">Contact</a>
-      </div>
-    </div>
-    <div class="footer-bottom"><p>© 2026 Draftly</p><div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div></div>
+      <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p></div>
+      <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+      <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="newsletter.html">Newsletter</a></div>
+      <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
+    </div><div class="footer-bottom"><p>© 2026 Draftly</p><div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div></div>
   </footer>
-
   <script>
     const navToggle = document.getElementById("navToggle");
     const navLinks = document.getElementById("navLinks");
@@ -298,7 +188,6 @@
       });
     }
   </script>
-<script src="/js/court-enhancements.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/oauth-callback-fallback.js"></script>
 <script src="/js/platform.js"></script>

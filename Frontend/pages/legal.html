@@ -6,8 +6,6 @@
   <meta name="description" content="Read Draftly privacy, service, and affiliate disclosures.">
   <meta name="theme-color" content="#171717">
   <title>Legal | Draftly</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Legal | Draftly">
   <meta property="og:description" content="Read Draftly privacy, service, and affiliate disclosures.">
@@ -16,13 +14,8 @@
 <body>
   <header class="navbar">
     <div class="logo"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></div>
-    <nav class="profile-nav" aria-label="Legal navigation">
-      <a href="index.html">Home</a>
-      <a href="blogs.html">Blogs</a>
-      <a href="editor.html">Write</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="profile.html">Profile</a>
-    </nav>
+    <button class="hamburger" type="button" aria-controls="legalNav" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <nav class="profile-nav" id="legalNav" aria-label="Legal navigation"><a href="index.html">Home</a><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="about.html">About</a><a href="Contact.html">Contact</a><a class="write-entry" href="editor.html">Write</a><a href="legal.html" aria-current="page">Legal</a></nav>
     <ul class="auth-links" id="authArea" aria-label="Account actions"></ul>
   </header>
   <main class="profile-page legal-page">
@@ -42,15 +35,15 @@
       <p>Some editorial pages may discuss products or services. This demo platform does not process affiliate links or payments. Any commercial relationship should be clearly disclosed by the author in the relevant article.</p>
     </section>
   </main>
-  <footer class="site-footer">
-    <div class="footer-top">
-      <div class="footer-col brand-col"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a><p>Draft it. Publish it. Grow it.</p></div>
-      <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="editor.html">Write</a><a href="dashboard.html">Dashboard</a></div>
-      <div class="footer-col"><h2>Legal</h2><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="Contact.html">Contact</a></div>
-    </div>
-    <div class="footer-bottom"><p>© 2026 Draftly</p></div>
-  </footer>
-  <script src="/js/court-enhancements.js"></script>
+  <footer class="site-footer shared-footer">
+  <div class="footer-top">
+    <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p><div class="footer-social" aria-label="Community links"><a href="Contact.html">Get in touch</a><a href="newsletter.html">Newsletter</a></div></div>
+    <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+    <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="dashboard.html">Dashboard</a></div>
+    <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Draftly</p><button class="scroll-top" type="button" aria-label="Back to top">↑</button></div>
+</footer>
   <script src="/js/api.js"></script>
   <script src="/js/platform.js"></script>
 </body>
