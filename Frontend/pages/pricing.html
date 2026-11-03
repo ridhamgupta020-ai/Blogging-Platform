@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Explore Draftly's annual memberships for thoughtful creators." />
+    <title>Draftly Membership | Annual Plans</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/pricing.css" />
+    <script src="/js/api.js" defer></script>
+    <script src="/js/platform.js" defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+    <script src="/js/membership-page.js" defer></script>
+  </head>
+  <body class="pricing-page">
+    <header class="pricing-header">
+      <nav class="pricing-nav" aria-label="Main navigation">
+        <div class="pricing-nav-inner">
+          <a class="pricing-brand" href="/" aria-label="Draftly home">
+            <img src="/images/draftly-icon.svg" alt="" />
+            <span>Draftly</span>
+          </a>
+          <button class="pricing-menu-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation menu">
+            <span></span><span></span>
+          </button>
+          <div class="pricing-nav-links" id="navLinks">
+            <div class="pricing-nav-center">
+              <a href="/">Home</a>
+              <a href="/blogs.html">Blogs</a>
+              <a href="/Features.html">Features</a>
+              <a href="/pricing.html" aria-current="page">Pricing</a>
+              <a href="/about.html">About</a>
+              <a href="/Contact.html">Contact</a>
+            </div>
+            <div class="pricing-nav-actions">
+              <a class="pricing-login" href="/login.html">Log in</a>
+              <a class="pricing-start" href="/signup.html">Start Writing</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="pricing-hero" aria-labelledby="pricingHeading">
+        <p class="pricing-kicker"><span aria-hidden="true">✦</span> Draftly Membership</p>
+        <h1 id="pricingHeading">Choose the Right Plan for Your <em>Creative Journey</em></h1>
+        <p class="pricing-intro">Unlock powerful tools to write, publish, grow and build your audience.</p>
+        <ul class="pricing-benefits" aria-label="Membership benefits">
+          <li><span aria-hidden="true">✳</span> Better Writing Experience</li>
+          <li><span aria-hidden="true">↗</span> Grow Your Audience</li>
+          <li><span aria-hidden="true">✦</span> Premium Creator Tools</li>
+        </ul>
+      </section>
+
+      <section class="pricing-plans-section" aria-label="Annual membership plans">
+        <div class="pricing-grid" id="membershipPlans" aria-live="polite" aria-busy="true">
+          <p class="pricing-loading" role="status">Loading annual plans…</p>
+        </div>
+        <p class="pricing-feedback" id="pricingFeedback" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <section class="annual-strip" aria-label="Annual membership benefits">
+        <div class="annual-strip-heading">
+          <span class="annual-seal" aria-hidden="true">365</span>
+          <p>One Payment. <strong>365 Days</strong> of Premium Access.</p>
+        </div>
+        <ul>
+          <li><span aria-hidden="true">◇</span> Secure Payments</li>
+          <li><span aria-hidden="true">◷</span> One Year Validity</li>
+          <li><span aria-hidden="true">✓</span> Instant Activation After Verification</li>
+          <li><span aria-hidden="true">—</span> No Monthly Billing</li>
+        </ul>
+      </section>
+
+      <section class="creator-tools" aria-labelledby="toolsHeading">
+        <p class="pricing-kicker">Made for the writing life</p>
+        <h2 id="toolsHeading">Everything You Need to Grow as a Creator</h2>
+        <p class="tools-intro">Explore the tools available today and the capabilities planned for future Draftly memberships.</p>
+        <div class="tools-grid">
+          <article class="tool-item"><span class="tool-icon" aria-hidden="true">Aa</span><div><h3>Advanced Writing Editor</h3><p>Available now</p></div></article>
+          <article class="tool-item planned"><span class="tool-icon" aria-hidden="true">✧</span><div><h3>AI Writing Assistance</h3><p>Planned</p></div></article>
+          <article class="tool-item planned"><span class="tool-icon" aria-hidden="true">▥</span><div><h3>Content Analytics</h3><p>Planned</p></div></article>
+          <article class="tool-item planned"><span class="tool-icon" aria-hidden="true">◷</span><div><h3>Scheduled Publishing</h3><p>Planned</p></div></article>
+          <article class="tool-item planned"><span class="tool-icon" aria-hidden="true">♧</span><div><h3>Team Collaboration</h3><p>Planned</p></div></article>
+          <article class="tool-item planned"><span class="tool-icon" aria-hidden="true">⌘</span><div><h3>Custom Domains</h3><p>Planned</p></div></article>
+          <article class="tool-item planned"><span class="tool-icon" aria-hidden="true">♡</span><div><h3>Priority Support</h3><p>Planned</p></div></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="pricing-footer">
+      <div class="pricing-footer-inner">
+        <div class="pricing-footer-brand">
+          <a class="pricing-brand" href="/" aria-label="Draftly home">
+            <img src="/images/draftly-icon.svg" alt="" />
+            <span>Draftly</span>
+          </a>
+          <p>Draft it. Publish it. Grow it.</p>
+        </div>
+        <div class="pricing-footer-col"><h2>Product</h2><a href="/blogs.html">Blogs</a><a href="/Features.html">Features</a><a href="/editor.html">Write</a><a href="/pricing.html">Pricing</a></div>
+        <div class="pricing-footer-col"><h2>Company</h2><a href="/about.html">About</a><a href="/Contact.html">Contact</a><a href="/newsletter.html">Newsletter</a></div>
+        <div class="pricing-footer-col"><h2>Legal</h2><a href="/legal.html#privacy">Privacy</a><a href="/legal.html#terms">Terms</a></div>
+      </div>
+      <div class="pricing-footer-bottom"><p>© <span id="currentYear">2026</span> Draftly. Made for thoughtful creators.</p><button class="pricing-back-top" type="button" aria-label="Back to top">↑</button></div>
+    </footer>
+  </body>
+</html>

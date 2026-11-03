@@ -14,6 +14,8 @@ process.env.SESSION_SECRET = "test-session-secret-with-at-least-32-characters";
 process.env.SUPABASE_URL = "https://test-project.supabase.co";
 process.env.SUPABASE_PUBLISHABLE_KEY = "test-publishable-key";
 process.env.SUPABASE_SECRET_KEY = "test-secret-key";
+delete process.env.RAZORPAY_KEY_ID;
+delete process.env.RAZORPAY_KEY_SECRET;
 
 const { app, db } = require("../../server");
 const supabase = require("../config/supabase");
@@ -107,6 +109,40 @@ test("authenticated blog workflows persist and enforce ownership", async (t) => 
   const registeredUser = (await request("auth/me", {}, ownerCookie)).payload.user;
   assert.equal(registeredUser.email, "riley@example.com");
   assert.equal("password" in registeredUser, false);
+  const membershipPlans = await request("membership/plans");
+  assert.equal(membershipPlans.response.status, 200);
+  assert.deepEqual(membershipPlans.payload.plans.map((plan) => [plan.slug, plan.price_inr, plan.annual_days]), [
+    ["free", 0, 365],
+    ["premium", 500, 365],
+    ["pro", 999, 365],
+    ["ultra_vip", 1999, 365]
+  ]);
+  const currentMembership = await request("membership/me", {}, ownerCookie);
+  assert.equal(currentMembership.response.status, 200);
+  assert.equal(currentMembership.payload.membership.plan, "free");
+  const unavailableCheckout = await request("membership/checkout", {
+    method: "POST",
+    body: { plan: "premium" }
+  }, ownerCookie);
+  assert.equal(unavailableCheckout.response.status, 503);
+  assert.match(unavailableCheckout.payload.error, /not configured/i);
+  assert.equal(db.prepare("SELECT COUNT(*) AS count FROM user_memberships WHERE user_id = ?").get(registeredUser.id).count, 0);
+  const unavailableVerification = await request("membership/verify", {
+    method: "POST",
+    body: { plan: "premium", orderId: "fake-order", paymentId: "fake-payment", signature: "fake-signature" }
+  }, ownerCookie);
+  assert.equal(unavailableVerification.response.status, 503);
+  assert.equal(db.prepare("SELECT COUNT(*) AS count FROM user_memberships WHERE user_id = ?").get(registeredUser.id).count, 0);
+  const premiumPlanId = db.prepare("SELECT id FROM membership_plans WHERE slug = 'premium'").get().id;
+  db.prepare(`
+    INSERT INTO user_memberships (user_id, plan_id, activation_date, expiry_date, membership_status, amount_paid)
+    VALUES (?, ?, datetime('now', '-400 days'), datetime('now', '-35 days'), 'active', 500)
+  `).run(registeredUser.id, premiumPlanId);
+  const expiredMembership = await request("membership/me", {}, ownerCookie);
+  assert.equal(expiredMembership.response.status, 200);
+  assert.equal(expiredMembership.payload.membership.status, "expired");
+  assert.equal(expiredMembership.payload.plan.slug, "free");
+  assert.deepEqual(expiredMembership.payload.availableFeatures.sort(), ["basic_editor", "personal_dashboard", "publish_blog"]);
   assert.equal((await request("dashboard")).response.status, 401);
   assert.equal((await request("auth/me")).payload.user, null);
 

@@ -408,8 +408,13 @@ app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
     return res.status(413).json({ error: "Images must be 5 MB or smaller." });
   }
-  if (status >= 500) console.error(error);
-  res.status(status).json({ error: status >= 500 ? "An unexpected server error occurred." : error.message });
+  if (status >= 500 && !(error instanceof ApiError)) console.error(error);
+  const message = error instanceof ApiError && status !== 500
+    ? error.message
+    : status >= 500
+      ? "An unexpected server error occurred."
+      : error.message;
+  res.status(status).json({ error: message });
 });
 
 if (require.main === module) {
