@@ -9,8 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Profile | Draftly">
   <meta property="og:description" content="View and manage your Draftly profile and published articles.">
@@ -19,11 +17,9 @@
 <body>
   <header class="navbar">
     <div class="logo"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></div>
-    <nav class="profile-nav" aria-label="Profile navigation">
-      <a href="index.html">Home</a>
-      <a href="blogs.html">Blogs</a>
-      <a href="dashboard.html">Dashboard</a>
-    </nav>
+    <button class="hamburger" type="button" aria-controls="profileNav" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <nav class="profile-nav" id="profileNav" aria-label="Profile navigation"><a href="index.html">Home</a><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="about.html">About</a><a href="Contact.html">Contact</a><a class="write-entry" href="editor.html">Write</a><a href="profile.html" aria-current="page">Profile</a></nav>
+    <ul class="auth-links" id="authArea" aria-label="Account actions"></ul>
   </header>
   <main class="profile-page">
     <section class="profile-heading">
@@ -33,50 +29,69 @@
         <h1 id="profileName">Loading profile…</h1>
         <p id="profileBio"></p>
       </div>
+      <span class="member-badge"><i aria-hidden="true"></i> Member</span>
     </section>
-    <section id="profileEditor" class="profile-card" hidden>
-      <h2>Account details</h2>
-      <form id="profileForm">
-        <label for="profileNameInput">Display name</label>
-        <input id="profileNameInput" name="name" maxlength="60" required>
-        <label for="profileEmailInput">Email address</label>
-        <input id="profileEmailInput" name="email" type="email" required>
-        <label for="currentPasswordForEmail">Current password <span>(required only when changing email)</span></label>
-        <input id="currentPasswordForEmail" name="currentPassword" type="password" autocomplete="current-password">
-        <button type="submit">Save profile</button>
-        <p class="status" id="profileStatus" aria-live="polite"></p>
-      </form>
+    <div class="profile-layout">
+      <section id="profileEditor" class="profile-editor-group" hidden>
+        <article class="profile-card">
+          <h2>Account details</h2>
+          <form id="profileForm">
+            <label for="profileNameInput">Display name</label>
+            <input id="profileNameInput" name="name" maxlength="60" placeholder="Your display name" required>
+            <label for="profileEmailInput">Email address</label>
+            <input id="profileEmailInput" name="email" type="email" placeholder="you@example.com" required>
+            <label for="currentPasswordForEmail">Current password <span>(required only when changing email)</span></label>
+            <input id="currentPasswordForEmail" name="currentPassword" type="password" placeholder="Enter your current password" autocomplete="current-password">
+            <button type="submit">Save profile</button>
+            <p class="status profile-form-status" id="profileStatus" aria-live="polite"></p>
+          </form>
+        </article>
 
-      <h2>Profile photo</h2>
-      <form id="avatarForm">
-        <label for="avatarInput">Upload JPG, PNG, or WebP (5 MB maximum)</label>
-        <input id="avatarInput" name="image" type="file" accept="image/jpeg,image/png,image/webp" required>
-        <button type="submit">Update photo</button>
-      </form>
+        <article class="profile-card profile-photo-card">
+          <h2>Profile photo</h2>
+          <form id="avatarForm">
+            <div class="avatar-upload-layout">
+              <span class="avatar-preview" aria-hidden="true">✎</span>
+              <div class="avatar-upload-fields">
+                <label for="avatarInput">Upload JPG, PNG, or WebP (5 MB maximum)</label>
+                <input id="avatarInput" name="image" type="file" accept="image/jpeg,image/png,image/webp" required>
+              </div>
+            </div>
+            <button type="submit">Update photo</button>
+            <p class="status profile-form-status" id="avatarStatus" aria-live="polite"></p>
+          </form>
+        </article>
 
-      <h2>Change password</h2>
-      <form id="passwordForm">
-        <label for="oldPassword">Current password</label>
-        <input id="oldPassword" name="currentPassword" type="password" autocomplete="current-password" required>
-        <label for="newPassword">New password</label>
-        <input id="newPassword" name="newPassword" type="password" minlength="12" autocomplete="new-password" required>
-        <small>At least 12 characters with lowercase, uppercase, and a number.</small>
-        <button type="submit">Change password</button>
-      </form>
-    </section>
-    <section class="profile-articles">
-      <h2 id="profileArticlesHeading">Published articles</h2>
-      <div id="profileArticles" class="blog-grid" aria-live="polite"></div>
-    </section>
-  </main>
-  <footer class="site-footer">
-    <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-    <div class="footer-bottom">
-      <p>© 2026 Draftly</p>
-      <a href="Contact.html">Contact</a>
+        <article class="profile-card">
+          <h2>Change password</h2>
+          <form id="passwordForm">
+            <label for="oldPassword">Current password</label>
+            <input id="oldPassword" name="currentPassword" type="password" placeholder="Enter current password" autocomplete="current-password" required>
+            <label for="newPassword">New password</label>
+            <input id="newPassword" name="newPassword" type="password" placeholder="Create a new password" minlength="12" autocomplete="new-password" required>
+            <small>At least 12 characters with lowercase, uppercase, and a number.</small>
+            <button type="submit">Change password</button>
+            <p class="status profile-form-status" id="passwordStatus" aria-live="polite"></p>
+          </form>
+        </article>
+      </section>
+
+      <section class="profile-articles">
+        <h2 id="profileArticlesHeading">Published articles</h2>
+        <div id="profileArticles" class="blog-grid" aria-live="polite"></div>
+        <a class="profile-empty-cta" href="editor.html"><i class="bi bi-pencil-square" aria-hidden="true"></i>Write your first article</a>
+      </section>
     </div>
-  </footer>
-  <script src="/js/court-enhancements.js"></script>
+  </main>
+  <footer class="site-footer shared-footer">
+  <div class="footer-top">
+    <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p><div class="footer-social" aria-label="Community links"><a href="Contact.html">Get in touch</a><a href="newsletter.html">Newsletter</a></div></div>
+    <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+    <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="dashboard.html">Dashboard</a></div>
+    <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Draftly</p><button class="scroll-top" type="button" aria-label="Back to top">↑</button></div>
+</footer>
   <script src="/js/api.js"></script>
   <script src="/js/platform.js"></script>
   <script src="/js/profile-page.js"></script>

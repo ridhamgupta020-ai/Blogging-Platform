@@ -94,6 +94,142 @@ function saveAuthSession(req, authSession, localUser) {
   req.session.supabaseExpiresAt = authSession.expires_at || Math.floor(Date.now() / 1000) + (authSession.expires_in || 3600);
 }
 
+const PLAN_ORDER = ["free", "premium", "pro", "ultra_vip"];
+const PLAN_PRICE_MAP = { free: 0, premium: 500, pro: 999, ultra_vip: 1999 };
+
+function getPlanBySlug(slug) {
+  if (!slug || typeof slug !== "string") return null;
+  return db.prepare("SELECT * FROM membership_plans WHERE slug = ? AND is_active = 1").get(slug);
+}
+
+function getEffectiveMembership(userId) {
+  if (!userId) return { plan: getPlanBySlug("free"), unlocked: [], active: false };
+  const membership = db.prepare(`
+    SELECT um.*, mp.slug AS plan_slug, mp.name AS plan_name, mp.price_inr, mp.description AS plan_description
+    FROM user_memberships um
+    JOIN membership_plans mp ON mp.id = um.plan_id
+    WHERE um.user_id = ?
+    ORDER BY datetime(um.activation_date) DESC, um.id DESC
+    LIMIT 1
+  `).get(userId);
+  if (!membership) {
+    const freePlan = getPlanBySlug("free");
+    return { plan: freePlan, unlocked: [], active: true };
+  }
+  const expiry = membership.expiry_date ? new Date(membership.expiry_date).getTime() : null;
+  const isExpired = expiry !== null && expiry < Date.now();
+  if (isExpired && membership.membership_status !== "expired") {
+    db.prepare("UPDATE user_memberships SET membership_status = 'expired', updated_at = datetime('now') WHERE id = ?").run(membership.id);
+  }
+  const current = isExpired ? getPlanBySlug("free") : membership;
+  const unlocked = db.prepare(`
+    SELECT mf.slug
+    FROM plan_features pf
+    JOIN membership_features mf ON mf.id = pf.feature_id
+    WHERE pf.plan_id = ?
+  `).all(current.plan_id || membership.plan_id).map((row) => row.slug);
+  return {
+    plan: current.plan_id ? { slug: current.plan_slug || membership.plan_slug, name: current.plan_name || membership.plan_name, price_inr: current.price_inr || membership.price_inr, id: current.plan_id || membership.plan_id } : freePlan(),
+    unlocked,
+    active: !isExpired,
+    membership
+  };
+}
+
+function freePlan() {
+  return getPlanBySlug("free");
+}
+
+function isFeatureUnlockedForPlan(planSlug, featureSlug) {
+  const planOrder = PLAN_ORDER.indexOf(planSlug || "free");
+  const featureMinimum = db.prepare("SELECT minimum_plan FROM membership_features WHERE slug = ?").get(featureSlug)?.minimum_plan || "free";
+  return PLAN_ORDER.indexOf(featureMinimum) <= planOrder;
+}
+
+function ensureAdminAccess(req) {
+  const allowed = (process.env.ADMIN_EMAILS || "").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean);
+  const userEmail = req.user?.email?.toLowerCase();
+  if (!userEmail || !allowed.includes(userEmail)) throw new ApiError(403, "Admin access is required.");
+}
+
+async function createRazorpayOrder({ userId, planId, amountInr }) {
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) {
+    const orderId = `demo_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`;
+    return {
+      provider: "demo",
+      orderId,
+      amount: amountInr * 100,
+      currency: "INR",
+      receipt: orderId,
+      key: "demo_key",
+      success: true,
+      mode: "demo"
+    };
+  }
+  const orderId = `draftly_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`;
+  const response = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      amount: Math.round(amountInr * 100),
+      currency: "INR",
+      receipt: orderId,
+      notes: { userId, planId }
+    })
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || !payload.id) {
+    throw new ApiError(502, payload.error?.description || "Unable to create a Razorpay order right now.");
+  }
+  return {
+    provider: "razorpay",
+    orderId: payload.id,
+    amount: payload.amount,
+    currency: payload.currency,
+    receipt: payload.receipt,
+    key: keyId,
+    success: true,
+    mode: "live"
+  };
+}
+
+function verifyRazorpaySignature({ orderId, paymentId, signature }) {
+  const secret = process.env.RAZORPAY_KEY_SECRET;
+  if (!secret || !orderId || !paymentId || !signature) return false;
+  const expected = crypto.createHmac("sha256", secret).update(`${orderId}|${paymentId}`).digest();
+  const actual = Buffer.from(signature, "utf8");
+  if (expected.length !== actual.length) return false;
+  return crypto.timingSafeEqual(expected, actual);
+}
+
+function activateMembership(userId, planId, options = {}) {
+  const { paymentId, orderId, amountPaid = 0, currency = "INR", status = "active" } = options;
+  const plan = db.prepare("SELECT * FROM membership_plans WHERE id = ?").get(planId);
+  if (!plan) throw new ApiError(400, "Membership plan not found.");
+  const expiryDate = new Date(Date.now() + (plan.annual_days || 365) * 24 * 60 * 60 * 1000).toISOString();
+  const membership = db.prepare(`
+    INSERT INTO user_memberships (user_id, plan_id, payment_id, order_id, activation_date, expiry_date, membership_status, amount_paid, currency, updated_at)
+    VALUES (?, ?, ?, ?, datetime('now'), ?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(user_id) DO UPDATE SET
+      plan_id = excluded.plan_id,
+      payment_id = excluded.payment_id,
+      order_id = excluded.order_id,
+      activation_date = datetime('now'),
+      expiry_date = excluded.expiry_date,
+      membership_status = excluded.membership_status,
+      amount_paid = excluded.amount_paid,
+      currency = excluded.currency,
+      updated_at = datetime('now')
+  `).run(userId, planId, paymentId || null, orderId || null, expiryDate, status, amountPaid, currency);
+  db.prepare("INSERT INTO membership_audit_logs (user_id, plan_id, action, reason, details) VALUES (?, ?, 'activate_membership', ?, ?)").run(userId, planId, "verified_payment", JSON.stringify({ paymentId, orderId, amountPaid }));
+  return membership;
+}
+
 app.get("/auth/google", asyncRoute(async (req, res) => {
   try {
     const redirectTo = `${supabase.backendUrl}/auth/callback`;
@@ -593,8 +729,185 @@ app.delete("/api/blogs/:id", requireAuth, asyncRoute(async (req, res, next) => {
   res.status(204).end();
 }));
 
-app.post("/api/blogs/:id/like", requireAuth, asyncRoute(async (req, res, next) => {
-  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+app.get("/api/membership/plans", asyncRoute(async (req, res) => {
+  const plans = db.prepare(`
+    SELECT id, slug, name, price_inr, currency, description, annual_days, recommended
+    FROM membership_plans
+    WHERE is_active = 1
+    ORDER BY price_inr ASC
+  `).all();
+  res.json({ plans });
+}));
+
+app.get("/api/membership/features", asyncRoute(async (req, res) => {
+  const features = db.prepare(`
+    SELECT slug, name, description, minimum_plan, active, usage_limit, reset_period
+    FROM membership_features
+    WHERE active = 1
+    ORDER BY name ASC
+  `).all();
+  res.json({ features });
+}));
+
+app.get("/api/membership/me", requireAuth, asyncRoute(async (req, res) => {
+  const plan = getPlanBySlug("free");
+  const membership = db.prepare(`
+    SELECT um.*, mp.slug AS plan_slug, mp.name AS plan_name, mp.price_inr, mp.currency
+    FROM user_memberships um
+    JOIN membership_plans mp ON mp.id = um.plan_id
+    WHERE um.user_id = ?
+    ORDER BY datetime(um.activation_date) DESC, um.id DESC
+    LIMIT 1
+  `).get(req.user.id) || null;
+
+  const currentPlan = membership ? getPlanBySlug(membership.plan_slug) || plan : plan;
+  const featureSlugs = db.prepare(`
+    SELECT mf.slug
+    FROM plan_features pf
+    JOIN membership_features mf ON mf.id = pf.feature_id
+    WHERE pf.plan_id = ?
+  `).all(currentPlan.id).map((item) => item.slug);
+  const now = Date.now();
+  const remainingDays = membership && membership.expiry_date
+    ? Math.max(0, Math.ceil((new Date(membership.expiry_date).getTime() - now) / (24 * 60 * 60 * 1000)))
+    : 0;
+
+  res.json({
+    membership: membership ? {
+      id: membership.id,
+      plan: membership.plan_slug,
+      planName: membership.plan_name,
+      status: membership.membership_status,
+      activationDate: membership.activation_date,
+      expiryDate: membership.expiry_date,
+      amountPaid: membership.amount_paid,
+      paymentId: membership.payment_id,
+      orderId: membership.order_id,
+      remainingDays
+    } : {
+      plan: "free",
+      planName: currentPlan.name,
+      status: "active",
+      activationDate: null,
+      expiryDate: null,
+      amountPaid: 0,
+      paymentId: null,
+      orderId: null,
+      remainingDays: 365
+    },
+    plan: { ...currentPlan, features: featureSlugs },
+    availableFeatures: featureSlugs,
+    featureAccess: featureSlugs
+  });
+}));
+
+app.get("/api/membership/check", requireAuth, asyncRoute(async (req, res) => {
+  const featureId = typeof req.query.feature === "string" ? req.query.feature.trim() : "";
+  if (!featureId) {
+    return res.json({ feature: null, unlocked: false, requiredPlan: "free" });
+  }
+  const membership = getEffectiveMembership(req.user.id);
+  const unlocked = Boolean(membership.unlocked.includes(featureId) || isFeatureUnlockedForPlan(membership.plan?.slug || "free", featureId));
+  const requiredPlan = db.prepare("SELECT minimum_plan FROM membership_features WHERE slug = ?").get(featureId)?.minimum_plan || "free";
+  res.json({ feature: featureId, unlocked, requiredPlan, currentPlan: membership.plan?.slug || "free" });
+}));
+
+app.post("/api/membership/checkout", requireAuth, asyncRoute(async (req, res) => {
+  const planSlug = typeof req.body?.plan === "string" ? req.body.plan.trim() : "";
+  const plan = getPlanBySlug(planSlug);
+  if (!plan) throw new ApiError(400, "Choose a valid membership plan.");
+  const orderPayload = await createRazorpayOrder({ userId: req.user.id, planId: plan.id, amountInr: Number(plan.price_inr || 0) });
+  const transaction = db.prepare(`
+    INSERT INTO payment_transactions (user_id, plan_id, payment_id, order_id, payment_status, provider, amount, currency, metadata)
+    VALUES (?, ?, NULL, ?, 'pending', ?, ?, ?, ?)
+    ON CONFLICT(order_id) DO UPDATE SET
+      user_id = excluded.user_id,
+      plan_id = excluded.plan_id,
+      provider = excluded.provider,
+      amount = excluded.amount,
+      currency = excluded.currency,
+      updated_at = datetime('now')
+  `).run(req.user.id, plan.id, orderPayload.orderId, orderPayload.provider || "demo", Number(orderPayload.amount || plan.price_inr * 100) / 100, orderPayload.currency || "INR", JSON.stringify({ plan: plan.slug, amountInr: Number(plan.price_inr || 0) }));
+  res.json({
+    success: true,
+    transactionId: transaction.lastInsertRowid,
+    orderId: orderPayload.orderId,
+    amount: Number(plan.price_inr || 0),
+    currency: orderPayload.currency || "INR",
+    provider: orderPayload.provider || "demo",
+    key: orderPayload.key || null,
+    mode: orderPayload.mode || "demo",
+    plan: { slug: plan.slug, name: plan.name, priceInr: Number(plan.price_inr || 0), annualDays: plan.annual_days || 365 }
+  });
+}));
+
+app.post("/api/membership/verify", requireAuth, asyncRoute(async (req, res) => {
+  const planSlug = typeof req.body?.plan === "string" ? req.body.plan.trim() : "";
+  const orderId = typeof req.body?.orderId === "string" ? req.body.orderId.trim() : "";
+  const paymentId = typeof req.body?.paymentId === "string" ? req.body.paymentId.trim() : "";
+  const signature = typeof req.body?.signature === "string" ? req.body.signature.trim() : "";
+  const amountInput = Number(req.body?.amount || 0);
+  const plan = getPlanBySlug(planSlug);
+  if (!plan) throw new ApiError(400, "Invalid membership plan.");
+  const transaction = db.prepare("SELECT * FROM payment_transactions WHERE user_id = ? AND order_id = ?").get(req.user.id, orderId || "");
+  if (!transaction) throw new ApiError(404, "Payment order not found.");
+  if (Number(transaction.amount || 0) !== Number(amountInput) && Number(amountInput) !== 0 && Number(transaction.amount || 0) !== Number(plan.price_inr)) {
+    throw new ApiError(400, "The paid amount does not match the selected plan.");
+  }
+
+  if (process.env.RAZORPAY_KEY_SECRET) {
+    const validSignature = verifyRazorpaySignature({ orderId: transaction.order_id, paymentId: paymentId || transaction.payment_id || "", signature });
+    if (!validSignature) throw new ApiError(400, "Payment signature verification failed.");
+  }
+
+  const paymentStatus = paymentId ? "paid" : "pending";
+  db.prepare(`
+    UPDATE payment_transactions
+    SET payment_id = COALESCE(?, payment_id), payment_status = ?, updated_at = datetime('now')
+    WHERE id = ?
+  `).run(paymentId || null, paymentStatus, transaction.id);
+
+  activateMembership(req.user.id, plan.id, {
+    paymentId: paymentId || transaction.payment_id || `manual_${Date.now()}`,
+    orderId: transaction.order_id,
+    amountPaid: Number(plan.price_inr || 0),
+    currency: transaction.currency || "INR",
+    status: "active"
+  });
+
+  const effectiveMembership = getEffectiveMembership(req.user.id);
+  res.json({ success: true, status: "paid", membership: effectiveMembership });
+}));
+
+app.get("/api/membership/history", requireAuth, asyncRoute(async (req, res) => {
+  const rows = db.prepare(`
+    SELECT pt.id, pt.order_id, pt.payment_id, pt.amount, pt.currency, pt.payment_status, p.slug AS plan_slug, p.name AS plan_name, pt.created_at
+    FROM payment_transactions pt
+    JOIN membership_plans p ON p.id = pt.plan_id
+    WHERE pt.user_id = ?
+    ORDER BY pt.created_at DESC
+  `).all(req.user.id);
+  res.json({ transactions: rows });
+}));
+
+app.get("/api/membership/admin/plans", requireAuth, asyncRoute(async (req, res) => {
+  ensureAdminAccess(req);
+  const plans = db.prepare("SELECT * FROM membership_plans WHERE is_active = 1 ORDER BY price_inr ASC").all();
+  res.json({ plans });
+}));
+
+app.patch("/api/membership/admin/plans/:slug", requireAuth, asyncRoute(async (req, res) => {
+  ensureAdminAccess(req);
+  const slug = String(req.params.slug || "");
+  const plan = getPlanBySlug(slug);
+  if (!plan) throw new ApiError(404, "Membership plan not found.");
+  const nextPrice = Number(req.body?.priceInr ?? plan.price_inr);
+  const description = typeof req.body?.description === "string" ? req.body.description.trim() : plan.description;
+  db.prepare("UPDATE membership_plans SET price_inr = ?, description = ?, recommended = ? WHERE slug = ?").run(nextPrice, description, Number(Boolean(req.body?.recommended)) || 0, slug);
+  res.json({ success: true, plan: getPlanBySlug(slug) });
+}));
+
+app.post("/api/blogs/:id/like", requireAuth, asyncRoute(async (req, res, next) => {  if (useSupabaseContent && validSupabaseId(req.params.id)) {
     return res.json(await contentStore.like(req.params.id, req.user.supabase_user_id));
   }
   const id = Number(req.params.id);
@@ -717,6 +1030,8 @@ app.get("/api/dashboard", requireAuth, asyncRoute(async (req, res) => {
   const subscribers = db.prepare("SELECT COUNT(*) AS count FROM newsletter_subscribers").get().count;
   res.json({ user: publicUser(req.user), counts, blogs, subscribers });
 }));
+
+app.use("/api", (req, res, next) => next(new ApiError(404, "API endpoint not found.")));
 }
 
 module.exports = registerApiRoutes;
