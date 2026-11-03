@@ -847,7 +847,6 @@ app.post("/api/membership/verify", requireAuth, asyncRoute(async (req, res) => {
   const orderId = typeof req.body?.orderId === "string" ? req.body.orderId.trim() : "";
   const paymentId = typeof req.body?.paymentId === "string" ? req.body.paymentId.trim() : "";
   const signature = typeof req.body?.signature === "string" ? req.body.signature.trim() : "";
-<<<<<<< HEAD
   const plan = getPlanBySlug(planSlug);
   if (!plan) throw new ApiError(400, "Invalid membership plan.");
   if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -885,36 +884,6 @@ app.post("/api/membership/verify", requireAuth, asyncRoute(async (req, res) => {
     });
   });
   activateVerifiedPayment();
-=======
-  const amountInput = Number(req.body?.amount || 0);
-  const plan = getPlanBySlug(planSlug);
-  if (!plan) throw new ApiError(400, "Invalid membership plan.");
-  const transaction = db.prepare("SELECT * FROM payment_transactions WHERE user_id = ? AND order_id = ?").get(req.user.id, orderId || "");
-  if (!transaction) throw new ApiError(404, "Payment order not found.");
-  if (Number(transaction.amount || 0) !== Number(amountInput) && Number(amountInput) !== 0 && Number(transaction.amount || 0) !== Number(plan.price_inr)) {
-    throw new ApiError(400, "The paid amount does not match the selected plan.");
-  }
-
-  if (process.env.RAZORPAY_KEY_SECRET) {
-    const validSignature = verifyRazorpaySignature({ orderId: transaction.order_id, paymentId: paymentId || transaction.payment_id || "", signature });
-    if (!validSignature) throw new ApiError(400, "Payment signature verification failed.");
-  }
-
-  const paymentStatus = paymentId ? "paid" : "pending";
-  db.prepare(`
-    UPDATE payment_transactions
-    SET payment_id = COALESCE(?, payment_id), payment_status = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `).run(paymentId || null, paymentStatus, transaction.id);
-
-  activateMembership(req.user.id, plan.id, {
-    paymentId: paymentId || transaction.payment_id || `manual_${Date.now()}`,
-    orderId: transaction.order_id,
-    amountPaid: Number(plan.price_inr || 0),
-    currency: transaction.currency || "INR",
-    status: "active"
-  });
->>>>>>> 4813462ef24b684a2735c88811327852ba30612d
 
   const effectiveMembership = getEffectiveMembership(req.user.id);
   res.json({ success: true, status: "paid", membership: effectiveMembership });
@@ -949,10 +918,6 @@ app.patch("/api/membership/admin/plans/:slug", requireAuth, asyncRoute(async (re
 }));
 
 app.post("/api/blogs/:id/like", requireAuth, asyncRoute(async (req, res, next) => {  if (useSupabaseContent && validSupabaseId(req.params.id)) {
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 4813462ef24b684a2735c88811327852ba30612d
     return res.json(await contentStore.like(req.params.id, req.user.supabase_user_id));
   }
   const id = Number(req.params.id);
