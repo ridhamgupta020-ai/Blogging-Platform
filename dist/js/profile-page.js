@@ -22,7 +22,7 @@
       const title = document.createElement("h3");
       title.textContent = blog.title;
       const description = document.createElement("p");
-      description.textContent = blog.description || blog.content.replace(/<[^>]*>/g, " ").trim().slice(0, 170);
+      description.textContent = blog.excerpt || blog.description || "A published story from this writer.";
       link.append(title, description);
       list.append(link);
     });

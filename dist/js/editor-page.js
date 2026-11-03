@@ -26,7 +26,9 @@
   }
 
   const currentId = new URLSearchParams(location.search).get("id");
-  let blogId = currentId && /^\d+$/.test(currentId) ? Number(currentId) : null;
+  const numericId = currentId && /^\d+$/.test(currentId);
+  const uuidId = currentId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(currentId);
+  let blogId = numericId ? Number(currentId) : uuidId ? currentId : null;
   let coverImage = null;
   let saveTimer;
   let savePromise = null;
@@ -137,6 +139,10 @@
 
   function setCover(src) {
     coverImage = src;
+    const fileName = document.getElementById("coverFileName");
+    const removeButton = document.getElementById("removeCoverBtn");
+    if (fileName) fileName.textContent = src ? fields.coverInput.files?.[0]?.name || "Current cover image attached" : "No image selected";
+    if (removeButton) removeButton.disabled = !src;
     if (!src) {
       fields.coverPreview.removeAttribute("src");
       fields.coverPreview.hidden = true;
@@ -157,14 +163,23 @@
   fields.coverInput.addEventListener("change", async () => {
     const file = fields.coverInput.files?.[0];
     if (!file) return;
+    const fileName = document.getElementById("coverFileName");
+    if (fileName) fileName.textContent = file.name;
     try {
       setSaveState("Uploading image…");
       setCover(await uploadFile(file));
       scheduleSave();
     } catch (error) {
+      fields.coverInput.value = "";
       setSaveState(error.message, true);
       api.notice(error.message, "error");
     }
+  });
+
+  document.getElementById("removeCoverBtn")?.addEventListener("click", () => {
+    setCover(null);
+    fields.coverInput.value = "";
+    scheduleSave();
   });
 
   fields.coverInput.accept = "image/jpeg,image/png,image/webp";
@@ -234,6 +249,7 @@
     fields.tags.value = "";
     fields.content.innerHTML = "";
     setCover(null);
+    fields.coverInput.value = "";
     blogId = null;
     if (currentId) history.replaceState(null, "", "editor.html");
     setSaveState("Cleared");

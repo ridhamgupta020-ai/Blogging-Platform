@@ -94,8 +94,6 @@ function saveAuthSession(req, authSession, localUser) {
   req.session.supabaseExpiresAt = authSession.expires_at || Math.floor(Date.now() / 1000) + (authSession.expires_in || 3600);
 }
 
-<<<<<<< Updated upstream
-=======
 const PLAN_ORDER = ["free", "premium", "pro", "ultra_vip"];
 const PLAN_PRICE_MAP = { free: 0, premium: 500, pro: 999, ultra_vip: 1999 };
 
@@ -225,7 +223,6 @@ function activateMembership(userId, planId, options = {}) {
   return membership;
 }
 
->>>>>>> Stashed changes
 app.get("/auth/google", asyncRoute(async (req, res) => {
   try {
     const redirectTo = `${supabase.backendUrl}/auth/callback`;
@@ -725,10 +722,6 @@ app.delete("/api/blogs/:id", requireAuth, asyncRoute(async (req, res, next) => {
   res.status(204).end();
 }));
 
-<<<<<<< Updated upstream
-app.post("/api/blogs/:id/like", requireAuth, asyncRoute(async (req, res, next) => {
-  if (useSupabaseContent && validSupabaseId(req.params.id)) {
-=======
 app.get("/api/membership/plans", asyncRoute(async (req, res) => {
   const plans = db.prepare(`
     SELECT id, slug, name, price_inr, currency, description, annual_days, recommended
@@ -854,6 +847,7 @@ app.post("/api/membership/verify", requireAuth, asyncRoute(async (req, res) => {
   const orderId = typeof req.body?.orderId === "string" ? req.body.orderId.trim() : "";
   const paymentId = typeof req.body?.paymentId === "string" ? req.body.paymentId.trim() : "";
   const signature = typeof req.body?.signature === "string" ? req.body.signature.trim() : "";
+<<<<<<< HEAD
   const plan = getPlanBySlug(planSlug);
   if (!plan) throw new ApiError(400, "Invalid membership plan.");
   if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -891,6 +885,36 @@ app.post("/api/membership/verify", requireAuth, asyncRoute(async (req, res) => {
     });
   });
   activateVerifiedPayment();
+=======
+  const amountInput = Number(req.body?.amount || 0);
+  const plan = getPlanBySlug(planSlug);
+  if (!plan) throw new ApiError(400, "Invalid membership plan.");
+  const transaction = db.prepare("SELECT * FROM payment_transactions WHERE user_id = ? AND order_id = ?").get(req.user.id, orderId || "");
+  if (!transaction) throw new ApiError(404, "Payment order not found.");
+  if (Number(transaction.amount || 0) !== Number(amountInput) && Number(amountInput) !== 0 && Number(transaction.amount || 0) !== Number(plan.price_inr)) {
+    throw new ApiError(400, "The paid amount does not match the selected plan.");
+  }
+
+  if (process.env.RAZORPAY_KEY_SECRET) {
+    const validSignature = verifyRazorpaySignature({ orderId: transaction.order_id, paymentId: paymentId || transaction.payment_id || "", signature });
+    if (!validSignature) throw new ApiError(400, "Payment signature verification failed.");
+  }
+
+  const paymentStatus = paymentId ? "paid" : "pending";
+  db.prepare(`
+    UPDATE payment_transactions
+    SET payment_id = COALESCE(?, payment_id), payment_status = ?, updated_at = datetime('now')
+    WHERE id = ?
+  `).run(paymentId || null, paymentStatus, transaction.id);
+
+  activateMembership(req.user.id, plan.id, {
+    paymentId: paymentId || transaction.payment_id || `manual_${Date.now()}`,
+    orderId: transaction.order_id,
+    amountPaid: Number(plan.price_inr || 0),
+    currency: transaction.currency || "INR",
+    status: "active"
+  });
+>>>>>>> 4813462ef24b684a2735c88811327852ba30612d
 
   const effectiveMembership = getEffectiveMembership(req.user.id);
   res.json({ success: true, status: "paid", membership: effectiveMembership });
@@ -925,7 +949,10 @@ app.patch("/api/membership/admin/plans/:slug", requireAuth, asyncRoute(async (re
 }));
 
 app.post("/api/blogs/:id/like", requireAuth, asyncRoute(async (req, res, next) => {  if (useSupabaseContent && validSupabaseId(req.params.id)) {
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> 4813462ef24b684a2735c88811327852ba30612d
     return res.json(await contentStore.like(req.params.id, req.user.supabase_user_id));
   }
   const id = Number(req.params.id);
@@ -1048,6 +1075,8 @@ app.get("/api/dashboard", requireAuth, asyncRoute(async (req, res) => {
   const subscribers = db.prepare("SELECT COUNT(*) AS count FROM newsletter_subscribers").get().count;
   res.json({ user: publicUser(req.user), counts, blogs, subscribers });
 }));
+
+app.use("/api", (req, res, next) => next(new ApiError(404, "API endpoint not found.")));
 }
 
 module.exports = registerApiRoutes;

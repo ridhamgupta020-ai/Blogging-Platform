@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<<<<<<< HEAD
     <meta name="description" content="Explore Draftly's annual memberships for thoughtful creators." />
     <title>Draftly Membership | Annual Plans</title>
+=======
+    <title>Draftly Pricing | Premium Membership</title>
+    <meta name="description" content="Draftly premium annual memberships for bloggers and teams." />
+>>>>>>> 4813462ef24b684a2735c88811327852ba30612d
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/styles.css" />
+<<<<<<< HEAD
     <link rel="stylesheet" href="/css/pricing.css" />
     <script src="/js/api.js" defer></script>
     <script src="/js/platform.js" defer></script>
@@ -39,11 +45,34 @@
               <a class="pricing-login" href="/login.html">Log in</a>
               <a class="pricing-start" href="/signup.html">Start Writing</a>
             </div>
+=======
+  </head>
+  <body>
+    <header class="site-header navbar">
+      <nav class="nav-wrap" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="Draftly home">
+          <img src="/images/draftly-logo-dark.svg" alt="Draftly" />
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation">
+          ☰
+        </button>
+        <div class="nav-links" id="navLinks">
+          <a href="/">Home</a>
+          <a href="/blogs.html">Blogs</a>
+          <a href="/Features.html">Features</a>
+          <a href="/pricing.html" class="active">Pricing</a>
+          <a href="/about.html">About</a>
+          <a href="/Contact.html">Contact</a>
+          <div class="nav-actions">
+            <a href="/login.html" class="btn-ghost">Log in</a>
+            <a href="/signup.html" class="btn-primary">Start writing</a>
+>>>>>>> 4813462ef24b684a2735c88811327852ba30612d
           </div>
         </div>
       </nav>
     </header>
 
+<<<<<<< HEAD
     <main>
       <section class="pricing-hero" aria-labelledby="pricingHeading">
         <p class="pricing-kicker"><span aria-hidden="true">✦</span> Draftly Membership</p>
@@ -107,5 +136,31 @@
       </div>
       <div class="pricing-footer-bottom"><p>© <span id="currentYear">2026</span> Draftly. Made for thoughtful creators.</p><button class="pricing-back-top" type="button" aria-label="Back to top">↑</button></div>
     </footer>
+=======
+    <main class="pricing-page" aria-labelledby="pricingHeading">
+      <section class="pricing-hero">
+        <p class="eyebrow">Annual memberships</p>
+        <h1 id="pricingHeading">Choose the plan that matches your publishing flow.</h1>
+        <p class="subheading">Billed yearly — 365 days of access.</p>
+      </section>
+
+      <section class="pricing-grid" id="membershipPlans" aria-live="polite"></section>
+    </main>
+
+    <footer class="site-footer shared-footer">
+      <div class="footer-top">
+        <div class="footer-col brand-col">
+          <a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a>
+          <p>Draft it. Publish it. Grow it.</p>
+        </div>
+        <div class="footer-col"><h2>Product</h2><a href="/blogs.html">Blogs</a><a href="/Features.html">Features</a><a href="/editor.html">Write</a></div>
+        <div class="footer-col"><h2>Company</h2><a href="/about.html">About</a><a href="/Contact.html">Contact</a><a href="/newsletter.html">Newsletter</a></div>
+        <div class="footer-col"><h2>Legal</h2><a href="/legal.html#privacy">Privacy</a><a href="/legal.html#terms">Terms</a></div>
+      </div>
+      <div class="footer-bottom"><p>© 2026 Draftly</p><div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div></div>
+    </footer>
+
+    <script src="/js/membership-page.js"></script>
+>>>>>>> 4813462ef24b684a2735c88811327852ba30612d
   </body>
 </html>
