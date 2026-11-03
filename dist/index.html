@@ -9,326 +9,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1432821596592-e2c18b78144f?auto=format&amp;fit=crop&amp;w=3000&amp;q=90&amp;fm=webp">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/css/style.css">
-
-  <style>
-    :root {
-      --brand-blue: #A78BFA;
-      --brand-orange: #E8FF65;
-      --text-dark: #111;
-      --text-light: #f4f4f4;
-      --surface: #ffffff;
-      --surface-soft: #f7fbff;
-      --shadow-soft: 0 18px 36px rgba(0, 0, 0, 0.08);
-    }
-
-    .skip-link {
-      position: absolute;
-      left: -9999px;
-      top: 0;
-      background: var(--text-dark);
-      color: var(--surface);
-      padding: 10px 14px;
-      border-radius: 8px;
-      z-index: 1200;
-    }
-
-    .skip-link:focus {
-      left: 16px;
-      top: 16px;
-    }
-
-    .navbar {
-      backdrop-filter: saturate(140%) blur(6px);
-    }
-
-    .logo a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .hamburger {
-      border: 0;
-      background: transparent;
-      color: var(--text-dark);
-      font-size: 1.8rem;
-      cursor: pointer;
-    }
-
-    .hero-content {
-      max-width: 640px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(58, 183, 255, 0.35);
-      color: #0f172a;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .hero-content p {
-      max-width: 580px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .hero-btn.secondary {
-      background: rgba(0, 0, 0, 0.75);
-      color: #fff;
-    }
-
-    .hero-stats {
-      margin-top: 22px;
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      background: rgba(255, 255, 255, 0.88);
-      border-radius: 12px;
-      padding: 10px 14px;
-      min-width: 140px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .stat strong {
-      font-size: 1.1rem;
-      color: #0f172a;
-    }
-
-    .vision-list {
-      margin: 10px 0 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 10px;
-    }
-
-    .vision-list li {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      color: #333;
-      line-height: 1.45;
-    }
-
-    .vision-list i {
-      color: var(--brand-blue);
-      margin-top: 2px;
-    }
-
-    .features .subtitle {
-      margin-top: 12px;
-      color: #4b5563;
-      font-size: 1rem;
-    }
-
-    .cards {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    }
-
-    .card {
-      text-align: left;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 26px 50px rgba(0, 0, 0, 0.12);
-    }
-
-    .quick-start {
-      background: linear-gradient(180deg, var(--surface-soft), var(--surface));
-      padding: 80px 80px 90px;
-    }
-
-    .quick-start h2 {
-      text-align: center;
-      font-size: 2rem;
-      color: #0f172a;
-      margin-bottom: 34px;
-    }
-
-    .steps {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-    }
-
-    .step {
-      background: var(--surface);
-      border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .step-number {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--brand-orange);
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 12px;
-    }
-
-    .step h3 {
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-      color: #0f172a;
-    }
-
-    .step p {
-      color: #4b5563;
-      line-height: 1.55;
-    }
-
-    .newsletter-cta {
-      max-width: 1100px;
-      margin: 0 auto 90px;
-      background: linear-gradient(135deg, #111827, #1f2937);
-      color: var(--text-light);
-      border-radius: 24px;
-      padding: 36px;
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 24px;
-      box-shadow: 0 28px 48px rgba(17, 24, 39, 0.24);
-    }
-
-    .newsletter-cta h3 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-    }
-
-    .newsletter-cta p {
-      color: #cbd5e1;
-      line-height: 1.6;
-    }
-
-    .newsletter-form {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .newsletter-form input {
-      flex: 1 1 220px;
-      border-radius: 999px;
-      border: 1px solid #475569;
-      padding: 12px 14px;
-      background: #0f172a;
-      color: #e2e8f0;
-    }
-
-    .newsletter-form button {
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 600;
-      cursor: pointer;
-      background: var(--brand-orange);
-      color: #111827;
-    }
-
-    .newsletter-feedback {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #93c5fd;
-      min-height: 1rem;
-    }
-
-    #authArea {
-      margin-left: 10px;
-    }
-
-    .auth-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-    }
-
-    .logout-btn {
-      border: 0;
-      border-radius: 999px;
-      background: #111827;
-      color: #fff;
-      cursor: pointer;
-      padding: 6px 12px;
-      font-size: 0.82rem;
-    }
-
-    .scroll-top {
-      user-select: none;
-    }
-
-    @media (max-width: 1024px) {
-      .quick-start {
-        padding: 72px 30px;
-      }
-
-      .newsletter-cta {
-        margin: 0 20px 80px;
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .hero-content h1 {
-        font-size: 2.7rem;
-      }
-
-      .steps {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-btn.secondary {
-        background: #111827;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .hero-stats {
-        gap: 10px;
-      }
-
-      .stat {
-        min-width: 120px;
-      }
-
-      .newsletter-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .newsletter-feedback {
-        width: 100%;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Draftly | Draft it. Publish it. Grow it.">
   <meta property="og:description" content="Draft it, publish it, and grow your audience with Draftly, a focused writing and publishing workspace.">
@@ -337,205 +21,86 @@
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <nav class="navbar" aria-label="Main navigation">
-    <div class="logo"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></div>
-
-    <button class="hamburger" id="navToggle" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="bi bi-list"></i>
-    </button>
-
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#vision">Vision</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="blogs.html">Blogs</a></li>
-      <li><a href="editor.html" class="login-btn">Write</a></li>
-      <li id="authArea"><a href="login.html" class="login-btn">Login</a></li>
-    </ul>
+  <nav class="navbar site-header" aria-label="Main navigation">
+    <a class="logo draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a>
+    <button class="hamburger" id="navToggle" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation"><i class="bi bi-list"></i></button>
+    <ul class="nav-links" id="navLinks"><li><a href="index.html" aria-current="page">Home</a></li><li><a href="blogs.html">Blogs</a></li><li><a href="Features.html">Features</a></li><li><a href="about.html">About</a></li><li><a href="Contact.html">Contact</a></li><li class="write-entry"><a href="editor.html">Write</a></li><li id="authArea"><a href="login.html" class="login-btn">Login</a></li></ul>
   </nav>
-
-  <main id="main-content">
-    <header class="hero" id="home">
-      <div class="overlay"></div>
+  <main id="main-content" class="soft-home">
+    <header class="hero soft-hero" id="home">
+      <div class="hero-wash" aria-hidden="true"></div>
       <div class="hero-content">
-        <div class="hero-badge">
-          <i class="bi bi-stars"></i>
-          Draft it. Publish it. Grow it.
-        </div>
-        <h1>Write Better.<br><span>Publish Faster.</span></h1>
-        <p>Turn your best ideas into thoughtful stories. Write, organize, and publish from one focused workspace built for independent creators.</p>
-        <div class="hero-actions">
-          <a href="editor.html" class="hero-btn">Start Writing <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
-          <a href="blogs.html" class="hero-btn secondary">Explore Platform</a>
-        </div>
+        <p class="hero-badge">A calm place for your next story</p>
+        <h1>Write better.<br><span>Publish faster.</span></h1>
+        <p>Turn rough notes into stories people want to read.</p>
+        <div class="hero-actions"><a href="editor.html" class="hero-btn">Start writing free <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
       </div>
+      <svg class="hero-plane" viewBox="0 0 120 90" aria-hidden="true"><path d="M8 39 108 7 78 80 57 52 8 39Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="m57 52 51-45M57 52l-4 28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M8 39 57 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="hero-flower" aria-hidden="true">✳</span>
+      <a class="hero-photo-credit" href="https://unsplash.com/photos/vintage-teal-typewriter-beside-book-jLwVAUtLOAQ" target="_blank" rel="noopener noreferrer">Photo by RetroSupply on Unsplash</a>
     </header>
 
-    <section class="social-proof" aria-label="Made for every kind of creator">
-      <p>One home for every kind of creator</p>
-      <div class="creator-types"><span>Writers</span><span>Independent publishers</span><span>Researchers</span><span>Storytellers</span></div>
-    </section>
-
-    <section class="stats-strip" aria-label="Live platform statistics">
-      <div><strong data-platform-stat="published">0</strong><span>Published posts</span></div>
-      <div><strong data-platform-stat="creators">0</strong><span>Published creators</span></div>
-      <div><strong data-platform-stat="subscribers">0</strong><span>Newsletter subscribers</span></div>
-    </section>
-
-    <section class="features" id="features">
-      <div class="section-kicker">A complete publishing workspace</div>
-      <h2>Everything your ideas need to go further.</h2>
-      <p class="subtitle">A thoughtful set of tools for the whole journey, from first draft to published story.</p>
-      <div class="feature-bento">
-        <article class="bento-card bento-editor"><span class="bento-icon"><i class="bi bi-pencil-square"></i></span><h3>Writing, without the noise</h3><p>A focused editor keeps the blank page simple and your ideas moving.</p><div class="mini-editor"><div class="mini-editor-top"><i></i><i></i><i></i><span>Untitled story</span></div><div class="mini-lines"><b></b><b></b><b></b><b></b></div><div class="mini-cursor"></div></div></article>
-        <article class="bento-card"><span class="bento-icon violet"><i class="bi bi-tags"></i></span><h3>Keep your work organized</h3><p>Categories and tags make every story easy to find again.</p><div class="mini-tags"><span>Ideas</span><span>Writing</span><span>Culture</span></div></article>
-        <article class="bento-card"><span class="bento-icon sky"><i class="bi bi-bar-chart-line"></i></span><h3>See your momentum</h3><p>Useful publishing and audience signals live in your dashboard.</p><div class="mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
-        <article class="bento-card"><span class="bento-icon teal"><i class="bi bi-envelope-paper"></i></span><h3>Stay close to readers</h3><p>Invite readers to keep up with your latest writing.</p><div class="mini-mail"><span></span><b></b><i></i></div></article>
-        <article class="bento-card"><span class="bento-icon amber"><i class="bi bi-search"></i></span><h3>Publish with clarity</h3><p>Shape a clear title, summary, and structure before you share.</p><div class="mini-checks"><span>✓ Clear title</span><span>✓ Useful summary</span><span>✓ Ready to publish</span></div></article>
-      </div>
-      <h2 class="stories-heading">A little inspiration for your next story.</h2>
-      <div class="cards">
-        <article class="card">
-          <img src="/images/7.png" alt="Content strategy article preview">
-          <h3>Let’s talk about love languages</h3>
-          <p>Not all marketing works the same way for all prospects, just as the same love language is not for everyone.</p>
-          <a href="short.html" class="card-btn">Read →</a>
-        </article>
-
-        <article class="card">
-          <img src="/images/8.webp" alt="Monetization strategy article preview">
-          <h3>There’s money on the table you’re not collecting</h3>
-          <p>You may already have everything you need to start generating revenue from your existing content.</p>
-          <a href="newsletter2.html" class="card-btn">Read →</a>
-        </article>
-
-        <article class="card">
-          <img src="/images/3.jpg" alt="SEO training article preview">
-          <h3>Can’t you learn SEO from YouTube and ChatGPT?</h3>
-          <p>Understand when free advice is enough and when a structured learning path gives better long-term results.</p>
-          <a href="newsletter.html" class="card-btn">Read →</a>
-        </article>
-
-        <article class="card">
-          <img src="/images/6.jpg" alt="Consistency and writing routine article preview">
-          <h3>How to build a 30-day writing streak</h3>
-          <p>Use a repeatable content cadence with practical prompts so you can publish consistently without burnout.</p>
-          <a href="blogs.html" class="card-btn">Read →</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="vision" id="vision">
+    <section class="vision soft-intro" id="vision" aria-labelledby="visionTitle">
+      <div class="vision-right"><img src="/images/8.jpg" alt="A writer finding a quiet moment to gather ideas" loading="lazy"></div>
       <div class="vision-left">
-        <h2>Our Vision</h2>
-        <p>
-          We believe great ideas should be easy to publish. This platform is built to help you focus on writing, not tool friction.
-        </p>
-        <ul class="vision-list">
-          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Simple editor experience for fast publishing.</span></li>
-          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Content-first workflow designed for consistency.</span></li>
-          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Built-in organization so your blog stays clean.</span></li>
-        </ul>
-        <a href="editor.html" class="arrow-btn" aria-label="Open editor">→</a>
-      </div>
-
-      <div class="vision-right">
-        <img src="/images/2.jpg" alt="Team collaborating on blog strategy">
+        <div class="intro-illustration" aria-hidden="true"><svg viewBox="0 0 180 120"><path d="M27 94c6-33 25-59 57-67 23-6 44 4 56 20-17 2-31 13-37 30-9 24-32 34-76 17Z" fill="#D0C1F3"/><path d="M52 88c14-24 34-39 66-45M61 97l4-20m24 12 4-23m21 8 8-18" fill="none" stroke="#1F2A14" stroke-width="3" stroke-linecap="round"/><circle cx="145" cy="29" r="9" fill="#B9A083"/><path d="M24 24l4 10 10 4-10 4-4 10-4-10-10-4 10-4 4-10Z" fill="#D7EFB1"/></svg></div>
+        <p class="eyebrow">A softer way to create</p>
+        <h2 id="visionTitle">A little room for your ideas to grow.</h2>
+        <p>Draftly is a calm place to turn rough notes into stories people want to read.</p>
+        <p>Write with focus, keep your work close, and publish when it feels ready.</p>
+        <p>One thoughtful workspace for every step from first thought to published.</p>
+        <a href="editor.html" class="soft-button">Find your writing ridham <span aria-hidden="true">→</span></a>
       </div>
     </section>
 
+    <section class="home-stats" aria-label="Draftly community statistics">
+      <div class="stats-strip"><div><strong data-platform-stat="published"></strong><span>Published stories</span></div><div><strong data-platform-stat="creators"></strong><span>Creators</span></div><div><strong data-platform-stat="subscribers"></strong><span>Readers</span></div></div>
+    </section>
 
-    <section class="quick-start" id="quick-start">
-      <h2>How It Works</h2>
-      <div class="steps">
-        <article class="step">
-          <div class="step-number">1</div>
-          <h3>Draft Quickly</h3>
-          <p>Open the editor and turn ideas into structured posts with clean formatting tools.</p>
-        </article>
-        <article class="step">
-          <div class="step-number">2</div>
-          <h3>Organize Smartly</h3>
-          <p>Use tags and simple management tools to keep all your blog content easy to find.</p>
-        </article>
-        <article class="step">
-          <div class="step-number">3</div>
-          <h3>Publish Confidently</h3>
-          <p>Ship polished content and keep a reliable publishing rhythm that grows audience trust.</p>
-        </article>
+    <section class="features soft-features" id="features" aria-labelledby="featuresTitle">
+      <p class="eyebrow">A thoughtful toolkit</p><h2 id="featuresTitle">Make space for the work that matters.</h2>
+      <div class="feature-bento soft-stagger">
+        <article class="tab-card lavender"><span class="tab-label">Draft quietly</span><p>Settle into a clear page and let the first version be imperfect.</p><img src="/images/3.jpg" alt="Open notebook and notes on a desk" loading="lazy"></article>
+        <article class="tab-card cream-card"><span class="tab-label">Organise gently</span><p>Keep stories easy to find with simple categories and tags.</p><img src="/images/7.png" alt="Colorful editorial planning notes" loading="lazy"></article>
+        <article class="tab-card sage-card"><span class="tab-label">Publish with confidence</span><p>Shape your story, preview the details, and share it on your terms.</p><img src="/images/8.webp" alt="A published story ready for readers" loading="lazy"></article>
       </div>
     </section>
 
-    <section class="showcase" aria-labelledby="showcaseTitle">
-      <div class="section-kicker">Your creative home</div><h2 id="showcaseTitle">From first thought to published.</h2><p>Write in a focused space. Keep the bigger picture close in your dashboard.</p>
-      <div class="showcase-grid"><article class="showcase-window"><div class="window-bar"><span></span><span></span><span></span><b>Writing studio</b></div><div class="window-content"><small>YOUR NEXT STORY</small><h3>Make room for the work that matters</h3><div class="window-rule"></div><div class="window-rule short"></div><div class="window-rule"></div><div class="window-rule medium"></div><div class="window-toolbar"><i>B</i><i>I</i><i>↗</i><span>Draft saved</span></div></div></article><article class="showcase-window dashboard-preview"><div class="window-bar"><span></span><span></span><span></span><b>Creator dashboard</b></div><div class="dashboard-preview-content"><div class="preview-stat"><small>YOUR STORIES</small><strong>Overview</strong></div><div class="preview-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="preview-row"><span></span><b></b><em></em></div><div class="preview-row"><span></span><b></b><em></em></div></div></article></div>
+    <section class="photo-band" aria-label="Draftly writing workspace">
+      <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&amp;fit=crop&amp;w=2000&amp;q=82&amp;fm=webp" alt="Hands writing in a notebook beside a warm cup of tea" loading="lazy">
+      <div><p>From first thought to published, one calm workspace.</p></div>
     </section>
 
-    <section class="testimonials" aria-labelledby="testimonialTitle"><div class="section-kicker">Made for the craft</div><h2 id="testimonialTitle">A better rhythm for your ideas.</h2><div class="testimonial-grid"><article><div class="quote-mark">“</div><p>Give your ideas a place to grow, from the first rough note to the final publish.</p><span>THE WRITING FLOW</span></article><article><div class="quote-mark">“</div><p>Keep your writing, organization, and publishing rhythm together in one calm space.</p><span>THE CREATOR WORKSPACE</span></article><article><div class="quote-mark">“</div><p>Build a consistent practice around the stories you want to put into the world.</p><span>THE PUBLISHING HABIT</span></article></div></section>
-
-    <section class="pricing" aria-labelledby="pricingTitle"><div class="section-kicker">Choose your pace</div><h2 id="pricingTitle">Room to grow, your way.</h2><p>Start with the essentials and find the workflow that fits your work.</p><div class="pricing-grid"><article class="plan-card"><span class="plan-label">FREE</span><h3>A place to begin</h3><p>Build a steady writing habit with the essentials.</p><ul><li>Focused writing workspace</li><li>Publish and manage stories</li><li>Simple creator dashboard</li></ul><a href="signup.html">Create an account <span>→</span></a></article><article class="plan-card featured-plan"><span class="plan-label">PRO · FOR YOUR NEXT CHAPTER</span><h3>Make more of your ideas</h3><p>A deeper toolkit for a growing publishing practice.</p><ul><li>Everything in Free</li><li>Organized content workflow</li><li>Reader newsletter tools</li></ul><a href="signup.html">Get started <span>→</span></a></article><article class="plan-card"><span class="plan-label">TEAM</span><h3>Build together</h3><p>Bring a shared editorial rhythm to your team.</p><ul><li>Collaborative planning</li><li>Shared publishing calendar</li><li>Team-ready workspace</li></ul><a href="Contact.html">Talk to us <span>→</span></a></article></div></section>
-
-    <section class="faq" aria-labelledby="faqTitle"><div><div class="section-kicker">A few helpful answers</div><h2 id="faqTitle">Questions, answered.</h2></div><div class="faq-list"><details><summary>What can I publish here?<i class="bi bi-plus"></i></summary><p>Write and publish articles, essays, guides, and other long-form stories from your creator workspace.</p></details><details><summary>Can I save a draft and finish later?<i class="bi bi-plus"></i></summary><p>Yes. Use the editor’s Save Draft action to keep your work in progress on your account.</p></details><details><summary>How do readers find my posts?<i class="bi bi-plus"></i></summary><p>Published stories appear in the blog experience, where readers can browse, search, and filter content.</p></details><details><summary>Can I manage my writing from a phone?<i class="bi bi-plus"></i></summary><p>The platform adapts to smaller screens, so you can browse and manage your work on mobile.</p></details></div></section>
-
-    <section class="final-cta"><div><span>YOUR NEXT STORY STARTS HERE</span><h2>Make the idea real.</h2><p>Open a clean page and start writing.</p></div><a href="editor.html">Start writing <i class="bi bi-arrow-up-right"></i></a></section>
-
-    <section class="newsletter-cta" aria-labelledby="newsletterTitle">
-      <div>
-        <h3 id="newsletterTitle">A little inspiration, in your inbox.</h3>
-        <p>Sign up for thoughtful writing ideas and new stories from the platform.</p>
+    <section class="quick-start soft-how" id="quick-start" aria-labelledby="howTitle">
+      <p class="eyebrow">A gentle three-step rhythm</p><h2 id="howTitle">From a note to a story.</h2>
+      <svg class="hanging-doodle" viewBox="0 0 240 55" aria-hidden="true"><path d="M8 28c48-36 80 36 125 0s68 1 99-15" fill="none" stroke="#B9A083" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round"/><path d="m222 8 11 5-8 9" fill="none" stroke="#B9A083" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="steps soft-stagger">
+        <article class="tab-card lavender numbered"><span class="step-number">01</span><span class="tab-label">Begin anywhere</span><p>Collect the idea, the question, or the first sentence.</p></article>
+        <article class="tab-card tan-card numbered"><span class="step-number">02</span><span class="tab-label">Find your flow</span><p>Shape the draft with a simple, focused editor.</p></article>
+        <article class="tab-card sage-card numbered"><span class="step-number">03</span><span class="tab-label">Share it proudly</span><p>Publish when your story is ready to meet its readers.</p></article>
       </div>
-      <form class="newsletter-form" id="newsletterForm">
-        <input type="email" id="newsletterEmail" name="newsletterEmail" placeholder="Enter your email" required aria-label="Email address">
-        <button type="submit">Subscribe</button>
-        <p id="newsletterFeedback" class="newsletter-feedback" aria-live="polite"></p>
-      </form>
     </section>
+
+    <section class="testimonials soft-testimonials" aria-labelledby="testimonialTitle"><p class="eyebrow">Writers’ words</p><h2 id="testimonialTitle">A little encouragement goes a long way.</h2><div class="testimonial-grid soft-stagger"><article class="tab-card lavender"><span class="tab-label">A creator’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article><article class="tab-card cream-card"><span class="tab-label">A reader’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article><article class="tab-card sage-card"><span class="tab-label">A writer’s note</span><p>Add a real creator quote here.</p><small>Creator quote to be added</small></article></div></section>
+
+    <section class="showcase soft-gallery" aria-labelledby="showcaseTitle"><p class="eyebrow">Made by the community</p><h2 id="showcaseTitle">A few stories to get you started.</h2><div class="gallery-track" tabindex="0" aria-label="Featured Draftly stories" aria-live="polite" aria-busy="true"><p role="status">Loading published stories…</p></div><a class="soft-button" href="blogs.html">See what creators publish <span aria-hidden="true">→</span></a><a class="gallery-next" href="blogs.html" aria-label="Browse all published stories">→</a></section>
+
+    <section class="pricing soft-pricing" aria-labelledby="pricingTitle"><p class="eyebrow">Choose your pace</p><h2 id="pricingTitle">Room to grow, your way.</h2><p>Billed yearly — 365 days of access.</p><div class="pricing-grid"><article class="plan-card"><span class="plan-label">FREE</span><h3>A place to begin</h3><div class="price-row"><span class="price">₹0</span><span class="price-note">/year</span></div><p>For new writers getting started.</p><ul><li>Basic blog publishing</li><li>Standard writing editor</li><li>Personal dashboard</li></ul><a href="signup.html">Create an account <span>→</span></a></article><article class="plan-card featured-plan"><span class="plan-label">PREMIUM</span><h3>For growing creators</h3><div class="price-row"><span class="price">₹500</span><span class="price-note">/year</span></div><p>Unlock faster publishing and deeper analytics.</p><ul><li>Everything in Free</li><li>Advanced analytics</li><li>Scheduled publishing</li><li>Premium editor themes</li></ul><a href="pricing.html">Upgrade to Premium <span>→</span></a></article><article class="plan-card"><span class="plan-label">PRO</span><h3>For serious publishers</h3><div class="price-row"><span class="price">₹999</span><span class="price-note">/year</span></div><p>AI and SEO tools for a more strategic publishing workflow.</p><ul><li>Everything in Premium</li><li>SEO assistant</li><li>Newsletter tools</li><li>PDF export</li></ul><a href="pricing.html">Go Pro <span>→</span></a></article><article class="plan-card"><span class="plan-label">ULTRA VIP</span><h3>For teams and power users</h3><div class="price-row"><span class="price">₹1,999</span><span class="price-note">/year</span></div><p>Premium growth, team workspaces, and advanced collaboration.</p><ul><li>Everything in Pro</li><li>Custom domain</li><li>Multiple authors</li><li>VIP support</li></ul><a href="pricing.html">Become Ultra VIP <span>→</span></a></article></div></section>
+
+    <section class="faq soft-faq" aria-labelledby="faqTitle"><div><p class="eyebrow">A few helpful answers</p><h2 id="faqTitle">Questions, answered.</h2></div><div class="faq-list"><details><summary>What can I publish here?<i class="bi bi-plus"></i></summary><p>Write and publish articles, essays, guides, and other long-form stories from your creator workspace.</p></details><details><summary>Can I save a draft and finish later?<i class="bi bi-plus"></i></summary><p>Yes. Use the editor’s Save Draft action to keep your work in progress on your account.</p></details><details><summary>How do readers find my posts?<i class="bi bi-plus"></i></summary><p>Published stories appear in the blog experience, where readers can browse, search, and filter content.</p></details><details><summary>Can I manage my writing from a phone?<i class="bi bi-plus"></i></summary><p>The platform adapts to smaller screens, so you can browse and manage your work on mobile.</p></details></div></section>
+
+    <section class="final-cta soft-final-cta"><div><p class="eyebrow">Your next story starts here</p><h2>Make the idea real.</h2><p>Open a clean page and start writing.</p><a href="editor.html" class="hero-btn">Start writing free <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div><a class="hero-photo-credit" href="https://unsplash.com/photos/the-sun-is-setting-over-a-city-with-a-clock-tower-9nb3S2dPn9Y" target="_blank" rel="noopener noreferrer">Photo by Jonny Gios on Unsplash</a></section>
+
+    <section class="newsletter-cta" aria-labelledby="newsletterTitle"><div><p class="eyebrow">A small note from Draftly</p><h3 id="newsletterTitle">A little inspiration, in your inbox.</h3><p>Sign up for thoughtful writing ideas and new stories from the platform.</p></div><form class="newsletter-form" id="newsletterForm"><label class="visually-hidden" for="newsletterEmail">Email address</label><input type="email" id="newsletterEmail" name="newsletterEmail" placeholder="Enter your email" required aria-label="Email address"><button type="submit">Subscribe</button><p id="newsletterFeedback" class="newsletter-feedback" aria-live="polite"></p></form></section>
   </main>
-
-  <footer class="site-footer">
+  <footer class="site-footer shared-footer">
     <div class="footer-top">
-      <div class="footer-col brand">
-        <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-        <a href="about.html">About</a>
-        <a href="Contact.html">Contact</a>
-        <div class="socials" aria-label="Social media links">
-          <span class="bi bi-youtube" aria-hidden="true"></span>
-          <span class="bi bi-pinterest" aria-hidden="true"></span>
-          <span class="bi bi-instagram" aria-hidden="true"></span>
-          <span class="bi bi-twitter-x" aria-hidden="true"></span>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h4>RESOURCES</h4>
-        <a href="blogs.html">→ Newsletter</a>
-        <a href="blogs.html">→ Blog</a>
-        <a href="Features.html">→ Tools & Resources</a>
-        <a href="dashboard.html">→ Dashboard</a>
-      </div>
-
-      <div class="footer-col">
-        <h4>SPONSOR / ADS</h4>
-        <a href="Contact.html#contact-form">→ Brand Partnership</a>
-        <a href="Contact.html#contact-form">→ Newsletter Ads</a>
-      </div>
-
-      <div class="footer-col">
-        <h4>DISCLOSURES</h4>
-        <a href="legal.html#privacy">→ Privacy Policy</a>
-        <a href="legal.html#terms">→ Terms & Conditions</a>
-        <a href="legal.html#affiliate">→ Affiliate Disclosure</a>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>© 2026 Draftly</p>
-      <p class="cookie">This site uses affiliate links and cookies.</p>
-      <button class="vault-btn" type="button" onclick="window.location.href='signup.html'">Join the Vault</button>
-      <div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div>
-    </div>
+      <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p></div>
+      <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+      <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="newsletter.html">Newsletter</a></div>
+      <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
+    </div><div class="footer-bottom"><p>© 2026 Draftly</p><div class="scroll-top" id="scrollTopBtn" aria-label="Back to top" role="button" tabindex="0">↑</div></div>
   </footer>
-
   <script>
     const navToggle = document.getElementById("navToggle");
     const navLinks = document.getElementById("navLinks");
@@ -564,51 +129,6 @@
       });
     }
 
-    function renderAuth() {
-      const isLoggedIn = localStorage.getItem("loggedIn");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-      if (!authArea) return;
-
-      if (isLoggedIn) {
-        authArea.innerHTML = [
-          '<span class="auth-chip">',
-          '<i class="bi bi-person-circle" aria-hidden="true"></i>',
-          (user.name || "User"),
-          '<button class="logout-btn" type="button" id="logoutBtn">Logout</button>',
-          '</span>'
-        ].join(" ");
-
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("loggedIn");
-            window.location.href = "login.html";
-          });
-        }
-      } else {
-        authArea.innerHTML = '<a href="login.html" class="login-btn">Login</a>';
-      }
-    }
-
-    renderAuth();
-
-    if (newsletterForm && newsletterEmail && newsletterFeedback) {
-      newsletterForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const email = newsletterEmail.value.trim();
-
-        if (!email) {
-          newsletterFeedback.textContent = "Please enter your email address.";
-          return;
-        }
-
-        localStorage.setItem("newsletterEmail", email);
-        newsletterFeedback.textContent = "Thanks for subscribing. Updates are on the way.";
-        newsletterForm.reset();
-      });
-    }
-
     if (scrollTopBtn) {
       const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
       scrollTopBtn.addEventListener("click", scrollToTop);
@@ -620,9 +140,9 @@
       });
     }
   </script>
-<script src="/js/court-enhancements.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/oauth-callback-fallback.js"></script>
 <script src="/js/platform.js"></script>
+<script src="/js/home-blog-preview.js"></script>
 </body>
 </html>

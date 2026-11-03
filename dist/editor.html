@@ -11,514 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-  <style>
-    :root {
-      --bg: #f3f6fb;
-      --surface: #ffffff;
-      --surface-soft: #f9fbff;
-      --text: #111827;
-      --muted: #6b7280;
-      --line: #dbe3ef;
-      --primary: #A78BFA;
-      --primary-dark: #249fe0;
-      --accent: #E8FF65;
-      --danger: #dc2626;
-      --success: #0f9d58;
-      --shadow: 0 24px 54px rgba(15, 23, 42, 0.12);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, system-ui, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 6% 6%, rgba(58, 183, 255, 0.18), transparent 28%),
-        radial-gradient(circle at 90% 90%, rgba(255, 196, 102, 0.22), transparent 30%),
-        var(--bg);
-      color: var(--text);
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
-      padding: 14px 28px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .brand a {
-      color: #0f172a;
-      font-weight: 700;
-      font-size: 1.1rem;
-      text-decoration: none;
-      letter-spacing: 0.2px;
-    }
-
-    .nav-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-group,
-    .auth-links {
-      list-style: none;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-group a,
-    .auth-links a {
-      text-decoration: none;
-      color: #0f172a;
-      font-size: 0.92rem;
-      font-weight: 600;
-      padding: 7px 10px;
-      border-radius: 8px;
-    }
-
-    .nav-group a:hover,
-    .auth-links a:hover {
-      background: #eef5ff;
-    }
-
-    .auth-links button {
-      border: 0;
-      background: #0f172a;
-      color: #fff;
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 0.82rem;
-      cursor: pointer;
-    }
-
-    .editor-page {
-      max-width: 1260px;
-      margin: 0 auto;
-      padding: 28px 18px 64px;
-    }
-
-    .editor-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(270px, 1fr);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .editor-panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .editor-panel h1 {
-      font-size: 1.55rem;
-      margin-bottom: 6px;
-    }
-
-    .editor-subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 18px;
-      line-height: 1.5;
-    }
-
-    .field-label {
-      display: block;
-      margin: 12px 0 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    input[type="text"],
-    select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 12px;
-      font-size: 0.94rem;
-      color: #0f172a;
-      background: #fff;
-    }
-
-    input[type="text"]:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(58, 183, 255, 0.18);
-    }
-
-    #title {
-      font-size: 1.05rem;
-      font-weight: 600;
-    }
-
-    .meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 4px;
-    }
-
-    .toolbar {
-      margin-top: 14px;
-      border: 1px solid var(--line);
-      background: var(--surface-soft);
-      border-radius: 14px;
-      padding: 8px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .toolbar button {
-      border: 1px solid #d7deea;
-      background: #fff;
-      color: #0f172a;
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      min-width: 42px;
-    }
-
-    .toolbar button:hover {
-      background: #eef5ff;
-      border-color: #c4d9f8;
-    }
-
-    .cover-input {
-      margin-top: 12px;
-      width: 100%;
-      border: 2px dashed #c9d6ea;
-      border-radius: 14px;
-      padding: 10px;
-      background: #fbfcff;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    .cover-input::file-selector-button {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff;
-      border: 0;
-      border-radius: 999px;
-      padding: 8px 12px;
-      margin-right: 10px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    #coverPreview {
-      width: 100%;
-      max-height: 260px;
-      object-fit: cover;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      margin-top: 10px;
-      display: none;
-    }
-
-    .editor-canvas {
-      margin-top: 10px;
-      width: 100%;
-      min-height: 340px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-      font-size: 1rem;
-      line-height: 1.72;
-      background: #fff;
-      outline: none;
-    }
-
-    .editor-canvas:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(58, 183, 255, 0.18);
-    }
-
-    .editor-canvas:empty::before {
-      content: "Start writing your post here...";
-      color: #94a3b8;
-    }
-
-    .editor-canvas img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin: 12px 0;
-      border: 1px solid #e2e8f0;
-    }
-
-    .status-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid #d7deea;
-      background: #f8fbff;
-      color: #1f2937;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .chip.muted {
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    .action-row {
-      margin-top: 16px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: #0f172a;
-      color: #fff;
-    }
-
-    .btn-ghost {
-      background: #edf2f7;
-      color: #0f172a;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .side-panel {
-      display: grid;
-      gap: 12px;
-    }
-
-    .info-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-    }
-
-    .info-card h2 {
-      font-size: 1rem;
-      margin-bottom: 6px;
-    }
-
-    .info-card p {
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.45;
-      margin-bottom: 8px;
-    }
-
-    .checklist {
-      list-style: none;
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .checklist li {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      font-size: 0.88rem;
-      color: #374151;
-    }
-
-    .checklist i {
-      color: #94a3b8;
-      margin-top: 2px;
-    }
-
-    .checklist li.pass i {
-      color: var(--success);
-    }
-
-    .shortcut-list {
-      list-style: none;
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .shortcut-list li {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 0.86rem;
-      color: #334155;
-      border: 1px solid #e4e9f3;
-      border-radius: 10px;
-      padding: 7px 9px;
-      background: #fbfcff;
-    }
-
-    kbd {
-      border: 1px solid #ced6e4;
-      border-bottom-width: 2px;
-      border-radius: 6px;
-      padding: 1px 6px;
-      background: #fff;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.78rem;
-      color: #334155;
-    }
-
-    .snapshot-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.88rem;
-      margin-top: 8px;
-      color: #334155;
-    }
-
-    .snapshot-line strong {
-      color: #0f172a;
-    }
-
-    .editor-footer {
-      border-top: 1px solid var(--line);
-      margin-top: 22px;
-      padding: 16px 18px 24px;
-      text-align: center;
-      color: #64748b;
-      font-size: 0.86rem;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.66);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 80;
-    }
-
-    .modal[hidden] {
-      display: none;
-    }
-
-    .modal-card {
-      width: min(880px, 100%);
-      max-height: 85vh;
-      overflow: auto;
-      background: #fff;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      padding: 16px;
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .modal-head h3 {
-      font-size: 1.1rem;
-    }
-
-    .close-btn {
-      border: 0;
-      border-radius: 999px;
-      background: #eef2f7;
-      color: #111827;
-      width: 34px;
-      height: 34px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .preview-body h1,
-    .preview-body h2,
-    .preview-body h3 {
-      margin: 14px 0 8px;
-      color: #0f172a;
-    }
-
-    .preview-body p {
-      color: #1f2937;
-      line-height: 1.7;
-      margin: 8px 0;
-    }
-
-    .preview-body img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin: 10px 0;
-    }
-
-    @media (max-width: 980px) {
-      .editor-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .nav-wrap {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      .meta-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="/css/court-enhancements.css">
   <link rel="stylesheet" href="/css/styles.css">
   <meta property="og:title" content="Write | Draftly">
   <meta property="og:description" content="Draft, edit, and publish your next story with Draftly.">
@@ -528,13 +20,10 @@
 <body data-protected="true">
   <header class="topbar">
     <div class="brand"><a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a></div>
+    <button class="hamburger" type="button" aria-controls="editorNav" aria-expanded="false" aria-label="Toggle navigation">☰</button>
 
     <div class="nav-wrap">
-      <ul class="nav-group">
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="blogs.html">Blogs</a></li>
-        <li><a href="index.html">Home</a></li>
-      </ul>
+      <ul class="nav-group" id="editorNav"><li><a href="index.html">Home</a></li><li><a href="blogs.html">Blogs</a></li><li><a href="Features.html">Features</a></li><li><a href="about.html">About</a></li><li><a href="Contact.html">Contact</a></li><li class="write-entry"><a href="editor.html" aria-current="page">Write</a></li></ul>
       <ul id="authArea" class="auth-links"></ul>
     </div>
   </header>
@@ -542,14 +31,14 @@
   <main class="editor-page">
     <section class="editor-layout">
       <article class="editor-panel">
-        <h1>Write Blog</h1>
-        <p class="editor-subtitle">Use templates, formatting tools, and live quality checks to publish faster.</p>
+        <h1>Write your next story</h1>
+        <p class="editor-subtitle">Shape your ideas in a focused space, then save or publish when you’re ready.</p>
 
         <label class="field-label" for="title">Title</label>
-        <input id="title" type="text" placeholder="Blog title..." />
+        <input id="title" type="text" placeholder="Give your story a title..." />
 
         <label class="field-label" for="description">Description</label>
-        <textarea id="description" rows="3" maxlength="500" placeholder="A short summary for readers and search results..."></textarea>
+        <textarea id="description" rows="3" maxlength="500" placeholder="Write a short summary for readers and search results..."></textarea>
 
         <div class="meta-grid">
           <div>
@@ -578,27 +67,34 @@
           </div>
           <div>
             <label class="field-label" for="tags">Tags</label>
-            <input id="tags" type="text" placeholder="security, cloud, ai" />
+            <input id="tags" type="text" placeholder="Add tags separated by commas..." />
           </div>
         </div>
 
-        <div class="toolbar" aria-label="Editor toolbar">
-          <button type="button" onclick="cmd('bold')" title="Bold"><i class="bi bi-type-bold"></i></button>
-          <button type="button" onclick="cmd('italic')" title="Italic"><i class="bi bi-type-italic"></i></button>
-          <button type="button" onclick="cmd('insertUnorderedList')" title="Bullet list"><i class="bi bi-list-ul"></i></button>
-          <button type="button" onclick="cmd('formatBlock', 'h2')" title="Heading"><i class="bi bi-type-h2"></i></button>
-          <button type="button" onclick="insertLink()" title="Insert link"><i class="bi bi-link-45deg"></i></button>
-          <button type="button" onclick="uploadImage()" title="Insert image"><i class="bi bi-image"></i></button>
+        <div class="toolbar" role="toolbar" aria-label="Editor formatting">
+          <button type="button" onclick="cmd('bold')" title="Bold" aria-label="Bold"><i class="bi bi-type-bold" aria-hidden="true"></i></button>
+          <button type="button" onclick="cmd('italic')" title="Italic" aria-label="Italic"><i class="bi bi-type-italic" aria-hidden="true"></i></button>
+          <button type="button" onclick="cmd('insertUnorderedList')" title="Bullet list" aria-label="Bullet list"><i class="bi bi-list-ul" aria-hidden="true"></i></button>
+          <button type="button" onclick="cmd('formatBlock', 'h2')" title="Heading" aria-label="Heading"><i class="bi bi-type-h2" aria-hidden="true"></i></button>
+          <button type="button" onclick="insertLink()" title="Insert link" aria-label="Insert link"><i class="bi bi-link-45deg" aria-hidden="true"></i></button>
+          <button type="button" onclick="uploadImage()" title="Insert image" aria-label="Insert image"><i class="bi bi-image" aria-hidden="true"></i></button>
         </div>
 
-        <label class="field-label" for="coverInput">Cover Image</label>
-        <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" />
-        <img id="coverPreview" alt="Cover preview">
-
         <label class="field-label" for="content">Content</label>
-        <div id="content" class="editor-canvas" contenteditable="true" role="textbox" aria-multiline="true"></div>
+        <div id="content" class="editor-canvas" contenteditable="true" role="textbox" aria-label="Article content" aria-multiline="true"></div>
 
-        <div class="status-row">
+        <label class="field-label" for="coverInput">Cover image</label>
+        <div class="cover-upload-box">
+          <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+          <span class="cover-upload-title">Choose a cover image</span>
+          <span class="cover-file-name" id="coverFileName" aria-live="polite">No image selected</span>
+          <label class="cover-select-btn" for="coverInput">Browse images</label>
+          <input id="coverInput" class="cover-input" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="coverFileName" />
+          <img id="coverPreview" alt="Cover preview" hidden>
+          <button class="cover-remove-btn" id="removeCoverBtn" type="button" disabled>Remove cover</button>
+        </div>
+
+        <div class="status-row" aria-label="Draft statistics">
           <span class="chip" id="wordCount">0 words</span>
           <span class="chip" id="readTime">0 min read</span>
           <span class="chip" id="headingCount">0 headings</span>
@@ -607,17 +103,17 @@
         </div>
 
         <div class="action-row">
-          <button class="btn btn-primary" id="publishBtn" type="button"><i class="bi bi-send"></i>Publish Blog</button>
-          <button class="btn btn-secondary" id="saveDraftBtn" type="button"><i class="bi bi-save2"></i>Save Draft</button>
-          <button class="btn btn-ghost" id="clearDraftBtn" type="button"><i class="bi bi-trash3"></i>Clear Draft</button>
-          <button class="btn btn-ghost" id="previewBtn" type="button"><i class="bi bi-eye"></i>Preview</button>
+          <button class="btn btn-secondary" id="saveDraftBtn" type="button"><i class="bi bi-save2" aria-hidden="true"></i>Save Draft</button>
+          <button class="btn btn-ghost" id="previewBtn" type="button"><i class="bi bi-eye" aria-hidden="true"></i>Preview</button>
+          <button class="btn btn-primary" id="publishBtn" type="button"><i class="bi bi-send" aria-hidden="true"></i>Publish Blog</button>
+          <button class="btn btn-ghost" id="clearDraftBtn" type="button"><i class="bi bi-trash3" aria-hidden="true"></i>Clear Draft</button>
         </div>
       </article>
 
       <aside class="side-panel">
-        <section class="info-card" aria-label="Additional court card">
-          <h2>Content Court</h2>
-          <p>Check these signals before publishing for better readability and SEO health.</p>
+        <section class="info-card" aria-label="Publishing checklist">
+          <h2>Publishing checklist</h2>
+          <p>A few helpful checks for a clear, reader-friendly article.</p>
           <ul class="checklist">
             <li id="checkTitle"><i class="bi bi-circle"></i><span>Title is at least 40 characters.</span></li>
             <li id="checkWords"><i class="bi bi-circle"></i><span>Post has at least 300 words.</span></li>
@@ -656,13 +152,15 @@
     </div>
   </section>
 
-  <footer class="editor-footer">
-    <a class="draftly-logo" href="/"><img src="/images/draftly-logo-dark.svg" alt="Draftly" height="36"></a>
-    <p>Tip: publish only after all Content Court checks pass.</p>
-  </footer>
-
-
-<script src="/js/court-enhancements.js"></script>
+<footer class="site-footer shared-footer">
+  <div class="footer-top">
+    <div class="footer-col brand-col"><a class="draftly-wordmark" href="/" aria-label="Draftly home"><span>Draftly</span></a><p>Draft it. Publish it. Grow it.</p><div class="footer-social" aria-label="Community links"><a href="Contact.html">Get in touch</a><a href="newsletter.html">Newsletter</a></div></div>
+    <div class="footer-col"><h2>Product</h2><a href="blogs.html">Blogs</a><a href="Features.html">Features</a><a href="editor.html">Write</a></div>
+    <div class="footer-col"><h2>Company</h2><a href="about.html">About</a><a href="Contact.html">Contact</a><a href="dashboard.html">Dashboard</a></div>
+    <div class="footer-col"><h2>Legal</h2><a href="legal.html#privacy">Privacy</a><a href="legal.html#terms">Terms</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Draftly</p><button class="scroll-top" type="button" aria-label="Back to top">↑</button></div>
+</footer>
 <script src="/js/api.js"></script>
 <script src="/js/platform.js"></script>
 <script src="/js/editor-page.js"></script>

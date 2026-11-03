@@ -94,8 +94,13 @@ Open [http://localhost:3000](http://localhost:3000). For development with automa
 
 The SQLite database is stored at `Backend/data/blogging-platform.sqlite`; uploaded profile and cover images are stored in `Backend/uploads/`. Both directories are ignored by Git. Back up the database and uploads together. SQLite is appropriate for a single-instance, small deployment; use a managed database and shared session store before running multiple server instances.
 
-The existing application pages are in `Frontend/pages/`, and their shared CSS, JavaScript, and images are in `Frontend/css/`, `Frontend/js/`, and `Frontend/images/`. Frontend API requests use same-origin `/api` endpoints. The Express entry point remains `server.js`; API endpoint registrations are in `Backend/routes/api.js`, database initialization is in `Backend/config/database.js`, and tests are in `Backend/tests/`. Existing page URLs (such as `/index.html` and `/login.html`) and `/api` endpoints remain unchanged.
+The existing application pages are in `Frontend/pages/`, and their shared CSS, JavaScript, and images are in `Frontend/css/`, `Frontend/js/`, and `Frontend/images/`. Frontend API requests use same-origin `/api` endpoints. The Express entry point remains `server.js`; API endpoint registrations are in `Backend/routes/api.js`, database initialization is in `Backend/config/database.js`, and the membership data model is in the SQLite schema created at startup.
 
+## Membership and annual billing
+
+The platform includes four annual membership plans: Free, Premium, Pro, and Ultra VIP. All paid plans are valid for 365 days and are activated only after a verified payment. The backend exposes `GET /api/membership/plans`, `GET /api/membership/me`, `POST /api/membership/checkout`, and `POST /api/membership/verify` so frontend pricing pages can display prices and unlock access after payment confirmation. Razorpay keys are configured via `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`, while `ADMIN_EMAILS` allows a trusted admin to update plan pricing from the backend.
+
+If Razorpay credentials are not configured, the app falls back to a local demo checkout flow so the annual plan selection and verification flow can still be tested without breaking the app. Real Razorpay verification remains enabled whenever the service credentials are provided. and tests are in `Backend/tests/`. Existing page URLs (such as `/index.html` and `/login.html`) and `/api` endpoints remain unchanged.
 The existing backend uses parameterized SQLite statements directly rather than an ORM/model layer. Its API handlers remain colocated with route registrations to avoid a behavior-changing rewrite during this filesystem reorganization; the requested `Backend/controllers/` and `Backend/models/` directories are ready for a future incremental extraction.
 
 ## Features
